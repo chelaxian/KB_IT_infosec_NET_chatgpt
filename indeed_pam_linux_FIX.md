@@ -4,6 +4,9 @@ cp ca.crt /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/ca-certific
 cp cert.pfx /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/certs/
 cp vars.yml /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/scripts/ansible/
 cp config.json /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/
+cd /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/
+chmod 777 *.sh
+sudo bash run-deploy.sh --bench-skip -vvv
 ```
 
 ### Fix Docker Bench for Security
