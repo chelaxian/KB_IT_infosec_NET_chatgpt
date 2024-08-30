@@ -34,6 +34,7 @@ chmod 644 /etc/default/docker
 ```
 
 ```
+mkdir /etc/sysconfig
 echo '# /etc/sysconfig/docker
 DOCKER_STORAGE_OPTIONS="--storage-driver=overlay2"
 DOCKER_NETWORK_OPTIONS="--bip=172.17.0.1/16"
