@@ -10,6 +10,10 @@ cp config.json /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/
 IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/cis-benchmark/local.docker.log
 
 ```
+sudo -i
+```
+
+```
 echo '{
   "debug": true,
   "log-level": "info",
