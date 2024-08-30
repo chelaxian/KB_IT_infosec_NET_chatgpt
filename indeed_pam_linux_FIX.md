@@ -1,18 +1,3 @@
-### Fix permissons
-
-```
-mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/temp
-mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/backups
-mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs
-mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/cis-benchmark
-mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/selfsigned
-
-sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/temp
-sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/backups
-sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/
-sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state
-```
-
 ### Fix Docker Bench for Security
 IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/cis-benchmark/local.docker.log
 
@@ -70,3 +55,19 @@ chown root:root /etc/docker/certs.d/server-key.pem /etc/docker/certs.d/server-ce
 chmod 400 /etc/docker/certs.d/server-key.pem
 chmod 444 /etc/docker/certs.d/server-cert.pem
 ```
+
+### Fix permissons (danger!)
+
+```
+mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/temp
+mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/backups
+mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs
+mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/cis-benchmark
+mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/selfsigned
+
+sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/temp
+sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/backups
+sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/
+sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state
+```
+
