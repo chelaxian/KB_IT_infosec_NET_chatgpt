@@ -46,7 +46,7 @@ chmod 644 /etc/default/docker
 ```
 
 ```
-mkdir /etc/sysconfig
+mkdir -p /etc/sysconfig
 echo '# /etc/sysconfig/docker
 DOCKER_STORAGE_OPTIONS="--storage-driver=overlay2"
 DOCKER_NETWORK_OPTIONS="--bip=172.17.0.1/16"
@@ -70,11 +70,11 @@ sudo systemctl restart docker
 
 ### Fix permissons
 ```
-sudo mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/temp
-sudo mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/backups
-sudo mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs
-sudo mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/cis-benchmark
-sudo mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/selfsigned
+sudo mkdir -p /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/temp
+sudo mkdir -p /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/backups
+sudo mkdir -p /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs
+sudo mkdir -p /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/cis-benchmark
+sudo mkdir -p /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/selfsigned
 
 sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/temp
 sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/backups
