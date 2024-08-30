@@ -12,7 +12,7 @@ sudo mkdir -p /mnt/storage
 sudo bash run-deploy.sh --bench-skip -vvv
 ```
 
-### Fix Docker Bench for Security
+### Fix Docker Bench for Security (!!!DANGER!!!)
 IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/cis-benchmark/local.docker.log
 
 ```
