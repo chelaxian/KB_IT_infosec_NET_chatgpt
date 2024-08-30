@@ -67,11 +67,11 @@ sudo systemctl restart docker
 ### Fix permissons (danger!)
 
 ```
-mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/temp
-mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/backups
-mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs
-mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/cis-benchmark
-mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/selfsigned
+sudo mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/temp
+sudo mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/backups
+sudo mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs
+sudo mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/cis-benchmark
+sudo mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/selfsigned
 
 sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/temp
 sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/backups
