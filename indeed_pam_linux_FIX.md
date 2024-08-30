@@ -52,6 +52,10 @@ chmod 400 /etc/docker/certs.d/server-key.pem
 chmod 444 /etc/docker/certs.d/server-cert.pem
 ```
 
+```
+sudo systemctl restart docker
+```
+
 ### Fix permissons (danger!)
 
 ```
