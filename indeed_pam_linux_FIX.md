@@ -45,11 +45,6 @@ chmod 644 /etc/sysconfig/docker
 ```
 
 ```
-apt-get install containerd runc -y   # для Debian/Ubuntu
-dnf install containerd runc -y       # для CentOS/RHEL
-```
-
-```
 mkdir -p /etc/docker/certs.d
 openssl req -newkey rsa:4096 -nodes -keyout /etc/docker/certs.d/server-key.pem -x509 -days 365 -out /etc/docker/certs.d/server-cert.pem -subj "/CN=localhost"
 chown root:root /etc/docker/certs.d/server-key.pem /etc/docker/certs.d/server-cert.pem
