@@ -68,8 +68,7 @@ chmod 444 /etc/docker/certs.d/server-cert.pem
 sudo systemctl restart docker
 ```
 
-### Fix permissons (danger!)
-
+### Fix permissons
 ```
 sudo mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/temp
 sudo mkdir /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/backups
@@ -83,3 +82,7 @@ sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/
 sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state
 ```
 
+### Run Deploing script
+```
+sudo bash run-deploy.sh -vvv
+```
