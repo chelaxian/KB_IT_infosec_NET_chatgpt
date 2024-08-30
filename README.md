@@ -1,4 +1,4 @@
-KB_IT_infosec_NET_chatgpt
+#KB_IT_infosec_NET_chatgpt
 
 База знаний - сборник ответов ChatGPT на полезные темы:
 - АйТи
