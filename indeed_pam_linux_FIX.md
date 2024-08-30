@@ -1,3 +1,11 @@
+### Copy certs and configs to folders
+```
+cp ca.crt /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/ca-certificates/
+cp cert.pfx /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/certs/
+cp vars.yml /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/scripts/ansible/
+cp config.json /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/
+```
+
 ### Fix Docker Bench for Security
 IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/cis-benchmark/local.docker.log
 
