@@ -1,1 +1,6 @@
-# KB_net_infosec_chatgpt
+KB_IT_infosec_NET_chatgpt
+
+База знаний - сборник ответов ChatGPT на полезные темы:
+- АйТи
+- Кибербез
+- Комп. Сети
