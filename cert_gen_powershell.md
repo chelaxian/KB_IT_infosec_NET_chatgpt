@@ -1,4 +1,4 @@
-Для создания самоподписанного сертификата на веб-сайт с указанными DNS-именами в Windows с помощью PowerShell, нужно выполнить следующие команды:
+Для создания самоподписанного сертификата на веб-сайт, который будет использоваться для проверки подлинности сервера (SSL Server Authentication) и для проверки клиента (Client Authentication), с несколькими указанными DNS-именами в Windows с помощью PowerShell, нужно выполнить следующие команды:
 
 ### Шаг 1: Определение переменных
 
@@ -59,4 +59,53 @@ Export-PfxCertificate -Cert $cert -FilePath "C:\path\to\your\certificate.pfx" -P
    - `-FilePath` — Путь, где будет сохранен файл PFX.
    - `-Password` — Пароль для защиты экспортированного сертификата.
 
-Если нужно что-то еще уточнить или дополнить, дай знать!
+
+---
+
+
+Для создания самоподписанного сертификата, который будет использоваться только для проверки подлинности сервера (SSL Server Authentication) и не будет включать проверку клиента (Client Authentication), необходимо изменить параметр `-Type` в команде `New-SelfSignedCertificate`.
+
+По умолчанию, `-Type` включает как `SSLServerAuthentication`, так и `ClientAuthentication`. Чтобы исключить проверку клиента, укажем только `SSLServerAuthentication`.
+
+### Команды для создания сертификата только с проверкой подлинности сервера
+
+```powershell
+$certName = "mdgkd-pam-test"
+$dnsNames = @(
+    "mdgkd-pam-test-linux.int.kronshtadt.ru",
+    "mdgkd-pam-test.int.kronshtadt.ru",
+    "mdgkd-pam-test-linux",
+    "mdgkd-pam-test",
+    "int.kronshtadt.ru",
+    "*.int.kronshtadt.ru"
+)
+
+# Шаг 2: Создание сертификата только для аутентификации сервера
+$cert = New-SelfSignedCertificate `
+    -DnsName $dnsNames `
+    -CertStoreLocation "Cert:\LocalMachine\My" `
+    -FriendlyName $certName `
+    -KeyAlgorithm RSA `
+    -KeyLength 2048 `
+    -HashAlgorithm SHA256 `
+    -NotAfter (Get-Date).AddYears(1) `
+    -Type SSLServerAuthentication
+```
+
+### Экспорт сертификата в файл
+
+Экспорт сертификата в формате PFX (PKCS#12) для использования:
+
+```powershell
+$pfxPassword = ConvertTo-SecureString -String "YourPasswordHere" -Force -AsPlainText
+
+Export-PfxCertificate -Cert $cert -FilePath "C:\path\to\your\certificate.pfx" -Password $pfxPassword
+```
+
+### Объяснение изменений:
+
+- **`-Type SSLServerAuthentication`** — Указывает, что сертификат предназначен только для аутентификации SSL-сервера, и не будет использоваться для проверки подлинности клиента.
+
+Теперь этот сертификат будет действовать только для проверки подлинности сервера без клиентской проверки. 
+
+Если есть еще вопросы или нужны дополнительные пояснения, сообщи!
