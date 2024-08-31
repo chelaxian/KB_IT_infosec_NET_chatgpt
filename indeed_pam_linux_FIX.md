@@ -46,10 +46,10 @@ cd /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/
 sudo chmod 777 *.sh
 sudo mkdir -p /mnt/storage
 sudo chmod -R 777 /mnt/storage
-sudo bash run-deploy.sh --bench-skip -vvv
+#sudo bash run-deploy.sh --bench-skip -vvv
 ```
 
-### Fix Docker Bench for Security (!!!DANGER!!!)
+### Fix Docker Bench for Security
 IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/cis-benchmark/local.docker.log
 
 ```
