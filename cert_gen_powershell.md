@@ -28,7 +28,7 @@ $cert = New-SelfSignedCertificate `
     -KeyAlgorithm RSA `
     -KeyLength 2048 `
     -HashAlgorithm SHA256 `
-    -NotAfter (Get-Date).AddYears(1) `
+    -NotAfter (Get-Date).AddYears(10) `
     -Type SSLServerAuthentication
 ```
 
@@ -88,7 +88,7 @@ $cert = New-SelfSignedCertificate `
     -KeyAlgorithm RSA `
     -KeyLength 2048 `
     -HashAlgorithm SHA256 `
-    -NotAfter (Get-Date).AddYears(1) `
+    -NotAfter (Get-Date).AddYears(10) `
     -Type SSLServerAuthentication
 ```
 
