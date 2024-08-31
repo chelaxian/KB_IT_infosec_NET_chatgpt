@@ -109,6 +109,7 @@ chmod 444 /etc/docker/certs.d/server-cert.pem
 
 ```
 sudo systemctl restart docker
+exit
 ```
 
 ### Fix permissons
