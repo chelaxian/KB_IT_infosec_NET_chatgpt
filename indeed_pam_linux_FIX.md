@@ -3,7 +3,7 @@
 sudo apt-get update && sudo apt-get install openssh-server nano htop zip unzip net-tools curl wget python3 python-is-python3 sudo iptables tcpdump -y
 
 ```
-### Install docker & portainer
+### Install docker & portainer (Debian)
 ```
 # Add Docker's official GPG key:
 sudo apt-get update
