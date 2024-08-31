@@ -3,7 +3,8 @@
 sudo apt-get update && sudo apt-get install openssh-server nano htop zip unzip net-tools curl wget python3 python-is-python3 sudo iptables tcpdump -y
 
 ```
-### Install docker & portainer (Debian)
+### Install docker & portainer
+#### Debian
 ```
 # Add Docker's official GPG key:
 sudo apt-get update
@@ -21,6 +22,8 @@ sudo apt-get update
 
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 ```
+#### Other's distro
+https://docs.docker.com/engine/install/
 
 ### Copy certs and configs to folders
 ```
