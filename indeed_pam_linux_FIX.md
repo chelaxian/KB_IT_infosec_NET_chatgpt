@@ -1,3 +1,8 @@
+### Install dependensies
+```
+sudo apt-get update && sudo apt-get install openssh-server nano htop zip unzip net-tools curl wget python3 python-is-python3 sudo iptables tcpdump -y
+
+```
 ### Copy certs and configs to folders
 ```
 cp ca.crt /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/ca-certificates/
