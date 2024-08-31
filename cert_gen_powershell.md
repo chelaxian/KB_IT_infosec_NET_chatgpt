@@ -102,6 +102,13 @@ $pfxPassword = ConvertTo-SecureString -String "YourPasswordHere" -Force -AsPlain
 Export-PfxCertificate -Cert $cert -FilePath "C:\path\to\your\certificate.pfx" -Password $pfxPassword
 ```
 
+например:
+```powershell
+$pfxPassword = ConvertTo-SecureString -String "1" -Force -AsPlainText
+
+Export-PfxCertificate -Cert $cert -FilePath "C:\certificate.pfx" -Password $pfxPassword
+```
+
 ### Объяснение изменений:
 
 - **`-Type SSLServerAuthentication`** — Указывает, что сертификат предназначен только для аутентификации SSL-сервера, и не будет использоваться для проверки подлинности клиента.
