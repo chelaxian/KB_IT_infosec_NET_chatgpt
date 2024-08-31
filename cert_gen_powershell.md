@@ -5,14 +5,11 @@
 Определим переменные, чтобы сделать команду более читаемой:
 
 ```powershell
-$certName = "mdgkd-pam-test"
+$certName = "WEB.DOMAIN.NET"
 $dnsNames = @(
-    "mdgkd-pam-test-linux.int.kronshtadt.ru",
-    "mdgkd-pam-test.int.kronshtadt.ru",
-    "mdgkd-pam-test-linux",
-    "mdgkd-pam-test",
-    "int.kronshtadt.ru",
-    "*.int.kronshtadt.ru"
+    "WEB.DOMAIN.NET",
+    "*.DOMAIN.NET",
+    "DOMAIN.NET"
 )
 ```
 
@@ -70,14 +67,11 @@ Export-PfxCertificate -Cert $cert -FilePath "C:\path\to\your\certificate.pfx" -P
 ### Команды для создания сертификата только с проверкой подлинности сервера
 
 ```powershell
-$certName = "mdgkd-pam-test"
+$certName = "WEB.DOMAIN.NET"
 $dnsNames = @(
-    "mdgkd-pam-test-linux.int.kronshtadt.ru",
-    "mdgkd-pam-test.int.kronshtadt.ru",
-    "mdgkd-pam-test-linux",
-    "mdgkd-pam-test",
-    "int.kronshtadt.ru",
-    "*.int.kronshtadt.ru"
+    "WEB.DOMAIN.NET",
+    "*.DOMAIN.NET",
+    "DOMAIN.NET"
 )
 
 # Шаг 2: Создание сертификата только для аутентификации сервера
