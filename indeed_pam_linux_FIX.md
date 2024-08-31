@@ -32,8 +32,9 @@ sudo chmod 777 /var/run/docker.sock
 sudo docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v "/var/run/docker.sock:/var/run/docker.sock" -v "portainer_data:/data" portainer/portainer-ce:2.21.0
 ```
 
-### Copy certs and configs to folders
+### Copy certs and configs to folders and start deploy
 ```
+unzip IndeedPAM_2.10.1_RU.zip
 #cp ca.crt /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/ca-certificates/
 #cp cert.pfx /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/certs/
 cp vars.yml /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/scripts/ansible/
