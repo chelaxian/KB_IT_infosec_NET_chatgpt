@@ -106,7 +106,11 @@ chown root:root /etc/docker/certs.d/server-key.pem /etc/docker/certs.d/server-ce
 chmod 400 /etc/docker/certs.d/server-key.pem
 chmod 444 /etc/docker/certs.d/server-cert.pem
 ```
-
+```
+sudo apt-get install containerd runc -y
+sudo autoremove
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+```
 ```
 sudo systemctl restart docker
 exit
