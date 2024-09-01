@@ -9,10 +9,10 @@ from OpenSSL import crypto
 from shutil import copyfile
 
 # Устанавливаем путь к каталогу, где находятся OpenSSL-библиотеки
-#os.environ['PATH'] = "C:/Program Files/OpenSSL-Win64/bin;" + os.environ['PATH']
+os.environ['PATH'] = "C:/Program Files/OpenSSL-Win64/bin;" + os.environ['PATH']
 
 # Устанавливаем путь к каталогу, где находятся OpenSSL-библиотеки
-os.environ['PATH'] = os.path.dirname(os.path.abspath(__file__)) + ";" + os.environ['PATH']
+#os.environ['PATH'] = os.path.dirname(os.path.abspath(__file__)) + ";" + os.environ['PATH']
 
 
 # Проверка доступности библиотек OpenSSL
