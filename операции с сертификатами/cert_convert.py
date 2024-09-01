@@ -564,8 +564,90 @@ def merge_cert_chain():
         print(f'Ошибка преобразования сертификата: {e}')
         return None
 
+# 7 =======================================================================================
+
+def extract_root_certificate(cert_file):
+    """Извлекает корневой сертификат из файла сертификата."""
+    input_format = determine_format(cert_file)
+    if not input_format:
+        print(f"Файл {cert_file} не является допустимым сертификатом.")
+        return None
+
+    temp_pem = "temp_cert_chain.pem"
+    try:
+        # Преобразуем файл в PEM, если он не в PEM
+        if input_format == 'PEM':
+            copyfile(cert_file, temp_pem)
+        elif input_format == 'DER':
+            subprocess.run(['openssl', 'x509', '-inform', 'DER', '-in', cert_file, '-out', temp_pem, '-outform', 'PEM'], check=True)
+        elif input_format in ['P7B', 'P7C']:
+            subprocess.run(['openssl', 'pkcs7', '-print_certs', '-in', cert_file, '-out', temp_pem], check=True)
+        elif input_format in ['PFX', 'P12']:
+            subprocess.run(['openssl', 'pkcs12', '-in', cert_file, '-out', temp_pem, '-nodes'], check=True)
+        else:
+            print(f'Невозможно обработать формат {input_format} для извлечения корневого сертификата.')
+            return None
+
+        # Открываем и читаем все содержимое PEM файла
+        with open(temp_pem, "rb") as pem_file:
+            pem_data = pem_file.read()
+
+        # Разделяем на отдельные сертификаты
+        certificates = pem_data.split(b"-----END CERTIFICATE-----")
+        certificates = [cert + b"-----END CERTIFICATE-----\n" for cert in certificates if b"-----BEGIN CERTIFICATE-----" in cert]
+
+        # Если меньше одного сертификата, значит нет цепочки
+        if len(certificates) < 1:
+            print("Ошибка: не удалось найти сертификаты в файле.")
+            os.remove(temp_pem)
+            return None
+
+        # Извлекаем последний сертификат в цепочке (корневой)
+        root_certificate = certificates[-1]
+
+        # Выбор выходного формата
+        formats = ['PEM', 'DER', 'CRT', 'CER']
+        print("Выберите формат для сохранения корневого сертификата:")
+        for i, fmt in enumerate(formats, 1):
+            print(f"{i}. {fmt}")
+
+        choice = input("Выберите номер формата: ")
+        try:
+            output_format = formats[int(choice) - 1]
+        except (IndexError, ValueError):
+            print("Неверный выбор.")
+            os.remove(temp_pem)
+            return None
+
+        output_file = f"root_certificate.{output_format.lower()}"
+
+        # Сохранение корневого сертификата в выбранном формате
+        with open("temp_root.pem", "wb") as root_file:
+            root_file.write(root_certificate)
+
+        if output_format == 'PEM':
+            copyfile("temp_root.pem", output_file)
+        elif output_format == 'DER':
+            subprocess.run(['openssl', 'x509', '-inform', 'PEM', '-in', "temp_root.pem", '-outform', 'DER', '-out', output_file], check=True)
+        elif output_format in ['CRT', 'CER']:
+            subprocess.run(['openssl', 'x509', '-in', "temp_root.pem", '-out', output_file], check=True)
+
+        # Очистка временных файлов
+        os.remove(temp_pem)
+        os.remove("temp_root.pem")
+
+        print(f'Корневой сертификат успешно извлечен и сохранен в {output_file}')
+        return output_file
+
+    except subprocess.CalledProcessError as e:
+        print(f'Ошибка при извлечении корневого сертификата: {e}')
+    except FileNotFoundError:
+        print(f"Не удалось найти файл {cert_file} для обработки.")
+    return None
+
 
 # MENU ====================================================================================
+
 def main():
     while True:  # Запускаем бесконечный цикл для работы меню
         print("===========================================")
@@ -577,6 +659,7 @@ def main():
         print("4. CER/CRT - смена формата PEM/DER")
         print("5. Разбить цепочку сертификатов")
         print("6. Сбор сертификатов в цепочку")
+        print("7. Извлечение корневого сертификата")
         print("-------------------------------------------")
         print("0. Выход")
         print("===========================================")
@@ -622,11 +705,17 @@ def main():
         elif choice == '6':
             merge_cert_chain()
 
+        elif choice == '7':  # Новый пункт для извлечения корневого сертификата
+            cert_file = display_files(files)
+            if cert_file:
+                extract_root_certificate(cert_file)
+
         else:
             print("Неверный выбор. Пожалуйста, выберите правильный номер.")
 
         # Ожидание пользователя перед возвращением в меню
         input("Нажмите Enter для возврата в главное меню...")
+
 
 if __name__ == "__main__":
     main()
