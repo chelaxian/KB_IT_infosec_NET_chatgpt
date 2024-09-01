@@ -1,16 +1,6 @@
 #pip install pyopenssl requests cryptography certifi #pyinstaller
 #
-#pyinstaller --onefile \
-#    --add-binary "C:/Program Files/OpenSSL-Win64/bin/openssl.exe;." \
-#    --add-binary "C:/Program Files/OpenSSL-Win64/bin/libcrypto-3-x64.dll;." \
-#    --add-binary "C:/Program Files/OpenSSL-Win64/bin/libssl-3-x64.dll;." \
-#    --add-binary "C:/Program Files/OpenSSL-Win64/bin/legacy.dll;." \
-#    --hidden-import pyopenssl \
-#    --hidden-import cryptography \
-#    --hidden-import certifi \
-#    --hidden-import requests \
-#    cert_convert.py
-#
+#pyinstaller --onefile --add-binary "C:/Program Files/OpenSSL-Win64/bin/openssl.exe;." --add-binary "C:/Program Files/OpenSSL-Win64/bin/libcrypto-3-x64.dll;." --add-binary "C:/Program Files/OpenSSL-Win64/bin/libssl-3-x64.dll;." --add-binary "C:/Program Files/OpenSSL-Win64/bin/legacy.dll;." --hidden-import pyopenssl --hidden-import cryptography --hidden-import certifi --hidden-import requests cert_convert.py
 
 import re
 import os
