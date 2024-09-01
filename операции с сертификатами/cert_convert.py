@@ -563,7 +563,7 @@ def natural_sort_key(s):
 
 def merge_cert_chain():
     """Собирает цепочку сертификатов из отдельных файлов и конвертирует в выбранный формат."""
-    files = [f for f in find_cert_files() if f.lower().endswith(('.pem', '.crt', '.cer'))]
+    files = [f for f in find_cert_files() if f.lower().endswith(('.pem', '.crt', '.cer', '.der'))]
 
     if not files:
         print("Сертификаты для сборки цепочки не найдены.")
