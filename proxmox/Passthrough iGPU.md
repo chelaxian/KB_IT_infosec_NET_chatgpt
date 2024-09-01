@@ -19,7 +19,10 @@
     ```bash
     bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/misc/post-pve-install.sh)"
     ```
-
+5. Установите пакет CPU Microcode:
+    ```
+    bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/misc/microcode.sh)"
+    ```
 ### 2. Настройка IOMMU и VFIO
 1. **Настройте IOMMU** в BIOS/UEFI:
    - Включите опции IOMMU и SVM.
