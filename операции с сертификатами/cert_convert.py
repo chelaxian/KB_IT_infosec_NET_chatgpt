@@ -1,3 +1,4 @@
+import re
 import os
 import subprocess
 from OpenSSL import crypto
@@ -401,15 +402,18 @@ def change_cert_format(cert_path):
     Конвертирует сертификат из одного формата в другой (PEM <-> DER).
     """
     try:
+        # Определение выходного пути
+        base_name = os.path.splitext(cert_path)[0]
+
         if is_pem_format(cert_path):
             print("Сертификат в формате PEM. Преобразуем в DER.")
-            output_path = f"{os.path.splitext(cert_path)[0]}_converted.der"
-            subprocess.run(['openssl', 'x509', '-in', cert_path, '-outform', 'DER', '-out', output_path], check=True)
+            output_path = f"{base_name}.der"
+            subprocess.run(['openssl', 'x509', '-outform', 'DER', '-in', cert_path, '-out', output_path], check=True)
             print(f"Сертификат сохранен в формате DER как {output_path}")
 
         elif is_der_format(cert_path):
             print("Сертификат в формате DER. Преобразуем в PEM.")
-            output_path = f"{os.path.splitext(cert_path)[0]}_converted.pem"
+            output_path = f"{base_name}.pem"
             subprocess.run(['openssl', 'x509', '-inform', 'DER', '-in', cert_path, '-out', output_path, '-outform', 'PEM'], check=True)
             print(f"Сертификат сохранен в формате PEM как {output_path}")
 
@@ -422,6 +426,7 @@ def change_cert_format(cert_path):
         print("Проверьте, является ли файл действительно сертификатом в формате DER или PEM и доступен ли он для чтения.")
     except Exception as e:
         print(f"Ошибка: {e}")
+
 
 # 5 =======================================================================================
 def split_certificate_chain(cert_path):
@@ -437,15 +442,30 @@ def split_certificate_chain(cert_path):
             return
 
         certificates = cert_data.split(b"-----END CERTIFICATE-----")
+        certificates = [cert for cert in certificates if b"-----BEGIN CERTIFICATE-----" in cert]
+        certificates = [cert + b"-----END CERTIFICATE-----\n" for cert in certificates]
+        
+        # Спросить пользователя формат для сохранения
+        formats = ['PEM', 'DER', 'CRT', 'CER']
+        print("Выберите формат для сохранения отдельных сертификатов:")
+        for i, fmt in enumerate(formats, 1):
+            print(f"{i}. {fmt}")
+
+        choice = input("Выберите номер формата: ")
+        try:
+            output_format = formats[int(choice) - 1]
+        except (IndexError, ValueError):
+            print("Неверный выбор.")
+            return
+
         output_files = []
 
+        # Разбиваем и сохраняем каждый сертификат
         for i, cert in enumerate(certificates):
-            if b"-----BEGIN CERTIFICATE-----" in cert:
-                cert += b"-----END CERTIFICATE-----\n"
-                output_path = f"{os.path.splitext(cert_path)[0]}_split_{i+1}.pem"
-                with open(output_path, "wb") as output_file:
-                    output_file.write(cert)
-                output_files.append(output_path)
+            output_path = f"{os.path.splitext(cert_path)[0]}_split_{i+1}.{output_format.lower()}"
+            with open(output_path, "wb") as output_file:
+                output_file.write(cert)
+            output_files.append(output_path)
 
         if output_files:
             print(f"Цепочка сертификатов разбита на {len(output_files)} частей: {', '.join(output_files)}")
@@ -455,32 +475,44 @@ def split_certificate_chain(cert_path):
     except Exception as e:
         print(f"Ошибка: {e}")
 
+
 # 6 =======================================================================================
-        
+
+def natural_sort_key(s):
+    """Функция для сортировки строк в естественном порядке (с учетом чисел)."""
+    return [int(text) if text.isdigit() else text.lower() for text in re.split('([0-9]+)', s)]
+
 def merge_cert_chain():
-    """Собирает цепочку сертификатов из отдельных файлов."""
-    root_cert = display_files([f for f in find_cert_files() if f.lower().endswith(('.pem', '.crt', '.cer'))])
-    if not root_cert:
+    """Собирает цепочку сертификатов из отдельных файлов и конвертирует в выбранный формат."""
+    files = [f for f in find_cert_files() if f.lower().endswith(('.pem', '.crt', '.cer'))]
+
+    if not files:
+        print("Сертификаты для сборки цепочки не найдены.")
         return
 
-    certs = [root_cert]
-    while True:
-        choice = input("Добавить промежуточный сертификат? (1 - Да, 2 - Нет): ")
-        if choice == '1':
-            intermediate_cert = display_files([f for f in find_cert_files() if f.lower().endswith(('.pem', '.crt', '.cer'))])
-            if intermediate_cert:
-                certs.append(intermediate_cert)
+    # Сортировка файлов в естественном порядке
+    files.sort(key=natural_sort_key)
+
+    print("Найдены следующие файлы сертификатов:")
+    for i, file in enumerate(files, 1):
+        print(f"{i}. {file}")
+
+    # Ввод номера или диапазона
+    print("Введите номер или диапазон сертификатов для сборки цепочки (например, 1 или 1-3):")
+    choice = input("Ваш выбор: ")
+    
+    try:
+        if '-' in choice:
+            start, end = map(int, choice.split('-'))
+            selected_files = files[start-1:end]
         else:
-            break
-
-    end_cert = display_files([f for f in find_cert_files() if f.lower().endswith(('.pem', '.crt', '.cer'))])
-    if end_cert:
-        certs.append(end_cert)
-    else:
-        print("Финальный сертификат не выбран.")
+            selected_files = [files[int(choice) - 1]]
+    except (IndexError, ValueError):
+        print("Неверный выбор.")
         return
 
-    formats = ['P7B', 'P7C']
+    # Выбор формата для сохранения
+    formats = ['PEM', 'DER', 'CRT', 'CER', 'P7B', 'P7C']
     print("Выберите формат для сохранения цепочки сертификатов:")
     for i, fmt in enumerate(formats, 1):
         print(f"{i}. {fmt}")
@@ -492,12 +524,41 @@ def merge_cert_chain():
         print("Неверный выбор.")
         return None
 
-    output_file = 'certificate_chain.' + output_format.lower()
-    with open(output_file, 'wb') as out_file:
-        for cert in certs:
+    # Создание файла в формате PEM
+    pem_file = 'certificate_chain.pem'
+    with open(pem_file, 'wb') as out_file:
+        for cert in selected_files:
             with open(cert, 'rb') as in_file:
                 out_file.write(in_file.read())
-    print(f'Цепочка сертификатов собрана и сохранена в {output_file}')
+
+    # Преобразование в выбранный формат
+    output_file = f'certificate_chain.{output_format.lower()}'
+
+    try:
+        if output_format == 'PEM':
+            # Уже в формате PEM, файл создан
+            print(f'Цепочка сертификатов собрана и сохранена в {output_file}')
+            return output_file
+        elif output_format == 'DER':
+            subprocess.run(['openssl', 'x509', '-in', pem_file, '-outform', 'der', '-out', output_file], check=True)
+        elif output_format in ['CRT', 'CER']:
+            # CRT и CER эквивалентны, просто копируем файл
+            subprocess.run(['openssl', 'x509', '-in', pem_file, '-out', output_file], check=True)
+        elif output_format == 'P7B':
+            subprocess.run(['openssl', 'crl2pkcs7', '-nocrl', '-certfile', pem_file, '-out', output_file], check=True)
+        elif output_format == 'P7C':
+            subprocess.run(['openssl', 'crl2pkcs7', '-nocrl', '-certfile', pem_file, '-out', output_file], check=True)
+        else:
+            print(f"Преобразование в формат {output_format} не поддерживается.")
+            return None
+
+        print(f'Цепочка сертификатов собрана и сохранена в {output_file}')
+        return output_file
+
+    except subprocess.CalledProcessError as e:
+        print(f'Ошибка преобразования сертификата: {e}')
+        return None
+
 
 # MENU ====================================================================================
 def main():
@@ -510,36 +571,45 @@ def main():
     print("6. Сбор сертификатов в цепочку")
     choice = input("Выберите номер меню: ")
 
+    files = find_cert_files()  # Находим все сертификаты и ключи один раз
+
     if choice == '1':
-        files = find_cert_files()
-        pfx_file = display_files([f for f in files if f.lower().endswith(('.pfx', '.p12'))])
+        pfx_files = [f for f in files if f.lower().endswith(('.pfx', '.p12'))]
+        pfx_file = display_files(pfx_files)
         if pfx_file:
             split_pfx(pfx_file)
+
     elif choice == '2':
-        files = find_cert_files()
         cert_file = display_files(files)
         if cert_file:
             convert_certificate(cert_file)
+
     elif choice == '3':
-        files = find_cert_files()
-        cert_file = display_files([f for f in files if f.lower().endswith(('.pem', '.crt', '.cer', '.der'))])
-        key_file = display_files([f for f in files if f.lower().endswith(('.key', '.pem', '.rsa', '.pvk', '.ppk', '.ssh', '.openssh', '.p8'))])
+        cert_files = [f for f in files if f.lower().endswith(('.pem', '.crt', '.cer', '.der'))]
+        cert_file = display_files(cert_files)
+        key_files = [f for f in files if f.lower().endswith(('.key', '.pem', '.rsa', '.pvk', '.ppk', '.ssh', '.openssh', '.p8'))]
+        key_file = display_files(key_files)
         if cert_file and key_file:
             merge_pem_to_pfx(cert_file, key_file)
+
     elif choice == '4':
-        files = find_cert_files()
-        cert_file = display_files([f for f in files if f.lower().endswith(('.cer', '.crt'))])
+        cert_files = [f for f in files if f.lower().endswith(('.pem', '.der', '.crt', '.cer'))]
+        cert_file = display_files(cert_files)
         if cert_file:
             change_cert_format(cert_file)
+
     elif choice == '5':
-        files = find_cert_files()
-        chain_file = display_files([f for f in files if f.lower().endswith(('.pem', '.crt', '.cer', '.p7b', '.p7c'))])
+        chain_files = [f for f in files if f.lower().endswith(('.pem', '.crt', '.cer', '.p7b', '.p7c'))]
+        chain_file = display_files(chain_files)
         if chain_file:
             split_certificate_chain(chain_file)
+
     elif choice == '6':
         merge_cert_chain()
+
     else:
         print("Неверный выбор. Завершение программы.")
 
 if __name__ == "__main__":
     main()
+
