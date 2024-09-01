@@ -166,6 +166,7 @@
     ```
 
     </details>
+    
     - Скомпилируйте `vbios.c` для извлечения vBIOS:
         ```bash
         gcc vbios.c -o vbios
