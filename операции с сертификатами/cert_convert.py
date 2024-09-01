@@ -34,12 +34,12 @@ def display_files(files):
 
 def is_cer_format(cert_path):
     """Проверяет, является ли файл сертификатом в формате CER."""
-    # CER может быть как в формате DER, так и в формате PEM
+    # CER обычно используется для DER-формата, но может быть и в PEM
     return is_der_format(cert_path) or is_pem_format(cert_path)
 
 def is_crt_format(cert_path):
     """Проверяет, является ли файл сертификатом в формате CRT."""
-    # CRT может быть как в формате PEM, так и в формате DER
+    # CRT обычно используется для PEM-формата
     return is_pem_format(cert_path) or is_der_format(cert_path)
 
 def is_key_format(cert_path):
@@ -91,8 +91,9 @@ def is_p7b_format(cert_path):
         return False
 
 def is_p7c_format(cert_path):
-    """Проверяет, является ли файл сертификатом в формате PKCS#7 (P7C)."""
+    """Проверяет, является ли файл сертификатом в формате PKCS#7 (P7B/P7C)."""
     return is_p7b_format(cert_path)  # P7B и P7C имеют одинаковую структуру, разница только в расширении
+
 
 def is_pfx_format(cert_path):
     """Проверяет, является ли файл сертификатом в формате PFX/P12 с помощью команды openssl."""
@@ -106,7 +107,7 @@ def is_pfx_format(cert_path):
 def determine_format(filename):
     """Определяет формат сертификата по расширению и проверяет его корректность."""
     extension = filename.lower().split('.')[-1]
-
+    
     if extension == 'pem':
         return 'PEM' if is_pem_format(filename) else None
     elif extension == 'der':
@@ -115,16 +116,14 @@ def determine_format(filename):
         return 'P7B' if is_p7b_format(filename) else None
     elif extension == 'p7c':
         return 'P7C' if is_p7c_format(filename) else None
-    elif extension == 'crt':
-        return 'CRT' if is_crt_format(filename) else None
-    elif extension == 'cer':
-        return 'CER' if is_cer_format(filename) else None
+    elif extension in ['crt', 'cer']:
+        return 'CRT/CER' if is_pem_format(filename) else None  # CRT и CER обычно в формате PEM
     elif extension == 'pfx':
         return 'PFX' if is_pfx_format(filename) else None
     elif extension == 'p12':
-        return 'P12' if is_pfx_format(filename) else None
+        return 'P12' if is_pfx_format(filename) else None  # P12 проверяется так же, как и PFX
     elif extension == 'key':
-        return 'KEY' if is_key_format(filename) else None
+        return 'KEY'  # Файлы ключей могут не нуждаться в проверке
     elif extension in ['rsa', 'pvk', 'ppk', 'ssh', 'pub', 'openssh']:
         return 'KEY'  # Секретные и публичные ключи различных форматов
     elif extension == 'cert':
@@ -134,7 +133,6 @@ def determine_format(filename):
     else:
         print(f"Неизвестное расширение файла: {extension}")
         return None
-
 
 # 1 =======================================================================================
         
@@ -155,29 +153,67 @@ def split_pfx(pfx_file):
         
 
 # 2 =======================================================================================
-def convert_certificate(input_file):
-    """Конвертирует сертификат в указанный формат."""
-    formats = ['PEM', 'DER', 'PFX', 'P12', 'P7B', 'P7C', 'CRT', 'CER']
-    print("Выберите формат для преобразования:")
-    for i, fmt in enumerate(formats, 1):
-        print(f"{i}. {fmt}")
+def find_private_keys():
+    """Находит все файлы приватных ключей в текущей директории."""
+    key_extensions = ['.key', '.pem', '.rsa', '.pvk', '.ppk', '.ssh', '.openssh', '.p8']
+    files = [f for f in os.listdir('.') if os.path.isfile(f) and any(f.lower().endswith(ext) for ext in key_extensions)]
+    return files
 
-    choice = input("Выберите номер формата: ")
+def select_private_key():
+    """Показывает меню для выбора приватного ключа."""
+    private_keys = find_private_keys()
+    if not private_keys:
+        print("Приватные ключи не найдены в текущей директории.")
+        return None
+
+    print("Найдены следующие файлы приватных ключей:")
+    for i, key_file in enumerate(private_keys, 1):
+        print(f"{i}. {key_file}")
+
+    choice = input("Выберите номер файла приватного ключа: ")
     try:
-        output_format = formats[int(choice) - 1]
+        return private_keys[int(choice) - 1]
     except (IndexError, ValueError):
         print("Неверный выбор.")
         return None
 
+def convert_certificate(input_file):
+    """Конвертирует сертификат в указанный формат."""
     input_format = determine_format(input_file)
     if not input_format:
         print(f"Файл {input_file} не является допустимым сертификатом.")
         return None
 
-    # Устанавливаем имя выходного файла
-    output_file = os.path.splitext(input_file)[0] + '.' + output_format.lower()
+    # Определение доступных выходных форматов в зависимости от входного формата
+    supported_formats = {
+        'PEM': ['DER', 'PFX', 'P12', 'P7B', 'P7C', 'CRT', 'CER'],
+        'DER': ['PEM', 'PFX', 'P12', 'CRT', 'CER', 'P7B', 'P7C'],
+        'PFX': ['PEM', 'DER', 'P12', 'CRT', 'CER', 'P7B', 'P7C'],
+        'P12': ['PEM', 'DER', 'PFX', 'CRT', 'CER', 'P7B', 'P7C'],
+        'P7B': ['PEM', 'PFX', 'P12', 'P7C', 'DER', 'CRT', 'CER'],
+        'P7C': ['PEM', 'PFX', 'P12', 'P7B', 'DER', 'CRT', 'CER'],
+        'CRT': ['PEM', 'DER', 'PFX', 'P12', 'P7B', 'P7C', 'CER'],
+        'CER': ['PEM', 'DER', 'PFX', 'P12', 'P7B', 'P7C', 'CRT'],
+        'KEY': ['PEM', 'DER']
+    }
 
-    # Если файл существует, удаляем его
+    available_formats = supported_formats.get(input_format, [])
+    if not available_formats:
+        print(f"Нет доступных преобразований для формата {input_format}.")
+        return None
+
+    print("Выберите формат для преобразования:")
+    for i, fmt in enumerate(available_formats, 1):
+        print(f"{i}. {fmt}")
+
+    choice = input("Выберите номер формата: ")
+    try:
+        output_format = available_formats[int(choice) - 1]
+    except (IndexError, ValueError):
+        print("Неверный выбор.")
+        return None
+
+    output_file = os.path.splitext(input_file)[0] + '.' + output_format.lower()
     if os.path.exists(output_file):
         os.remove(output_file)
 
@@ -186,64 +222,85 @@ def convert_certificate(input_file):
         if input_format == output_format:
             print(f"Файл уже в формате {output_format}.")
             return None
+
+        # Конвертации PEM в другие форматы
         elif input_format == 'PEM' and output_format == 'DER':
             subprocess.run(['openssl', 'x509', '-in', input_file, '-outform', 'der', '-out', output_file], check=True)
+        elif input_format == 'PEM' and output_format in ['CRT', 'CER']:
+            # PEM в CRT или CER (CRT и CER эквиваленты, просто копия файла)
+            subprocess.run(['openssl', 'x509', '-in', input_file, '-out', output_file], check=True)
+        elif input_format == 'PEM' and output_format in ['PFX', 'P12']:
+            key_file = select_private_key()
+            if not key_file:
+                return None
+            subprocess.run(['openssl', 'pkcs12', '-export', '-out', output_file, '-inkey', key_file, '-in', input_file], check=True)           
+        elif input_format == 'PEM' and output_format in ['P7B', 'P7C']:
+            subprocess.run(['openssl', 'crl2pkcs7', '-nocrl', '-certfile', input_file, '-out', output_file], check=True)
+
+        # Конвертации DER в другие форматы
         elif input_format == 'DER' and output_format == 'PEM':
             subprocess.run(['openssl', 'x509', '-in', input_file, '-inform', 'der', '-out', output_file, '-outform', 'pem'], check=True)
-        elif input_format == 'PEM' and output_format == 'PFX':
-            key_file = input("Введите путь к приватному ключу (private key): ")
-            subprocess.run(['openssl', 'pkcs12', '-export', '-out', output_file, '-inkey', key_file, '-in', input_file], check=True)
-        elif input_format == 'PEM' and output_format == 'P7B':
-            subprocess.run(['openssl', 'crl2pkcs7', '-nocrl', '-certfile', input_file, '-out', output_file], check=True)
-        elif input_format == 'PEM' and output_format == 'P7C':
-            subprocess.run(['openssl', 'crl2pkcs7', '-nocrl', '-certfile', input_file, '-out', output_file], check=True)
-        elif input_format == 'PEM' and output_format in ['CRT', 'CER']:
-            # Конвертация из PEM в CRT или CER (просто копирование файла)
-            copyfile(input_file, output_file)
-            print(f"Файл сохранен как {output_file}")
-        elif input_format == 'DER' and output_format == 'PFX':
-            key_file = input("Введите путь к приватному ключу (private key): ")
-            subprocess.run(['openssl', 'pkcs12', '-export', '-in', input_file, '-inkey', key_file, '-out', output_file], check=True)
-        elif input_format == 'DER' and output_format == 'P7B':
-            subprocess.run(['openssl', 'crl2pkcs7', '-nocrl', '-certfile', input_file, '-out', output_file], check=True)
+        elif input_format == 'DER' and output_format in ['CRT', 'CER']:
+            subprocess.run(['openssl', 'x509', '-in', input_file, '-inform', 'der', '-out', output_file], check=True)
+        elif input_format == 'DER' and output_format in ['P7B', 'P7C']:
+            temp_pem = "temp.pem"
+            subprocess.run(['openssl', 'x509', '-in', input_file, '-inform', 'der', '-out', temp_pem, '-outform', 'pem'], check=True)
+            subprocess.run(['openssl', 'crl2pkcs7', '-nocrl', '-certfile', temp_pem, '-out', output_file], check=True)
+            os.remove(temp_pem)
+
+        # Конвертации PFX/P12 в другие форматы
         elif input_format in ['PFX', 'P12'] and output_format == 'PEM':
             subprocess.run(['openssl', 'pkcs12', '-in', input_file, '-out', output_file, '-nodes'], check=True)
-        elif input_format in ['P7B', 'P7C'] and output_format == 'PEM':
-            subprocess.run(['openssl', 'pkcs7', '-print_certs', '-in', input_file, '-out', output_file], check=True)
-        elif input_format == 'P7B' and output_format == 'DER':
-            subprocess.run(['openssl', 'pkcs7', '-inform', 'PEM', '-outform', 'DER', '-in', input_file, '-out', output_file], check=True)
         elif input_format in ['PFX', 'P12'] and output_format == 'DER':
             subprocess.run(['openssl', 'pkcs12', '-in', input_file, '-out', output_file, '-nodes', '-outform', 'DER'], check=True)
-        elif input_format == 'P7B' and output_format == 'PFX':
+        elif input_format in ['PFX', 'P12'] and output_format in ['CRT', 'CER']:
+            temp_pem = "temp.pem"
+            subprocess.run(['openssl', 'pkcs12', '-in', input_file, '-out', temp_pem, '-nokeys'], check=True)
+            subprocess.run(['openssl', 'x509', '-in', temp_pem, '-out', output_file], check=True)
+            os.remove(temp_pem)
+        elif input_format in ['PFX', 'P12'] and output_format in ['P7B', 'P7C']:
+            temp_pem = "temp.pem"
+            subprocess.run(['openssl', 'pkcs12', '-in', input_file, '-out', temp_pem, '-nodes'], check=True)
+            subprocess.run(['openssl', 'crl2pkcs7', '-nocrl', '-certfile', temp_pem, '-out', output_file], check=True)
+            os.remove(temp_pem)
+
+        # Конвертации P7B/P7C в другие форматы
+        elif input_format in ['P7B', 'P7C'] and output_format == 'PEM':
+            subprocess.run(['openssl', 'pkcs7', '-print_certs', '-in', input_file, '-out', output_file], check=True)
+        elif input_format in ['P7B', 'P7C'] and output_format == 'DER':
             temp_pem = "temp.pem"
             subprocess.run(['openssl', 'pkcs7', '-print_certs', '-in', input_file, '-out', temp_pem], check=True)
-            key_file = input("Введите путь к приватному ключу (private key): ")
+            subprocess.run(['openssl', 'x509', '-in', temp_pem, '-outform', 'DER', '-out', output_file], check=True)
+            os.remove(temp_pem)
+        elif input_format in ['P7B', 'P7C'] and output_format in ['CRT', 'CER']:
+            temp_pem = "temp.pem"
+            subprocess.run(['openssl', 'pkcs7', '-print_certs', '-in', input_file, '-out', temp_pem], check=True)
+            subprocess.run(['openssl', 'x509', '-in', temp_pem, '-out', output_file], check=True)
+            os.remove(temp_pem)
+        elif input_format in ['P7B', 'P7C'] and output_format in ['PFX', 'P12']:
+            temp_pem = "temp.pem"
+            subprocess.run(['openssl', 'pkcs7', '-print_certs', '-in', input_file, '-out', temp_pem], check=True)
+            key_file = select_private_key()
+            if not key_file:
+                return None
             subprocess.run(['openssl', 'pkcs12', '-export', '-in', temp_pem, '-inkey', key_file, '-out', output_file], check=True)
             os.remove(temp_pem)
-        elif input_format in ['CRT', 'CER'] and output_format == 'PEM':
-            subprocess.run(['openssl', 'x509', '-in', input_file, '-inform', 'der', '-out', output_file, '-outform', 'pem'], check=True)
-        elif input_format in ['CRT', 'CER'] and output_format == 'DER':
-            subprocess.run(['openssl', 'x509', '-in', input_file, '-inform', 'pem', '-out', output_file, '-outform', 'der'], check=True)
+
+        # Конвертация между PFX и P12
         elif (input_format == 'PFX' and output_format == 'P12') or (input_format == 'P12' and output_format == 'PFX'):
-            # PFX в P12 или P12 в PFX - просто смена расширения
             copyfile(input_file, output_file)
             print(f"Файл сохранен как {output_file}")
-        elif (input_format == 'P7B' and output_format == 'P7C') or (input_format == 'P7C' and output_format == 'P7B'):
-            # P7B в P7C или P7C в P7B - просто смена расширения
+
+        # Конвертация между P7B и P7C, а также CRT и CER
+        elif (input_format in ['P7B', 'P7C'] and output_format in ['P7B', 'P7C']) or \
+             (input_format in ['CRT', 'CER'] and output_format in ['CRT', 'CER']):
             copyfile(input_file, output_file)
             print(f"Файл сохранен как {output_file}")
-        elif (input_format == 'CER' and output_format == 'CRT') or (input_format == 'CRT' and output_format == 'CER'):
-            # CER в CRT или CRT в CER - просто смена расширения
-            copyfile(input_file, output_file)
-            print(f"Файл сохранен как {output_file}")
+
         elif input_format == 'KEY' and output_format == 'PEM':
-            # Преобразование закрытого ключа из DER в PEM
-            subprocess.run(['openssl', 'rsa', '-inform', 'DER', '-in', input_file, '-out', output_file, '-outform', 'PEM'], check=True)
-            print(f"Ключ преобразован и сохранен в {output_file}")
+            subprocess.run(['openssl', 'rsa', '-in', input_file, '-out', output_file, '-outform', 'PEM'], check=True)
         elif input_format == 'KEY' and output_format == 'DER':
-            # Преобразование закрытого ключа из PEM в DER
             subprocess.run(['openssl', 'rsa', '-in', input_file, '-outform', 'DER', '-out', output_file], check=True)
-            print(f"Ключ преобразован и сохранен в {output_file}")
         else:
             print(f'Невозможно преобразовать из {input_format} в {output_format}.')
             return None
