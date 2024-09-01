@@ -1,4 +1,4 @@
-#pip install pyopenssl requests cryptography certifi pyinstaller
+#pip install pyopenssl requests cryptography certifi
 
 import re
 import os
