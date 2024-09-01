@@ -2,12 +2,16 @@
 #
 #pyinstaller --onefile --add-binary "C:/Program Files/OpenSSL-Win64/bin/openssl.exe;." --add-binary "C:/Program Files/OpenSSL-Win64/bin/libcrypto-3-x64.dll;." --add-binary "C:/Program Files/OpenSSL-Win64/bin/libssl-3-x64.dll;." --add-binary "C:/Program Files/OpenSSL-Win64/bin/legacy.dll;." --hidden-import OpenSSL --hidden-import cryptography --hidden-import certifi --hidden-import requests cert_convert.py
 
-
 import re
 import os
 import subprocess
 from OpenSSL import crypto
 from shutil import copyfile
+
+
+# Устанавливаем путь к каталогу, где находятся OpenSSL-библиотеки
+os.environ['PATH'] = os.path.dirname(os.path.abspath(__file__)) + ";" + os.environ['PATH']
+
 
 # 0 =======================================================================================
 def find_cert_files():
