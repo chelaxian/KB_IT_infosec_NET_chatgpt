@@ -208,7 +208,7 @@
 2. Запустите ВМ и подключитесь через RDP или подключите монитор к проброшенному GPU.
 
 ### 6. Настройка OVMF (UEFI BIOS) для решения ошибки 43
-1. Скачайте и установите `AMDGopDriver.rom`, добавьте его в конфигурацию:
+1. Скачайте и установите `[AMDGopDriver.rom](https://github.com/isc30/ryzen-7000-series-proxmox/raw/main/AMDGopDriver.rom)`, добавьте его в конфигурацию:
     ```diff
     hostpci1: 0000:34:00.1,pcie=1,romfile=AMDGopDriver.rom
     ```
