@@ -4,8 +4,18 @@
 
 ### 1. Установка Proxmox VE
 1. **Загрузите ISO Proxmox VE** с официального сайта и создайте установочный USB с помощью Rufus.
-2. **Установите Proxmox** на машину и выполните начальную настройку, включая исправление проблем с графическим интерфейсом (если используете Proxmox 7.4).
-3. **Подключитесь к Proxmox через SSH** и переключитесь на репозитории без подписки:
+2. **Установите Proxmox** на машину и выполните начальную настройку, включая исправление проблем с графическим интерфейсом.
+       <details><summary>Expand `(если используете Proxmox 7.4)`</summary>
+
+    ```bash
+Xorg -configure
+cp /root/xorg.conf.new /etc/X11/xorg.conf
+sed -i 's/amdgpu/fbdev/g' /etc/X11/xorg.conf
+    ```
+
+    </details>
+    
+4. **Подключитесь к Proxmox через SSH** и переключитесь на репозитории без подписки:
     ```bash
     bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/misc/post-pve-install.sh)"
     ```
