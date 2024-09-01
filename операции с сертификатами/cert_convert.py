@@ -576,57 +576,66 @@ def merge_cert_chain():
 
 # MENU ====================================================================================
 def main():
-    print("===========================================")
-    print("Конвертор сертификатов и ключей")
-    print("-------------------------------------------")
-    print("1. Разбить контейнер PFX/P12 на 2 части PEM")
-    print("2. Преобразовать из одного формата в другой")
-    print("3. Собрать 2 части в контейнер PFX/P12")
-    print("4. CER/CRT - смена формата PEM/DER")
-    print("5. Разбить цепочку сертификатов")
-    print("6. Сбор сертификатов в цепочку")
-    print("===========================================")
-    choice = input("Выберите номер меню: ")
+    while True:  # Запускаем бесконечный цикл для работы меню
+        print("===========================================")
+        print("Конвертор сертификатов и ключей")
+        print("-------------------------------------------")
+        print("1. Разбить контейнер PFX/P12 на 2 части PEM")
+        print("2. Преобразовать из одного формата в другой")
+        print("3. Собрать 2 части в контейнер PFX/P12")
+        print("4. CER/CRT - смена формата PEM/DER")
+        print("5. Разбить цепочку сертификатов")
+        print("6. Сбор сертификатов в цепочку")
+        print("-------------------------------------------")
+        print("0. Выход")
+        print("===========================================")
+        choice = input("Выберите номер меню: ")
 
-    files = find_cert_files()  # Находим все сертификаты и ключи один раз
+        if choice == '0':
+            print("Выход из программы.")
+            break  # Завершаем цикл и программу
 
-    if choice == '1':
-        pfx_files = [f for f in files if f.lower().endswith(('.pfx', '.p12'))]
-        pfx_file = display_files(pfx_files)
-        if pfx_file:
-            split_pfx(pfx_file)
+        files = find_cert_files()  # Находим все сертификаты и ключи один раз
 
-    elif choice == '2':
-        cert_file = display_files(files)
-        if cert_file:
-            convert_certificate(cert_file)
+        if choice == '1':
+            pfx_files = [f for f in files if f.lower().endswith(('.pfx', '.p12'))]
+            pfx_file = display_files(pfx_files)
+            if pfx_file:
+                split_pfx(pfx_file)
 
-    elif choice == '3':
-        cert_files = [f for f in files if f.lower().endswith(('.pem', '.crt', '.cer', '.der'))]
-        cert_file = display_files(cert_files)
-        key_files = [f for f in files if f.lower().endswith(('.key', '.pem', '.rsa', '.pvk', '.ppk', '.ssh', '.openssh', '.p8'))]
-        key_file = display_files(key_files)
-        if cert_file and key_file:
-            merge_pem_to_pfx(cert_file, key_file)
+        elif choice == '2':
+            cert_file = display_files(files)
+            if cert_file:
+                convert_certificate(cert_file)
 
-    elif choice == '4':
-        cert_files = [f for f in files if f.lower().endswith(('.pem', '.der', '.crt', '.cer'))]
-        cert_file = display_files(cert_files)
-        if cert_file:
-            change_cert_format(cert_file)
+        elif choice == '3':
+            cert_files = [f for f in files if f.lower().endswith(('.pem', '.crt', '.cer', '.der'))]
+            cert_file = display_files(cert_files)
+            key_files = [f for f in files if f.lower().endswith(('.key', '.pem', '.rsa', '.pvk', '.ppk', '.ssh', '.openssh', '.p8'))]
+            key_file = display_files(key_files)
+            if cert_file and key_file:
+                merge_pem_to_pfx(cert_file, key_file)
 
-    elif choice == '5':
-        chain_files = [f for f in files if f.lower().endswith(('.pem', '.crt', '.cer', '.p7b', '.p7c'))]
-        chain_file = display_files(chain_files)
-        if chain_file:
-            split_certificate_chain(chain_file)
+        elif choice == '4':
+            cert_files = [f for f in files if f.lower().endswith(('.pem', '.der', '.crt', '.cer'))]
+            cert_file = display_files(cert_files)
+            if cert_file:
+                change_cert_format(cert_file)
 
-    elif choice == '6':
-        merge_cert_chain()
+        elif choice == '5':
+            chain_files = [f for f in files if f.lower().endswith(('.pem', '.crt', '.cer', '.p7b', '.p7c'))]
+            chain_file = display_files(chain_files)
+            if chain_file:
+                split_certificate_chain(chain_file)
 
-    else:
-        print("Неверный выбор. Завершение программы.")
+        elif choice == '6':
+            merge_cert_chain()
+
+        else:
+            print("Неверный выбор. Пожалуйста, выберите правильный номер.")
+
+        # Ожидание пользователя перед возвращением в меню
+        input("Нажмите Enter для возврата в главное меню...")
 
 if __name__ == "__main__":
     main()
-
