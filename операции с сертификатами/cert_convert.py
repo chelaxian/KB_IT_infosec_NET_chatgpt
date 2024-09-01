@@ -1,5 +1,5 @@
 #pip install pyopenssl requests cryptography certifi #pyinstaller
-#pyinstaller --onefile --collect-all OpenSSL --hidden-import OpenSSL --hidden-import cryptography --hidden-import certifi --hidden-import requests --hidden-import ctypes --add-binary "C:/Program Files/OpenSSL-Win64/bin/openssl.exe;." --add-binary "C:/Program Files/OpenSSL-Win64/bin/libcrypto-3-x64.dll;." --add-binary "C:/Program Files/OpenSSL-Win64/bin/libssl-3-x64.dll;." --add-binary "C:/Program Files/OpenSSL-Win64/bin/legacy.dll;." cert_convert.py
+#pyinstaller --onefile --hidden-import OpenSSL --hidden-import cryptography --hidden-import certifi --hidden-import requests --hidden-import shutil --hidden-import ctypes --add-binary "C:/Program Files/OpenSSL-Win64/bin/openssl.exe;." --add-binary "C:/Program Files/OpenSSL-Win64/bin/libcrypto-3-x64.dll;." --add-binary "C:/Program Files/OpenSSL-Win64/bin/libssl-3-x64.dll;." --add-binary "C:/Program Files/OpenSSL-Win64/bin/legacy.dll;." cert_convert.py
 
 import re
 import os
@@ -9,10 +9,10 @@ from OpenSSL import crypto
 from shutil import copyfile
 
 # Устанавливаем путь к каталогу, где находятся OpenSSL-библиотеки
-os.environ['PATH'] = "C:/Program Files/OpenSSL-Win64/bin;" + os.environ['PATH']
+#os.environ['PATH'] = "C:/Program Files/OpenSSL-Win64/bin;" + os.environ['PATH']
 
 # Устанавливаем путь к каталогу, где находятся OpenSSL-библиотеки
-#os.environ['PATH'] = os.path.dirname(os.path.abspath(__file__)) + ";" + os.environ['PATH']
+os.environ['PATH'] = os.path.dirname(os.path.abspath(__file__)) + ";" + os.environ['PATH']
 
 
 # Проверка доступности библиотек OpenSSL
@@ -292,17 +292,27 @@ def convert_certificate(input_file):
 
         # Конвертации PFX/P12 в другие форматы
         elif input_format in ['PFX', 'P12'] and output_format == 'PEM':
+            # Преобразование PFX/P12 в PEM
             subprocess.run(['openssl', 'pkcs12', '-in', input_file, '-out', output_file, '-nodes'], check=True)
         elif input_format in ['PFX', 'P12'] and output_format == 'DER':
-            subprocess.run(['openssl', 'pkcs12', '-in', input_file, '-out', output_file, '-nodes', '-outform', 'DER'], check=True)
-        elif input_format in ['PFX', 'P12'] and output_format in ['CRT', 'CER']:
+            # Сначала преобразуем PFX/P12 в PEM
             temp_pem = "temp.pem"
-            subprocess.run(['openssl', 'pkcs12', '-in', input_file, '-out', temp_pem, '-nokeys'], check=True)
+            subprocess.run(['openssl', 'pkcs12', '-in', input_file, '-out', temp_pem, '-nodes'], check=True)   
+            # Затем преобразуем PEM в DER
+            subprocess.run(['openssl', 'x509', '-in', temp_pem, '-outform', 'DER', '-out', output_file], check=True)
+            os.remove(temp_pem)
+        elif input_format in ['PFX', 'P12'] and output_format in ['CRT', 'CER']:
+            # Сначала преобразуем PFX/P12 в PEM
+            temp_pem = "temp.pem"
+            subprocess.run(['openssl', 'pkcs12', '-in', input_file, '-out', temp_pem, '-nokeys'], check=True)    
+            # Затем преобразуем PEM в CRT или CER
             subprocess.run(['openssl', 'x509', '-in', temp_pem, '-out', output_file], check=True)
             os.remove(temp_pem)
         elif input_format in ['PFX', 'P12'] and output_format in ['P7B', 'P7C']:
+            # Сначала преобразуем PFX/P12 в PEM
             temp_pem = "temp.pem"
-            subprocess.run(['openssl', 'pkcs12', '-in', input_file, '-out', temp_pem, '-nodes'], check=True)
+            subprocess.run(['openssl', 'pkcs12', '-in', input_file, '-out', temp_pem, '-nodes'], check=True)    
+            # Затем преобразуем PEM в P7B или P7C
             subprocess.run(['openssl', 'crl2pkcs7', '-nocrl', '-certfile', temp_pem, '-out', output_file], check=True)
             os.remove(temp_pem)
 
@@ -450,22 +460,48 @@ def change_cert_format(cert_path):
 
 
 # 5 =======================================================================================
+import re
+import os
+import subprocess
+from shutil import copyfile
+
 def split_certificate_chain(cert_path):
     """
-    Разбивает цепочку сертификатов в файле PEM на отдельные сертификаты.
+    Разбивает цепочку сертификатов в файле на отдельные сертификаты.
     """
+    input_format = determine_format(cert_path)
+    if not input_format:
+        print(f"Файл {cert_path} не является допустимым сертификатом.")
+        return None
+
+    temp_pem = "temp_cert_chain.pem"
     try:
-        with open(cert_path, "rb") as cert_file:
-            cert_data = cert_file.read()
+        # Преобразуем файл в PEM, если он не в PEM
+        if input_format == 'PEM':
+            copyfile(cert_path, temp_pem)
+        elif input_format == 'DER':
+            subprocess.run(['openssl', 'x509', '-inform', 'DER', '-in', cert_path, '-out', temp_pem, '-outform', 'PEM'], check=True)
+        elif input_format in ['P7B', 'P7C']:
+            subprocess.run(['openssl', 'pkcs7', '-print_certs', '-in', cert_path, '-out', temp_pem], check=True)
+        elif input_format in ['PFX', 'P12']:
+            subprocess.run(['openssl', 'pkcs12', '-in', cert_path, '-out', temp_pem, '-nodes'], check=True)
+        else:
+            print(f'Невозможно обработать формат {input_format} для разбивки цепочки.')
+            return None
 
-        if b"-----BEGIN CERTIFICATE-----" not in cert_data:
-            print("Ошибка: Файл не является сертификатом в формате PEM.")
-            return
+        # Открываем и читаем все содержимое PEM файла
+        with open(temp_pem, "rb") as pem_file:
+            pem_data = pem_file.read()
 
-        certificates = cert_data.split(b"-----END CERTIFICATE-----")
-        certificates = [cert for cert in certificates if b"-----BEGIN CERTIFICATE-----" in cert]
-        certificates = [cert + b"-----END CERTIFICATE-----\n" for cert in certificates]
-        
+        # Используем регулярное выражение для поиска всех сертификатов
+        certificates = re.findall(b"-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----", pem_data, re.DOTALL)
+
+        # Если сертификатов меньше двух, значит файл не содержит цепочки
+        if len(certificates) < 2:
+            print("Ошибка: не удалось найти цепочку сертификатов в файле.")
+            os.remove(temp_pem)
+            return None
+
         # Спросить пользователя формат для сохранения
         formats = ['PEM', 'DER', 'CRT', 'CER']
         print("Выберите формат для сохранения отдельных сертификатов:")
@@ -477,7 +513,8 @@ def split_certificate_chain(cert_path):
             output_format = formats[int(choice) - 1]
         except (IndexError, ValueError):
             print("Неверный выбор.")
-            return
+            os.remove(temp_pem)
+            return None
 
         output_files = []
 
@@ -488,13 +525,19 @@ def split_certificate_chain(cert_path):
                 output_file.write(cert)
             output_files.append(output_path)
 
+        # Очистка временных файлов
+        os.remove(temp_pem)
+
         if output_files:
             print(f"Цепочка сертификатов разбита на {len(output_files)} частей: {', '.join(output_files)}")
         else:
             print("Ошибка: Не удалось разбить цепочку сертификатов.")
 
-    except Exception as e:
-        print(f"Ошибка: {e}")
+    except subprocess.CalledProcessError as e:
+        print(f'Ошибка при разбивке цепочки сертификатов: {e}')
+    except FileNotFoundError:
+        print(f"Не удалось найти файл {cert_path} для обработки.")
+    return None
 
 
 # 6 =======================================================================================
@@ -518,16 +561,18 @@ def merge_cert_chain():
     for i, file in enumerate(files, 1):
         print(f"{i}. {file}")
 
-    # Ввод номера или диапазона
-    print("Введите номер или диапазон сертификатов для сборки цепочки (например, 1 или 1-3):")
+    # Ввод номеров или диапазона
+    print("Введите номера сертификатов для сборки цепочки (например, 1-3 или 1 3 5):")
     choice = input("Ваш выбор: ")
-    
+
+    selected_files = []
     try:
         if '-' in choice:
             start, end = map(int, choice.split('-'))
             selected_files = files[start-1:end]
         else:
-            selected_files = [files[int(choice) - 1]]
+            indices = map(int, choice.split())
+            selected_files = [files[i - 1] for i in indices]
     except (IndexError, ValueError):
         print("Неверный выбор.")
         return
@@ -557,17 +602,13 @@ def merge_cert_chain():
 
     try:
         if output_format == 'PEM':
-            # Уже в формате PEM, файл создан
             print(f'Цепочка сертификатов собрана и сохранена в {output_file}')
             return output_file
         elif output_format == 'DER':
             subprocess.run(['openssl', 'x509', '-in', pem_file, '-outform', 'der', '-out', output_file], check=True)
         elif output_format in ['CRT', 'CER']:
-            # CRT и CER эквивалентны, просто копируем файл
             subprocess.run(['openssl', 'x509', '-in', pem_file, '-out', output_file], check=True)
-        elif output_format == 'P7B':
-            subprocess.run(['openssl', 'crl2pkcs7', '-nocrl', '-certfile', pem_file, '-out', output_file], check=True)
-        elif output_format == 'P7C':
+        elif output_format in ['P7B', 'P7C']:
             subprocess.run(['openssl', 'crl2pkcs7', '-nocrl', '-certfile', pem_file, '-out', output_file], check=True)
         else:
             print(f"Преобразование в формат {output_format} не поддерживается.")
@@ -579,6 +620,7 @@ def merge_cert_chain():
     except subprocess.CalledProcessError as e:
         print(f'Ошибка преобразования сертификата: {e}')
         return None
+
 
 # 7 =======================================================================================
 
@@ -608,17 +650,16 @@ def extract_root_certificate(cert_file):
         with open(temp_pem, "rb") as pem_file:
             pem_data = pem_file.read()
 
-        # Разделяем на отдельные сертификаты
-        certificates = pem_data.split(b"-----END CERTIFICATE-----")
-        certificates = [cert + b"-----END CERTIFICATE-----\n" for cert in certificates if b"-----BEGIN CERTIFICATE-----" in cert]
+        # Используем регулярное выражение для поиска всех сертификатов
+        certificates = re.findall(b"-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----", pem_data, re.DOTALL)
 
-        # Если меньше одного сертификата, значит нет цепочки
-        if len(certificates) < 1:
-            print("Ошибка: не удалось найти сертификаты в файле.")
+        # Если сертификатов меньше двух, значит файл не содержит цепочку
+        if len(certificates) < 2:
+            print("Ошибка: не удалось найти цепочку сертификатов в файле.")
             os.remove(temp_pem)
             return None
 
-        # Извлекаем последний сертификат в цепочке (корневой)
+        # Извлекаем последний сертификат в цепочке (предполагается, что это корневой)
         root_certificate = certificates[-1]
 
         # Выбор выходного формата
@@ -660,6 +701,7 @@ def extract_root_certificate(cert_file):
     except FileNotFoundError:
         print(f"Не удалось найти файл {cert_file} для обработки.")
     return None
+
 
 
 # MENU ====================================================================================
