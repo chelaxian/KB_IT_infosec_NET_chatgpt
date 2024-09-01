@@ -45,7 +45,10 @@
         ```
     - Добавьте их в конфигурацию VFIO:
         ```bash
-        echo "options vfio-pci ids=1002:1681,1002:1640" >> /etc/modprobe.d/vfio.conf
+        #echo "options vfio-pci ids=1002:1681,1002:1640" >> /etc/modprobe.d/vfio.conf
+        echo "softdep radeon pre: vfio-pci" >> /etc/modprobe.d/vfio.conf
+        echo "softdep amdgpu pre: vfio-pci" >> /etc/modprobe.d/vfio.conf
+        echo "softdep snd_hda_intel pre: vfio-pci" >> /etc/modprobe.d/vfio.conf
         ```
 
 5. **Обновите initramfs и перезагрузите систему**:
