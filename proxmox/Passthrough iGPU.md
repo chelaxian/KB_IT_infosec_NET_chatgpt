@@ -8,9 +8,9 @@
        <details><summary>Expand `(если используете Proxmox 7.4)`</summary>
 
     ```bash
-Xorg -configure
-cp /root/xorg.conf.new /etc/X11/xorg.conf
-sed -i 's/amdgpu/fbdev/g' /etc/X11/xorg.conf
+    Xorg -configure
+    cp /root/xorg.conf.new /etc/X11/xorg.conf
+    sed -i 's/amdgpu/fbdev/g' /etc/X11/xorg.conf
     ```
 
     </details>
