@@ -5,7 +5,7 @@
 ### 1. Установка Proxmox VE
 1. **Загрузите ISO Proxmox VE** с официального сайта и создайте установочный USB с помощью Rufus.
 2. **Установите Proxmox** на машину и выполните начальную настройку, включая исправление проблем с графическим интерфейсом.
-       <details><summary>Expand `(если используете Proxmox 7.4)`</summary>
+       <details><summary>Спойлер `(если используете Proxmox 7.4)`</summary>
 
     ```bash
     Xorg -configure
@@ -59,7 +59,7 @@
       - Диск: `64GB`, Discard: `ON`, SSD: `ON`
 2. **После установки Windows** остановите ВМ и настройте GPU BIOS:
       - Создайте файл на хосте proxmox со следующим содержимым:
-    <details><summary>Expand `vbios.c`</summary>
+    <details><summary>Спойлер `vbios.c`</summary>
 
     ```c
     #include <stdint.h>
