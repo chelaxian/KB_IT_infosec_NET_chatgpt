@@ -460,10 +460,6 @@ def change_cert_format(cert_path):
 
 
 # 5 =======================================================================================
-import re
-import os
-import subprocess
-from shutil import copyfile
 
 def split_certificate_chain(cert_path):
     """
@@ -493,12 +489,30 @@ def split_certificate_chain(cert_path):
         with open(temp_pem, "rb") as pem_file:
             pem_data = pem_file.read()
 
-        # Используем регулярное выражение для поиска всех сертификатов
-        certificates = re.findall(b"-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----", pem_data, re.DOTALL)
+        # Удаляем строки, содержащие приватный ключ
+        pem_data = re.sub(b"-----BEGIN PRIVATE KEY-----.*?-----END PRIVATE KEY-----\n?", b"", pem_data, flags=re.DOTALL)
 
-        # Если сертификатов меньше двух, значит файл не содержит цепочки
-        if len(certificates) < 2:
-            print("Ошибка: не удалось найти цепочку сертификатов в файле.")
+        # Если сертификат находится в одной секции BEGIN/END CERTIFICATE, извлекаем каждый сертификат
+        if pem_data.count(b"-----BEGIN CERTIFICATE-----") == 1:
+            # Используем openssl для разбора сертификата и извлечения отдельных частей
+            result = subprocess.run(['openssl', 'x509', '-in', temp_pem, '-text', '-noout'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            # Проверка на наличие ошибок при выполнении команды
+            if result.returncode != 0:
+                print("Ошибка: Не удалось прочитать файл сертификата.")
+                os.remove(temp_pem)
+                return None
+
+            cert_text = result.stdout
+            certificates = cert_text.split(b"-----END CERTIFICATE-----")
+            certificates = [cert + b"-----END CERTIFICATE-----\n" for cert in certificates if b"-----BEGIN CERTIFICATE-----" in cert]
+        else:
+            # Разделяем на отдельные сертификаты
+            certificates = pem_data.split(b"-----END CERTIFICATE-----")
+            certificates = [cert + b"-----END CERTIFICATE-----\n" for cert in certificates if b"-----BEGIN CERTIFICATE-----" in cert]
+
+        # Если меньше одного сертификата, значит нет цепочки
+        if len(certificates) < 1:
+            print("Ошибка: не удалось найти сертификаты в файле.")
             os.remove(temp_pem)
             return None
 
@@ -538,6 +552,7 @@ def split_certificate_chain(cert_path):
     except FileNotFoundError:
         print(f"Не удалось найти файл {cert_path} для обработки.")
     return None
+
 
 
 # 6 =======================================================================================
@@ -650,16 +665,30 @@ def extract_root_certificate(cert_file):
         with open(temp_pem, "rb") as pem_file:
             pem_data = pem_file.read()
 
-        # Используем регулярное выражение для поиска всех сертификатов
-        certificates = re.findall(b"-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----", pem_data, re.DOTALL)
+        # Если сертификат находится в одной секции BEGIN/END CERTIFICATE, извлекаем каждый сертификат
+        if pem_data.count(b"-----BEGIN CERTIFICATE-----") == 1:
+            # Используем openssl для разбора сертификата и извлечения корневого сертификата
+            result = subprocess.run(['openssl', 'x509', '-in', temp_pem, '-text', '-noout'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if result.returncode != 0:
+                print("Ошибка: Не удалось прочитать файл сертификата.")
+                os.remove(temp_pem)
+                return None
 
-        # Если сертификатов меньше двух, значит файл не содержит цепочку
-        if len(certificates) < 2:
-            print("Ошибка: не удалось найти цепочку сертификатов в файле.")
+            cert_text = result.stdout
+            certificates = cert_text.split(b"-----END CERTIFICATE-----")
+            certificates = [cert + b"-----END CERTIFICATE-----\n" for cert in certificates if b"-----BEGIN CERTIFICATE-----" in cert]
+        else:
+            # Разделяем на отдельные сертификаты
+            certificates = pem_data.split(b"-----END CERTIFICATE-----")
+            certificates = [cert + b"-----END CERTIFICATE-----\n" for cert in certificates if b"-----BEGIN CERTIFICATE-----" in cert]
+
+        # Если меньше одного сертификата, значит нет цепочки
+        if len(certificates) < 1:
+            print("Ошибка: не удалось найти сертификаты в файле.")
             os.remove(temp_pem)
             return None
 
-        # Извлекаем последний сертификат в цепочке (предполагается, что это корневой)
+        # Извлекаем последний сертификат в цепочке (корневой)
         root_certificate = certificates[-1]
 
         # Выбор выходного формата
