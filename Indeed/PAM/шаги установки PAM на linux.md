@@ -54,7 +54,7 @@ wget -O IndeedPAM_2.10.1_RU.zip \
 "https://download.indeed-company.ru/s/q8zoOXIGhxhfR2q/download"
 ```
 or
-```
+```bash
 curl -L -o IndeedPAM_2.10.1_RU.zip \
 "https://download.indeed-company.ru/s/q8zoOXIGhxhfR2q/download"
 ```
