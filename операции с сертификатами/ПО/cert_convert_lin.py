@@ -14,9 +14,8 @@ os.environ['PATH'] = "/usr/bin:" + os.environ.get('PATH', '')
 # Указываем путь к системным библиотекам OpenSSL
 os.environ['LD_LIBRARY_PATH'] = "/usr/lib:/usr/local/lib:" + os.environ.get('LD_LIBRARY_PATH', '')
 
-print(f"PATH установлен на: {os.environ['PATH']}")
-print(f"LD_LIBRARY_PATH установлен на: {os.environ.get('LD_LIBRARY_PATH', '')}")
-
+#print(f"PATH установлен на: {os.environ['PATH']}")
+#print(f"LD_LIBRARY_PATH установлен на: {os.environ.get('LD_LIBRARY_PATH', '')}")
 
 # Проверка доступности библиотек OpenSSL для Linux
 try:
