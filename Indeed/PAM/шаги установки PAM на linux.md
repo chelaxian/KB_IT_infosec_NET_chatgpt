@@ -238,7 +238,7 @@ DNS.2 = domain.com
 "Domain": "domain.net",
 -"Port": 389,
 +"Port": 689,
--"AuthType": "Basic",
+"AuthType": "Basic",
 -"SecureSocketLayer": false,
 +"SecureSocketLayer": true,
 
@@ -259,7 +259,14 @@ bash /etc/indeed/indeed-pam/scripts/run-pam.sh
 
 ### Add /etc/hosts entry to docker containers (if needed)
 nano /etc/indeed/indeed-pam/docker-compose.management-server.yml
+```diff
+  core:
+    [...]
++    extra_hosts:
++      - "int.kronshtadt.ru:10.81.74.11"
 
-
-
-
+  idp:
+    [...]
++    extra_hosts:
++      - "int.kronshtadt.ru:10.81.74.11"
+```
