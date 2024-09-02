@@ -165,6 +165,8 @@ openssl genrsa -out pam.key 2048
 nano server.conf
 ```
 <details><summary>server.conf</summary>
+  
+```
 [ req ]
 default_bits = 2048
 prompt = no
@@ -194,6 +196,7 @@ keyUsage=nonRepudiation,digitalSignature,keyEncipherment
 extendedKeyUsage=serverAuth,clientAuth
 subjectAltName=@alt_names
 </details>
+```
 
 ```
 openssl req -new -key pam.key -out server.csr -config server.conf
