@@ -1,5 +1,5 @@
 #pip install pyopenssl requests cryptography certifi #pyinstaller
-#pyinstaller --onefile --hidden-import OpenSSL --hidden-import cryptography --hidden-import certifi --hidden-import requests --hidden-import shutil --hidden-import ctypes cert_convert_lin.py
+#pyinstaller --onefile --clean --hidden-import OpenSSL --hidden-import cryptography --hidden-import certifi --hidden-import requests cert_convert_lin.py
 
 import re
 import os
