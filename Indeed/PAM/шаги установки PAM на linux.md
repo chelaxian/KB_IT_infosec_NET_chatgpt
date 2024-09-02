@@ -50,10 +50,12 @@ Create `ca.crt`, `cert.pfx`, Edit and Prepare `vars.yml`, `config.json` and plac
 cd /home/$(whoami)/
 ```
 ```bash
-curl -s -c cookies.txt \
+wget -O IndeedPAM_2.10.1_RU.zip \
 "https://download.indeed-company.ru/s/q8zoOXIGhxhfR2q/download"
-
-curl -L -b cookies.txt -o IndeedPAM_2.10.1_RU.zip \
+```
+or
+```
+curl -L -o IndeedPAM_2.10.1_RU.zip \
 "https://download.indeed-company.ru/s/q8zoOXIGhxhfR2q/download"
 ```
 ```bash
