@@ -7,7 +7,7 @@
 
 ### Install dependensies
 ```
-sudo apt-get update && sudo apt-get install openssh-server nano htop zip unzip net-tools curl wget python3 python-is-python3 sudo iptables tcpdump -y
+sudo apt-get update && sudo apt-get install openssh-server nano htop zip unzip net-tools curl wget python3 python-is-python3 sudo iptables tcpdump ldap-utils -y
 ```
 ### Install docker
 #### Debian
