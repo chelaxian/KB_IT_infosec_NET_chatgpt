@@ -49,9 +49,10 @@ sudo docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -
 cd /home/$(whoami)/
 ```
 ```bash
-curl -L -o IndeedPAM_2.10.1_RU.zip \
+curl -c cookies.txt -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0" "https://download.indeed-company.ru/index.php/s/q8zoOXIGhxhfR2q"
+
+curl -L -b cookies.txt -o IndeedPAM_2.10.1_RU.zip \
 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0" \
--H "Cookie: ocqxbsk2sheg=3loll64asuuralv1vhel6cufuf; oc_sessionPassphrase=s0Tw6o6MPUbrkPHlOkneMpW2CaC0LVZlf315qua3JFlLtwGjY41Enor9TOjTsg%2FRpae2mJNofvTSPJpIq9I3jA%2FQlsISbaTUOGyoRR08C%2BLLJXa0iIHnA4obUncGW%2FTk" \
 "https://download.indeed-company.ru/index.php/s/q8zoOXIGhxhfR2q/download"
 ```
 ```bash
