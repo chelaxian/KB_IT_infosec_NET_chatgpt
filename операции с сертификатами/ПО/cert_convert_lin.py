@@ -8,6 +8,16 @@ import subprocess
 from OpenSSL import crypto
 from shutil import copyfile
 
+# Указываем путь к системным бинарным файлам OpenSSL
+os.environ['PATH'] = "/usr/bin:" + os.environ.get('PATH', '')
+
+# Указываем путь к системным библиотекам OpenSSL
+os.environ['LD_LIBRARY_PATH'] = "/usr/lib:/usr/local/lib:" + os.environ.get('LD_LIBRARY_PATH', '')
+
+print(f"PATH установлен на: {os.environ['PATH']}")
+print(f"LD_LIBRARY_PATH установлен на: {os.environ.get('LD_LIBRARY_PATH', '')}")
+
+
 # Проверка доступности библиотек OpenSSL для Linux
 try:
     ctypes.CDLL("libcrypto.so.3")
@@ -16,7 +26,7 @@ try:
     print("Библиотеки OpenSSL загружены успешно.")
 except OSError as e:
     print("-------------------------------------------")
-    print(f"Ошибка загрузки библиотек OpenSSL: {e}. Сначала установите openssl.")
+    print(f"Ошибка загрузки библиотек OpenSSL: {e}")
 
 # 0 =======================================================================================
 def find_cert_files():
