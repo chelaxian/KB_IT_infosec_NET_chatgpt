@@ -231,7 +231,7 @@ DNS.2 = domain.com
 ```
 <details><summary>appsettings.json</summary>
 
-```
+```diff
           -"Id": "ad",
           -"ConnectorType": "Ldap",
           -"LdapServerType": "ActiveDirectory",
