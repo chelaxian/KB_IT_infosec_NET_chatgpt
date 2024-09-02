@@ -734,11 +734,136 @@ def extract_root_certificate(cert_file):
     return None
 
 
+# 8 =======================================================================================
 
+def generate_ca_and_certificate():
+    """Генерация собственного корневого CA и сертификата RSA."""
+    key_lengths = ['1024', '2048', '4096']
+    print("Выберите длину ключа:")
+    for i, length in enumerate(key_lengths, 1):
+        print(f"{i}. {length}")
+    
+    try:
+        key_length = key_lengths[int(input("Введите номер длины ключа (по умолчанию 2048): ") or 2) - 1]
+    except (IndexError, ValueError):
+        print("Неверный выбор длины ключа.")
+        return
+
+    days = input("Введите срок действия в днях, например, 365 (по умолчанию 365): ") or "365"
+
+    # Выбор алгоритма хеширования
+    hash_algorithms = ['sha256', 'sha384', 'sha512']
+    print("Выберите алгоритм хеширования:")
+    for i, algo in enumerate(hash_algorithms, 1):
+        print(f"{i}. {algo}")
+
+    try:
+        default_md = hash_algorithms[int(input("Введите номер алгоритма хеширования (по умолчанию sha256): ") or 1) - 1]
+    except (IndexError, ValueError):
+        print("Неверный выбор алгоритма хеширования.")
+        return
+
+    c = input("C (страна, по умолчанию RU): ") or "RU"
+    st = input("ST (регион, по умолчанию Moscow): ") or "Moscow"
+    l = input("L (город, по умолчанию Moscow): ") or "Moscow"
+    o = input("O (организация, по умолчанию Company): ") or "Company"
+    ou = input("OU (подразделение, по умолчанию IT): ") or "IT"
+    cn = input("CN (доменное имя, по умолчанию domain.net): ") or "domain.net"
+
+    alt_names = input("Введите альтернативные DNS-имена через пробел (по умолчанию www.domain.net *.domain.net domain.net): ") or "www.domain.net *.domain.net domain.net"
+
+    # Создаем server.conf
+    with open("server.conf", "w") as conf:
+        conf.write(f"""[ req ]
+default_bits = {key_length}
+prompt = no
+default_md = {default_md}
+req_extensions = req_ext
+distinguished_name = dn
+
+[ dn ]
+C = {c}
+ST = {st}
+L = {l}
+O = {o}
+OU = {ou}
+CN = {cn}
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+""")
+        for i, dns in enumerate(alt_names.split(), 1):
+            conf.write(f"DNS.{i} = {dns}\n")
+
+        conf.write(f"""\n[ v3_ext ]
+authorityKeyIdentifier=keyid,issuer:always
+basicConstraints=CA:TRUE
+keyUsage=nonRepudiation,digitalSignature,keyEncipherment
+extendedKeyUsage=serverAuth,clientAuth
+subjectAltName=@alt_names
+""")
+
+    try:
+        # Генерация ключа и сертификатов
+        subprocess.run(['openssl', 'genrsa', '-out', 'cert.key', key_length], check=True)
+        subprocess.run(['openssl', 'req', '-x509', '-new', '-nodes', '-key', 'cert.key', '-days', days, '-out', 'cert.crt', '-config', 'server.conf', '-extensions', 'req_ext'], check=True)
+        
+        # Создание PFX файла без пароля
+        subprocess.run(['openssl', 'pkcs12', '-export', '-out', 'cert.pfx', '-inkey', 'cert.key', '-in', 'cert.crt', '-password', 'pass:'], check=True)
+        
+        print("Сертификаты и ключи успешно сгенерированы:")
+        print("1. 'cert.key' - приватный ключ")
+        print("2. 'cert.crt' - открытый сертификат")
+        print("3. 'cert.pfx' - PFX контейнер без пароля")
+
+    except subprocess.CalledProcessError as e:
+        print(f"Ошибка генерации сертификатов: {e}")
+
+
+# 9 =======================================================================================
+
+def fetch_certificate_from_server():
+    """Получение сертификата с сервера."""
+    server = input("Введите IP или FQDN сервера: ")
+    output_file = f'{server}_certificates.pem'
+
+    try:
+        # Открываем процесс для команды openssl
+        process = subprocess.Popen(
+            ['openssl', 's_client', '-showcerts', '-servername', server, '-connect', f'{server}:443'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            stdin=subprocess.PIPE,
+            text=True
+        )
+
+        # Отправляем EOF сразу после запуска команды
+        stdout, stderr = process.communicate(input='\n', timeout=10)  # Ждем завершения до 10 секунд
+
+        # Проверяем, успешно ли завершилось выполнение команды
+        if process.returncode != 0:
+            print(f"Ошибка получения сертификатов: {stderr}")
+            return
+
+        # Сохраняем сертификаты в файл
+        with open(output_file, 'w') as cert_file:
+            cert_file.write(stdout)
+        
+        print(f"Сертификаты успешно получены и сохранены в файл {output_file}.")
+
+    except subprocess.TimeoutExpired:
+        print("Команда OpenSSL заняла слишком много времени и была прервана.")
+    except subprocess.CalledProcessError as e:
+        print(f"Ошибка получения сертификатов: {e}")
+    except Exception as e:
+        print(f"Произошла ошибка: {e}")
+        
 # MENU ====================================================================================
 
 def main():
-    while True:  # Запускаем бесконечный цикл для работы меню
+    while True:
         print("===========================================")
         print("Конвертор сертификатов и ключей")
         print("-------------------------------------------")
@@ -749,6 +874,8 @@ def main():
         print("5. Разбить цепочку сертификатов")
         print("6. Сбор сертификатов в цепочку")
         print("7. Извлечение корневого сертификата")
+        print("8. Генерация самоподписанного сертификата RSA")
+        print("9. Получение сертификата с сервера")
         print("-------------------------------------------")
         print("0. Выход")
         print("===========================================")
@@ -756,9 +883,9 @@ def main():
 
         if choice == '0':
             print("Выход из программы.")
-            break  # Завершаем цикл и программу
+            break
 
-        files = find_cert_files()  # Находим все сертификаты и ключи один раз
+        files = find_cert_files()
 
         if choice == '1':
             pfx_files = [f for f in files if f.lower().endswith(('.pfx', '.p12'))]
@@ -794,17 +921,21 @@ def main():
         elif choice == '6':
             merge_cert_chain()
 
-        elif choice == '7':  # Новый пункт для извлечения корневого сертификата
+        elif choice == '7':
             cert_file = display_files(files)
             if cert_file:
                 extract_root_certificate(cert_file)
 
+        elif choice == '8':
+            generate_ca_and_certificate()
+
+        elif choice == '9':
+            fetch_certificate_from_server()
+
         else:
             print("Неверный выбор. Пожалуйста, выберите правильный номер.")
 
-        # Ожидание пользователя перед возвращением в меню
         input("Нажмите Enter для возврата в главное меню...")
-
 
 if __name__ == "__main__":
     main()
