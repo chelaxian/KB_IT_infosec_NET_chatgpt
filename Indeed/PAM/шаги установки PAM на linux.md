@@ -46,9 +46,9 @@ cd /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/
 sudo chmod 777 *.sh
 sudo mkdir -p /mnt/storage
 sudo chmod -R 777 /mnt/storage
-#sudo bash run-deploy.sh --bench-skip -vvv
+sudo bash run-deploy.sh --bench-skip -vvv
 ```
-<details><summary>Spoiler `(If you want to pass Benchmark without skipping)`</summary>
+<details><summary>Spoiler (If you want to pass Benchmark without skipping)</summary>
 
 ### Fix Docker Bench for Security
 
@@ -119,8 +119,14 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 sudo systemctl restart docker
 exit
 ```
+### Run Deploing script
+```
+sudo bash run-deploy.sh -vvv
+```
 </details>
 
+<details><summary>Spoiler (If you have problems with permissions while Deploying)</summary>
+  
 ### Fix permissons
 ```
 sudo mkdir -p /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/temp
@@ -134,8 +140,5 @@ sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/backups
 sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/
 sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state
 ```
+</details>
 
-### Run Deploing script
-```
-sudo bash run-deploy.sh -vvv
-```
