@@ -224,3 +224,49 @@ Curl should work both for DC and for DOMAIN. If curl for DOMAIN not work - you s
 DNS.1 = dc.domain.com
 DNS.2 = domain.com
 ```
+### Change settings from LDAP to LDAPS
+```
+ nano /etc/indeed/indeed-pam/core/appsettings.json
+ nano /etc/indeed/indeed-pam/idp/appsettings.json
+```
+<details><summary>appsettings.json</summary>
+
+```
+          -"Id": "ad",
+          -"ConnectorType": "Ldap",
+          -"LdapServerType": "ActiveDirectory",
+          -"Domain": "int.kronshtadt.ru",
+          -"Port": 389,
+          -"AuthType": "Basic",
+          -"SecureSocketLayer": false,
+
+
+          +"Id": "ad",
+          +"ConnectorType": "Ldap",
+          +"LdapServerType": "ActiveDirectory",
+          +"Domain": "int.kronshtadt.ru",
+          +"Port": 689,
+          +"AuthType": "Basic",
+          +"SecureSocketLayer": true,
+
+```
+
+</details>
+
+
+
+
+
+### Commands to STOP / START / SET permissions after CHANGES in CONFIGS
+```
+bash /etc/indeed/indeed-pam/scripts/stop-pam.sh
+bash /etc/indeed/indeed-pam/scripts/set-permissions.sh
+bash /etc/indeed/indeed-pam/scripts/run-pam.sh
+```
+
+### Add /etc/hosts entry to docker containers (if needed)
+nano /etc/indeed/indeed-pam/docker-compose.management-server.yml
+
+
+
+
