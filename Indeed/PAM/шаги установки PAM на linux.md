@@ -232,22 +232,15 @@ DNS.2 = domain.com
 <details><summary>appsettings.json</summary>
 
 ```diff
-          -"Id": "ad",
-          -"ConnectorType": "Ldap",
-          -"LdapServerType": "ActiveDirectory",
-          -"Domain": "int.kronshtadt.ru",
-          -"Port": 389,
-          -"AuthType": "Basic",
-          -"SecureSocketLayer": false,
-
-
-          +"Id": "ad",
-          +"ConnectorType": "Ldap",
-          +"LdapServerType": "ActiveDirectory",
-          +"Domain": "int.kronshtadt.ru",
-          +"Port": 689,
-          +"AuthType": "Basic",
-          +"SecureSocketLayer": true,
+"Id": "ad",
+"ConnectorType": "Ldap",
+"LdapServerType": "ActiveDirectory",
+"Domain": "domain.net",
+-"Port": 389,
++"Port": 689,
+-"AuthType": "Basic",
+-"SecureSocketLayer": false,
++"SecureSocketLayer": true,
 
 ```
 
