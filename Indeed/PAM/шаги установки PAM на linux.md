@@ -157,7 +157,7 @@ You may ignore that.
   <img width="875" alt="image" src="https://github.com/user-attachments/assets/16cec3c1-7745-40d4-a002-63b769d8577f">
 </details>
 
-### Generate Self-Signed certificate and change default
+### Generate Self-Signed certificate and change default one
 ```
 openssl genrsa -out pam-ca.key 2048
 openssl req -x509 -new -nodes -key pam-ca.key -subj "/CN=indeed-pam" -days 10000 -out pam-ca.crt
