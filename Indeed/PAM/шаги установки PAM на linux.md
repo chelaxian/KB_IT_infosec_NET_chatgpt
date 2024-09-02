@@ -50,7 +50,9 @@ Create `ca.crt`, `cert.pfx`, Edit and Prepare `vars.yml`, `config.json` and plac
 cd /home/$(whoami)/
 ```
 ```bash
-curl -s -c cookies.txt -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0" "https://download.indeed-company.ru/s/q8zoOXIGhxhfR2q/download"
+curl -s -c cookies.txt \
+-H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0" \
+"https://download.indeed-company.ru/s/q8zoOXIGhxhfR2q/download"
 
 curl -L -b cookies.txt -o IndeedPAM_2.10.1_RU.zip \
 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0" \
