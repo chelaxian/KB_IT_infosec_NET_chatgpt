@@ -142,3 +142,10 @@ sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state
 ```
 </details>
 
+### Warnings
+
+On Debian 12 you will have visual bug - Docker Containers may look like `Unhealthy` while fully Healthy and Running.
+You may ignore that.
+<details><summary>Screenshot</summary>
+  <img width="875" alt="image" src="https://github.com/user-attachments/assets/16cec3c1-7745-40d4-a002-63b769d8577f">
+</details>
