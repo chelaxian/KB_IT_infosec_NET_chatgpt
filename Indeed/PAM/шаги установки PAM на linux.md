@@ -51,11 +51,9 @@ cd /home/$(whoami)/
 ```
 ```bash
 curl -s -c cookies.txt \
--H "User-Agent: Mozilla/5.0" \
 "https://download.indeed-company.ru/s/q8zoOXIGhxhfR2q/download"
 
 curl -L -b cookies.txt -o IndeedPAM_2.10.1_RU.zip \
--H "User-Agent: Mozilla/5.0" \
 "https://download.indeed-company.ru/s/q8zoOXIGhxhfR2q/download"
 ```
 ```bash
