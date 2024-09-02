@@ -6,12 +6,12 @@
 [База знаний](https://support.indeed-company.ru/Knowledgebase/List/Index/50/indeed-privileged-access-manager) 
 
 ### Install dependensies
-```
+```bash
 sudo apt-get update && sudo apt-get install openssh-server nano htop zip unzip net-tools curl wget python3 python-is-python3 sudo iptables tcpdump ldap-utils -y
 ```
 ### Install docker
 #### Debian
-```
+```bash
 # Add Docker's official GPG key:
 sudo apt-get update
 sudo apt-get install ca-certificates curl
@@ -32,17 +32,17 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 https://docs.docker.com/engine/install/
 
 ### Install portainer
-```
+```bash
 sudo docker volume create portainer_data
 sudo touch /var/run/docker.sock
 sudo chmod 777 /var/run/docker.sock
 ```
-```
+```bash
 sudo docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v "/var/run/docker.sock:/var/run/docker.sock" -v "portainer_data:/data" portainer/portainer-ce:2.21.0
 ```
 
 ### Copy certs and configs to folders and start deploy
-```
+```bash
 cd /home/$(whoami)/
 unzip IndeedPAM_2.10.1_RU.zip
 cp ca.crt /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/ca-certificates/
@@ -51,7 +51,7 @@ cp cert.pfx /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/certs/
 #cp config.json /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/
 cd /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/
 ```
-```
+```bash
 sudo chmod 777 *.sh
 sudo bash run-deploy.sh --bench-skip -vvv
 ```
@@ -63,11 +63,11 @@ sudo bash run-deploy.sh --bench-skip -vvv
 IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/cis-benchmark/local.docker.log
 ```
   
-```
+```bash
 sudo -i
 ```
 
-```
+```bash
 echo '{
   "debug": true,
   "log-level": "info",
@@ -81,7 +81,7 @@ chown root:root /etc/docker/daemon.json
 chmod 644 /etc/docker/daemon.json
 ```
 
-```
+```bash
 echo '[plugins."io.containerd.grpc.v1.cri".containerd]
   snapshotter = "overlayfs"
   [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
@@ -92,14 +92,14 @@ chown root:root /etc/containerd/config.toml
 chmod 644 /etc/containerd/config.toml
 ```
 
-```
+```bash
 echo 'DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4"' > /etc/default/docker
 
 chown root:root /etc/default/docker
 chmod 644 /etc/default/docker
 ```
 
-```
+```bash
 mkdir -p /etc/sysconfig
 echo '# /etc/sysconfig/docker
 DOCKER_STORAGE_OPTIONS="--storage-driver=overlay2"
@@ -110,24 +110,24 @@ chown root:root /etc/sysconfig/docker
 chmod 644 /etc/sysconfig/docker
 ```
 
-```
+```bash
 mkdir -p /etc/docker/certs.d
 openssl req -newkey rsa:4096 -nodes -keyout /etc/docker/certs.d/server-key.pem -x509 -days 365 -out /etc/docker/certs.d/server-cert.pem -subj "/CN=localhost"
 chown root:root /etc/docker/certs.d/server-key.pem /etc/docker/certs.d/server-cert.pem
 chmod 400 /etc/docker/certs.d/server-key.pem
 chmod 444 /etc/docker/certs.d/server-cert.pem
 ```
-```
+```bash
 sudo apt-get install containerd runc -y
 sudo autoremove
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 ```
-```
+```bash
 sudo systemctl restart docker
 exit
 ```
 ### Run Deploing script
-```
+```bash
 sudo bash run-deploy.sh -vvv
 ```
 </details>
@@ -135,7 +135,7 @@ sudo bash run-deploy.sh -vvv
 <details><summary>Spoiler (If you have problems with permissions while Deploying)</summary>
   
 ### Fix permissons
-```
+```bash
 sudo mkdir -p /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/temp
 sudo mkdir -p /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/backups
 sudo mkdir -p /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs
@@ -158,7 +158,7 @@ You may ignore that.
 </details>
 
 ### Generate Self-Signed certificate and change default one
-```
+```bash
 openssl genrsa -out pam-ca.key 2048
 openssl req -x509 -new -nodes -key pam-ca.key -subj "/CN=indeed-pam" -days 10000 -out pam-ca.crt
 openssl genrsa -out pam.key 2048
@@ -166,7 +166,7 @@ nano server.conf
 ```
 <details><summary>server.conf</summary>
   
-```
+```conf
 [ req ]
 default_bits = 2048
 prompt = no
@@ -199,7 +199,7 @@ subjectAltName=@alt_names
 ```
 </details>
 
-```
+```bash
 openssl req -new -key pam.key -out server.csr -config server.conf
 openssl x509 -req -in server.csr -CA pam-ca.crt -CAkey pam-ca.key -CAcreateserial -out pam.crt -days 10000 -extensions v3_ext -extfile server.conf
 cp pam-ca.crt /etc/indeed/indeed-pam/ca-certificates/
@@ -208,24 +208,24 @@ cp pam.key /etc/indeed/indeed-pam/certs/pam.key
 ```
 
 ### Add LDAPS root CA + intermediate CA and check connection
-```
+```bash
 cp ca1.cer /etc/indeed/indeed-pam/ca-certificates/ca1.crt #base64 (root CA)
 cp ca2.cer /etc/indeed/indeed-pam/ca-certificates/ca2.crt #base64 (intermediate CA)
 cat ca1.crt ca2.crt > /etc/indeed/indeed-pam/ca-certificates/ca-pem.crt
 ```
 check with CURL ldaps connection
-```
+```bash
 curl ldaps://dc1.domain.net --cacert /etc/indeed/indeed-pam/ca-certificates/ca-pem.crt
 curl ldaps://domain.net --cacert /etc/indeed/indeed-pam/ca-certificates/ca-pem.crt
 ```
 Curl should work both for DC and for DOMAIN. If curl for DOMAIN not work - you should create new Kerberos cert for LDAPS of your AD with 
-```
+```conf
 [ alt_names ]
 DNS.1 = dc.domain.com
 DNS.2 = domain.com
 ```
 ### Change settings from LDAP to LDAPS
-```
+```bash
  nano /etc/indeed/indeed-pam/core/appsettings.json
  nano /etc/indeed/indeed-pam/idp/appsettings.json
 ```
@@ -246,12 +246,8 @@ DNS.2 = domain.com
 
 </details>
 
-
-
-
-
 ### Commands to STOP / START / SET permissions after CHANGES in CONFIGS
-```
+```bash
 bash /etc/indeed/indeed-pam/scripts/stop-pam.sh
 bash /etc/indeed/indeed-pam/scripts/set-permissions.sh
 bash /etc/indeed/indeed-pam/scripts/run-pam.sh
@@ -263,10 +259,16 @@ nano /etc/indeed/indeed-pam/docker-compose.management-server.yml
   core:
     [...]
 +    extra_hosts:
-+      - "int.kronshtadt.ru:10.81.74.11"
++      - "domain.net:10.x.x.x"
 
   idp:
     [...]
 +    extra_hosts:
-+      - "int.kronshtadt.ru:10.81.74.11"
++      - "domain.net:10.x.x.x"
+```
+
+### Check LOGS to MONITOR and FIX ERRORS
+```bash
+ cd /etc/indeed/indeed-pam/logs/
+ cat /etc/indeed/indeed-pam/logs/idp/errors.log
 ```
