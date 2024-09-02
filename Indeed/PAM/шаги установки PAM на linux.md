@@ -48,7 +48,8 @@ sudo mkdir -p /mnt/storage
 sudo chmod -R 777 /mnt/storage
 #sudo bash run-deploy.sh --bench-skip -vvv
 ```
-
+<details><summary>Spoiler `(If you want to pass Benchmark without skipping)`</summary>
+```bash
 ### Fix Docker Bench for Security
 IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/cis-benchmark/local.docker.log
 
@@ -115,6 +116,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 sudo systemctl restart docker
 exit
 ```
+</details>
 
 ### Fix permissons
 ```
