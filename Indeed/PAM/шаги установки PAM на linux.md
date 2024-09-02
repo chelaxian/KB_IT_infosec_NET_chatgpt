@@ -156,3 +156,49 @@ You may ignore that.
 <details><summary>Screenshot</summary>
   <img width="875" alt="image" src="https://github.com/user-attachments/assets/16cec3c1-7745-40d4-a002-63b769d8577f">
 </details>
+
+### Generate Self-Signed certificate and change default
+```
+openssl genrsa -out pam-ca.key 2048
+openssl req -x509 -new -nodes -key pam-ca.key -subj "/CN=indeed-pam" -days 10000 -out pam-ca.crt
+openssl genrsa -out pam.key 2048
+nano server.conf
+```
+<details><summary>server.conf</summary>
+[ req ]
+default_bits = 2048
+prompt = no
+default_md = sha256
+req_extensions = req_ext
+distinguished_name = dn
+
+[ dn ]
+C = RU
+ST = Moscow
+L = Moscow
+O = Oblast
+OU = PamUnit
+CN = pam.domain.com
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = pam.domain.com
+DNS.2 = domain.com
+
+[ v3_ext ]
+authorityKeyIdentifier=keyid,issuer:always
+basicConstraints=CA:FALSE
+keyUsage=nonRepudiation,digitalSignature,keyEncipherment
+extendedKeyUsage=serverAuth,clientAuth
+subjectAltName=@alt_names
+</details>
+
+```
+openssl req -new -key pam.key -out server.csr -config server.conf
+openssl x509 -req -in server.csr -CA pam-ca.crt -CAkey pam-ca.key -CAcreateserial -out pam.crt -days 10000 -extensions v3_ext -extfile server.conf
+cp pam-ca.crt /etc/indeed/indeed-pam/ca-certificates/
+cp pam.crt /etc/indeed/indeed-pam/certs/pam.crt
+cp pam.key /etc/indeed/indeed-pam/certs/pam.key
+```
