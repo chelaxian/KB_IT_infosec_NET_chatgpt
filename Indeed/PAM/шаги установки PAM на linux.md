@@ -197,6 +197,7 @@ extendedKeyUsage=serverAuth,clientAuth
 subjectAltName=@alt_names
 </details>
 ```
+</details>
 
 ```
 openssl req -new -key pam.key -out server.csr -config server.conf
