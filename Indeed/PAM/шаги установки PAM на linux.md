@@ -47,6 +47,7 @@ sudo docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -
 ### Copy certs and configs to folders and start deploy
 ```bash
 cd /home/$(whoami)/
+wget https://download.indeed-company.ru/s/q8zoOXIGhxhfR2q/download
 unzip IndeedPAM_2.10.1_RU.zip
 cp ca.crt /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/ca-certificates/
 cp cert.pfx /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/certs/
