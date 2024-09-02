@@ -1,5 +1,5 @@
 #pip install pyopenssl requests cryptography certifi #pyinstaller
-#pyinstaller --onefile --clean --hidden-import OpenSSL --hidden-import cryptography --hidden-import certifi --hidden-import requests cert_convert_lin.py
+#/usr/local/bin/pyinstaller --onefile --clean --hidden-import ctypes --hidden-import shutil --hidden-import OpenSSL --hidden-import cryptography --hidden-import certifi --hidden-import requests cert_convert_lin.py
 
 import re
 import os
@@ -9,10 +9,10 @@ from OpenSSL import crypto
 from shutil import copyfile
 
 # Указываем путь к системным бинарным файлам OpenSSL
-os.environ['PATH'] = "/usr/bin:" + os.environ.get('PATH', '')
+os.environ['PATH'] = "/usr/bin:"
 
 # Указываем путь к системным библиотекам OpenSSL
-os.environ['LD_LIBRARY_PATH'] = "/usr/lib:/usr/local/lib:" + os.environ.get('LD_LIBRARY_PATH', '')
+os.environ['LD_LIBRARY_PATH'] = "/usr/lib:/usr/local/lib:"
 
 #print(f"PATH установлен на: {os.environ['PATH']}")
 #print(f"LD_LIBRARY_PATH установлен на: {os.environ.get('LD_LIBRARY_PATH', '')}")
