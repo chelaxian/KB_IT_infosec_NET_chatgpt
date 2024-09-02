@@ -44,7 +44,8 @@ sudo docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -
 ```
 </details>
   
-### Copy certs and configs to folders and start deploy
+### Download Installer, Copy certs and configs to folders and start Deploy
+Create `ca.crt`, `cert.pfx`, Edit and Prepare `vars.yml`, `config.json` and place them into `~home` directory
 ```bash
 cd /home/$(whoami)/
 ```
@@ -59,8 +60,8 @@ curl -L -b cookies.txt -o IndeedPAM_2.10.1_RU.zip \
 unzip IndeedPAM_2.10.1_RU.zip
 cp ca.crt /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/ca-certificates/
 cp cert.pfx /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/certs/
-#cp vars.yml /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/scripts/ansible/
-#cp config.json /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/
+cp vars.yml /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/scripts/ansible/
+cp config.json /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/
 cd /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/
 ```
 ```bash
