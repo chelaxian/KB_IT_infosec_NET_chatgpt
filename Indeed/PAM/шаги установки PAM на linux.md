@@ -207,7 +207,7 @@ cp pam.crt /etc/indeed/indeed-pam/certs/pam.crt
 cp pam.key /etc/indeed/indeed-pam/certs/pam.key
 ```
 
-### Add LDAP root CA + intermediate CA and check connection
+### Add LDAPS root CA + intermediate CA and check connection
 ```
 cp ca1.cer /etc/indeed/indeed-pam/ca-certificates/ca1.crt #base64 (root CA)
 cp ca2.cer /etc/indeed/indeed-pam/ca-certificates/ca2.crt #base64 (intermediate CA)
