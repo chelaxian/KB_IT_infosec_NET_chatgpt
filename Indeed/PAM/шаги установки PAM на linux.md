@@ -180,7 +180,7 @@ ST = Moscow
 L = Moscow
 O = Oblast
 OU = PamUnit
-CN = pam.domain.com
+CN = pam.domain.net
 
 [ req_ext ]
 subjectAltName = @alt_names
@@ -205,4 +205,22 @@ openssl x509 -req -in server.csr -CA pam-ca.crt -CAkey pam-ca.key -CAcreateseria
 cp pam-ca.crt /etc/indeed/indeed-pam/ca-certificates/
 cp pam.crt /etc/indeed/indeed-pam/certs/pam.crt
 cp pam.key /etc/indeed/indeed-pam/certs/pam.key
+```
+
+### Add LDAP root CA + intermediate CA and check connection
+```
+cp ca1.cer /etc/indeed/indeed-pam/ca-certificates/ca1.crt #base64 (root CA)
+cp ca2.cer /etc/indeed/indeed-pam/ca-certificates/ca2.crt #base64 (intermediate CA)
+cat ca1.crt ca2.crt > /etc/indeed/indeed-pam/ca-certificates/ca-pem.crt
+```
+check with CURL ldaps connection
+```
+curl ldaps://dc1.domain.net --cacert /etc/indeed/indeed-pam/ca-certificates/ca-pem.crt
+curl ldaps://domaint.net --cacert /etc/indeed/indeed-pam/ca-certificates/ca-pem.crt
+```
+Curl should work both for DC and for DOMAIN. If curl for DOMAIN not work - you should create new Kerberos cert for LDAPS of your AD with 
+```
+[ alt_names ]
+DNS.1 = dc.domain.com
+DNS.2 = domain.com
 ```
