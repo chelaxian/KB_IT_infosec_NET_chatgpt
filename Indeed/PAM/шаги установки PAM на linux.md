@@ -38,10 +38,10 @@ sudo docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -
 ```
 cd /home/$(whoami)/
 unzip IndeedPAM_2.10.1_RU.zip
-#cp ca.crt /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/ca-certificates/
-#cp cert.pfx /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/certs/
-cp vars.yml /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/scripts/ansible/
-cp config.json /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/
+cp ca.crt /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/ca-certificates/
+cp cert.pfx /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/certs/
+#cp vars.yml /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/scripts/ansible/
+#cp config.json /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/
 cd /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/
 ```
 ```
