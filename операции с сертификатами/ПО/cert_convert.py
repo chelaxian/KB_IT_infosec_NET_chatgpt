@@ -8,14 +8,13 @@ import subprocess
 from OpenSSL import crypto
 from shutil import copyfile
 
-# Устанавливаем путь к каталогу, где находятся OpenSSL-библиотеки
+## Устанавливаем путь к каталогу, где находятся OpenSSL-библиотеки
 os.environ['PATH'] = "C:/Program Files/OpenSSL-Win64/bin;" + os.environ['PATH']
 
-# Раскомментить вместо строки выше при сборке в Pyinstaller
-#os.environ['PATH'] = os.path.dirname(os.path.abspath(__file__)) + ";" + os.environ['PATH']
+# # Раскомментить вместо строки выше при сборке в Pyinstaller
+# os.environ['PATH'] = os.path.dirname(os.path.abspath(__file__)) + ";" + os.environ['PATH']
 
-
-# Проверка доступности библиотек OpenSSL
+## Проверка доступности библиотек OpenSSL
 try:
     ctypes.CDLL("libcrypto-3-x64.dll")
     ctypes.CDLL("libssl-3-x64.dll")
