@@ -15,16 +15,21 @@
 
 import re
 import os
+import sys
 import ctypes
 import subprocess
 from OpenSSL import crypto
 from shutil import copyfile
 
 # Указываем путь к системным бинарным файлам OpenSSL
-os.environ['PATH'] = "/usr/bin:"
-
+#os.environ['PATH'] = "/usr/bin:"
 # Указываем путь к системным библиотекам OpenSSL
-os.environ['LD_LIBRARY_PATH'] = "/usr/lib:/usr/local/lib:"
+#os.environ['LD_LIBRARY_PATH'] = "/usr/lib:/usr/local/lib:"
+
+# Определяем путь к исполняемому файлу (где будут находиться библиотеки)
+base_path = os.path.dirname(sys.executable)
+os.environ['PATH'] = f"{base_path}:{os.environ.get('PATH', '')}"
+os.environ['LD_LIBRARY_PATH'] = f"{base_path}:{os.environ.get('LD_LIBRARY_PATH', '')}"
 
 #print(f"PATH установлен на: {os.environ['PATH']}")
 #print(f"LD_LIBRARY_PATH установлен на: {os.environ.get('LD_LIBRARY_PATH', '')}")
