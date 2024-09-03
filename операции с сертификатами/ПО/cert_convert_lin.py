@@ -1,5 +1,17 @@
 #pip install pyopenssl requests cryptography certifi #pyinstaller
-#/usr/local/bin/pyinstaller --onefile --clean --hidden-import ctypes --hidden-import shutil --hidden-import OpenSSL --hidden-import cryptography --hidden-import certifi --hidden-import requests cert_convert_lin.py
+
+# Определите пути к openssl, libcrypto и libssl, а затем используйте их в команде:
+#OPENSSL_BIN_PATH=$(which openssl)
+#LIBCRYPTO_PATH=$(ldconfig -p | grep libcrypto.so | awk '{print $4}' | head -1)
+#LIBSSL_PATH=$(ldconfig -p | grep libssl.so | awk '{print $4}' | head -1)
+
+# Собираем бинарник с PyInstaller, добавляя найденные файлы
+#pyinstaller --onefile --clean \
+#--hidden-import ctypes --hidden-import shutil --hidden-import OpenSSL --hidden-import cryptography --hidden-import certifi --hidden-import requests \
+#--add-binary "${OPENSSL_BIN_PATH}:." \
+#--add-binary "${LIBCRYPTO_PATH}:." \
+#--add-binary "${LIBSSL_PATH}:." \
+#cert_convert_lin.py
 
 import re
 import os
