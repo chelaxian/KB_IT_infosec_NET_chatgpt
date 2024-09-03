@@ -1,23 +1,51 @@
 #pip install pyopenssl requests cryptography certifi #pyinstaller
-#/usr/local/bin/pyinstaller --onefile --clean --hidden-import ctypes --hidden-import shutil --hidden-import OpenSSL --hidden-import cryptography --hidden-import certifi --hidden-import requests cert_convert_lin.py
+
+## Определите пути к openssl, libcrypto и libssl, а затем используйте их в команде:
+#OPENSSL_BIN_PATH=$(which openssl)
+#LIBCRYPTO_PATH=$(ldconfig -p | grep libcrypto.so | awk '{print $4}' | head -1)
+#LIBSSL_PATH=$(ldconfig -p | grep libssl.so | awk '{print $4}' | head -1)
+
+##OPENSSL_BIN_PATH=/bin/openssl
+##LIBCRYPTO_PATH=/usr/lib/x86_64-linux-gnu/libcrypto.so.3
+##LIBSSL_PATH=/usr/lib/x86_64-linux-gnu/libssl.so
+
+## Собираем бинарник с PyInstaller, добавляя найденные файлы
+#/usr/local/bin/pyinstaller --onefile --clean \
+#--hidden-import ctypes --hidden-import shutil --hidden-import OpenSSL --hidden-import cryptography --hidden-import certifi --hidden-import requests \
+#--add-binary "${OPENSSL_BIN_PATH}:." \
+#--add-binary "${LIBCRYPTO_PATH}:." \
+#--add-binary "${LIBSSL_PATH}:." \
+#cert_convert_lin.py
 
 import re
 import os
+import sys
 import ctypes
 import subprocess
 from OpenSSL import crypto
 from shutil import copyfile
 
-# Указываем путь к системным бинарным файлам OpenSSL
+## Указываем путь к системным бинарным файлам OpenSSL
 os.environ['PATH'] = "/usr/bin:"
-
-# Указываем путь к системным библиотекам OpenSSL
+## Указываем путь к системным библиотекам OpenSSL
 os.environ['LD_LIBRARY_PATH'] = "/usr/lib:/usr/local/lib:"
 
-#print(f"PATH установлен на: {os.environ['PATH']}")
-#print(f"LD_LIBRARY_PATH установлен на: {os.environ.get('LD_LIBRARY_PATH', '')}")
+# # Раскомментить строки ниже вместо 2 строк выше при сборке в Pyinstaller
+#
+# # Определяем путь к временной директории, куда распаковывается бинарник
+# if hasattr(sys, '_MEIPASS'):
+#    base_path = sys._MEIPASS
+# else:
+#    base_path = os.path.dirname(os.path.abspath(__file__))
+#
+# # Устанавливаем PATH и LD_LIBRARY_PATH для использования локальных библиотек OpenSSL
+# os.environ['PATH'] = f"{base_path}:{os.environ.get('PATH', '')}"
+# os.environ['LD_LIBRARY_PATH'] = f"{base_path}:{os.environ.get('LD_LIBRARY_PATH', '')}"
+#
+# #print(f"PATH установлен на: {os.environ['PATH']}")
+# #print(f"LD_LIBRARY_PATH установлен на: {os.environ.get('LD_LIBRARY_PATH', '')}")
 
-# Проверка доступности библиотек OpenSSL для Linux
+## Проверка доступности библиотек OpenSSL
 try:
     ctypes.CDLL("libcrypto.so.3")
     ctypes.CDLL("libssl.so.3")
@@ -82,28 +110,21 @@ def is_key_format(cert_path):
         return False
 
 def is_pem_format(cert_path):
-    """
-    Проверяет, является ли файл сертификатом в формате Base64 PEM.
-    """
+    """Проверяет, является ли файл сертификатом в формате PEM."""
     try:
         with open(cert_path, "rb") as cert_file:
             cert_data = cert_file.read()
             return b'-----BEGIN CERTIFICATE-----' in cert_data
-    except Exception as e:
-        print(f"Ошибка при проверке PEM формата: {e}")
+    except Exception:
         return False
 
 def is_der_format(cert_path):
-    """
-    Проверяет, является ли файл сертификатом в формате DER.
-    """
+    """Проверяет, является ли файл сертификатом в формате DER с помощью команды openssl."""
     try:
-        # Попытка прочитать файл в формате DER с помощью OpenSSL
-        result = subprocess.run(['openssl', 'x509', '-inform', 'DER', '-in', cert_path, '-noout'],
+        result = subprocess.run(['openssl', 'x509', '-inform', 'DER', '-in', cert_path, '-noout', '-text'],
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         return result.returncode == 0
-    except Exception as e:
-        print(f"Ошибка при проверке DER формата: {e}")
+    except Exception:
         return False
 
 def is_p7b_format(cert_path):
@@ -439,36 +460,26 @@ def merge_pem_to_pfx(cert_file, key_file):
 # 4 =======================================================================================
 def change_cert_format(cert_path):
     """
-    Конвертирует сертификат из одного формата кодировки в другой (DER <-> Base64 PEM).
-    Принимает сертификаты с расширениями .cer, .crt или .der и сохраняет в таком же формате.
+    Конвертирует сертификат из одного формата в другой (PEM <-> DER).
     """
     try:
         # Определение выходного пути
-        base_name, extension = os.path.splitext(cert_path)
-        extension = extension.lower()
+        base_name = os.path.splitext(cert_path)[0]
 
-        # Проверяем допустимость расширения файла
-        if extension not in ['.cer', '.crt', '.der']:
-            print("Файл не является допустимым сертификатом (.cer, .crt, .der).")
-            return
-
-        # Определяем текущую кодировку сертификата
-        if is_der_format(cert_path):
-            print(f"Сертификат в формате DER. Преобразуем в Base64 PEM.")
-            output_path = f"{base_name}_pem{extension}"
-            # Конвертируем DER в PEM
-            subprocess.run(['openssl', 'x509', '-inform', 'DER', '-in', cert_path, '-out', output_path, '-outform', 'PEM'], check=True)
-            print(f"Сертификат сохранен в формате Base64 PEM как {output_path}")
-
-        elif is_pem_format(cert_path):
-            print(f"Сертификат в формате Base64 PEM. Преобразуем в DER.")
-            output_path = f"{base_name}_der{extension}"
-            # Конвертируем PEM в DER
-            subprocess.run(['openssl', 'x509', '-inform', 'PEM', '-in', cert_path, '-out', output_path, '-outform', 'DER'], check=True)
+        if is_pem_format(cert_path):
+            print("Сертификат в формате PEM. Преобразуем в DER.")
+            output_path = f"{base_name}.der"
+            subprocess.run(['openssl', 'x509', '-outform', 'DER', '-in', cert_path, '-out', output_path], check=True)
             print(f"Сертификат сохранен в формате DER как {output_path}")
 
+        elif is_der_format(cert_path):
+            print("Сертификат в формате DER. Преобразуем в PEM.")
+            output_path = f"{base_name}.pem"
+            subprocess.run(['openssl', 'x509', '-inform', 'DER', '-in', cert_path, '-out', output_path, '-outform', 'PEM'], check=True)
+            print(f"Сертификат сохранен в формате PEM как {output_path}")
+
         else:
-            print("Файл не является допустимым сертификатом в формате DER или Base64 PEM.")
+            print("Файл не является допустимым сертификатом в формате PEM или DER.")
             return
 
     except subprocess.CalledProcessError as e:
@@ -658,7 +669,6 @@ def merge_cert_chain():
 
 # 7 =======================================================================================
 
-
 def extract_root_certificate(cert_file):
     """Извлекает корневой сертификат из файла сертификата."""
     input_format = determine_format(cert_file)
@@ -669,15 +679,8 @@ def extract_root_certificate(cert_file):
     temp_pem = "temp_cert_chain.pem"
     try:
         # Преобразуем файл в PEM, если он не в PEM
-        if input_format in ['PEM', 'CRT', 'CER']:
-            try:
-                copyfile(cert_file, temp_pem)
-                with open(temp_pem, "rb") as pem_file:
-                    pem_data = pem_file.read()
-                if b'-----BEGIN CERTIFICATE-----' not in pem_data:
-                    raise ValueError("Not a PEM format")
-            except ValueError:
-                subprocess.run(['openssl', 'x509', '-inform', 'DER', '-in', cert_file, '-out', temp_pem, '-outform', 'PEM'], check=True)
+        if input_format == 'PEM':
+            copyfile(cert_file, temp_pem)
         elif input_format == 'DER':
             subprocess.run(['openssl', 'x509', '-inform', 'DER', '-in', cert_file, '-out', temp_pem, '-outform', 'PEM'], check=True)
         elif input_format in ['P7B', 'P7C']:
@@ -692,51 +695,33 @@ def extract_root_certificate(cert_file):
         with open(temp_pem, "rb") as pem_file:
             pem_data = pem_file.read()
 
-        # Разделяем на отдельные сертификаты
-        certificates = pem_data.split(b"-----END CERTIFICATE-----")
-        certificates = [cert + b"-----END CERTIFICATE-----\n" for cert in certificates if b"-----BEGIN CERTIFICATE-----" in cert]
+        # Если сертификат находится в одной секции BEGIN/END CERTIFICATE, извлекаем каждый сертификат
+        if pem_data.count(b"-----BEGIN CERTIFICATE-----") == 1:
+            # Используем openssl для разбора сертификата и извлечения корневого сертификата
+            result = subprocess.run(['openssl', 'x509', '-in', temp_pem, '-text', '-noout'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if result.returncode != 0:
+                print("Ошибка: Не удалось прочитать файл сертификата.")
+                os.remove(temp_pem)
+                return None
 
+            cert_text = result.stdout
+            certificates = cert_text.split(b"-----END CERTIFICATE-----")
+            certificates = [cert + b"-----END CERTIFICATE-----\n" for cert in certificates if b"-----BEGIN CERTIFICATE-----" in cert]
+        else:
+            # Разделяем на отдельные сертификаты
+            certificates = pem_data.split(b"-----END CERTIFICATE-----")
+            certificates = [cert + b"-----END CERTIFICATE-----\n" for cert in certificates if b"-----BEGIN CERTIFICATE-----" in cert]
+
+        # Если меньше одного сертификата, значит нет цепочки
         if len(certificates) < 1:
             print("Ошибка: не удалось найти сертификаты в файле.")
             os.remove(temp_pem)
             return None
 
-        # Ищем корневой сертификат
-        root_certificate = None
-        for cert in certificates:
-            with open("temp_individual_cert.pem", "wb") as temp_cert_file:
-                temp_cert_file.write(cert)
+        # Извлекаем последний сертификат в цепочке (корневой)
+        root_certificate = certificates[-1]
 
-            # Получаем текстовый вывод сертификата
-            result_text = subprocess.run(
-                ['openssl', 'x509', '-in', 'temp_individual_cert.pem', '-noout', '-subject', '-issuer'],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
-
-            if result_text.returncode != 0:
-                continue
-
-            cert_info = result_text.stdout.decode('utf-8').splitlines()
-            subject_line = next((line for line in cert_info if 'subject=' in line), None)
-            issuer_line = next((line for line in cert_info if 'issuer=' in line), None)
-
-            if subject_line and issuer_line:
-                # Извлекаем только значения "Subject" и "Issuer"
-                subject = subject_line.split('subject=')[-1].strip()
-                issuer = issuer_line.split('issuer=')[-1].strip()
-
-                if subject == issuer:
-                    root_certificate = cert
-                    break
-
-        os.remove("temp_individual_cert.pem")
-
-        if not root_certificate:
-            print("Ошибка: корневой сертификат не найден.")
-            os.remove(temp_pem)
-            return None
-
-        # Выбор формата для сохранения корневого сертификата
+        # Выбор выходного формата
         formats = ['PEM', 'DER', 'CRT', 'CER']
         print("Выберите формат для сохранения корневого сертификата:")
         for i, fmt in enumerate(formats, 1):
@@ -763,6 +748,7 @@ def extract_root_certificate(cert_file):
         elif output_format in ['CRT', 'CER']:
             subprocess.run(['openssl', 'x509', '-in', "temp_root.pem", '-out', output_file], check=True)
 
+        # Очистка временных файлов
         os.remove(temp_pem)
         os.remove("temp_root.pem")
 
@@ -812,12 +798,7 @@ def generate_ca_and_certificate():
     ou = input("OU (подразделение, по умолчанию IT): ") or "IT"
     cn = input("CN (доменное имя, по умолчанию domain.net): ") or "domain.net"
 
-    # Генерируем альтернативные имена на основе введенного CN
-    default_alt_names = f"www.{cn} *.{cn} {cn}"
-    alt_names = input(f"Введите альтернативные DNS-имена через пробел (по умолчанию {default_alt_names}; введите '-' для отсутствия альтернативных имен): ") or default_alt_names
-    
-    # Если пользователь ввел "-", то исключаем альтернативные имена
-    include_alt_names = alt_names != "-"
+    alt_names = input("Введите альтернативные DNS-имена через пробел (по умолчанию www.domain.net *.domain.net domain.net): ") or "www.domain.net *.domain.net domain.net"
 
     # Создаем server.conf
     with open("server.conf", "w") as conf:
@@ -825,14 +806,9 @@ def generate_ca_and_certificate():
 default_bits = {key_length}
 prompt = no
 default_md = {default_md}
+req_extensions = req_ext
 distinguished_name = dn
-""")
 
-        # Если альтернативные имена включены, добавляем секции req_ext и alt_names
-        if include_alt_names:
-            conf.write("req_extensions = req_ext\n")
-
-        conf.write(f"""
 [ dn ]
 C = {c}
 ST = {st}
@@ -840,34 +816,27 @@ L = {l}
 O = {o}
 OU = {ou}
 CN = {cn}
-""")
 
-        if include_alt_names:
-            conf.write(f"""
 [ req_ext ]
 subjectAltName = @alt_names
 
 [ alt_names ]
 """)
-            for i, dns in enumerate(alt_names.split(), 1):
-                conf.write(f"DNS.{i} = {dns}\n")
+        for i, dns in enumerate(alt_names.split(), 1):
+            conf.write(f"DNS.{i} = {dns}\n")
 
-        conf.write(f"""
-[ v3_ext ]
+        conf.write(f"""\n[ v3_ext ]
 authorityKeyIdentifier=keyid,issuer:always
 basicConstraints=CA:TRUE
 keyUsage=nonRepudiation,digitalSignature,keyEncipherment
 extendedKeyUsage=serverAuth,clientAuth
+subjectAltName=@alt_names
 """)
-
-        # Добавляем subjectAltName только если нужны альтернативные имена
-        if include_alt_names:
-            conf.write("subjectAltName=@alt_names\n")
 
     try:
         # Генерация ключа и сертификатов
         subprocess.run(['openssl', 'genrsa', '-out', 'cert.key', key_length], check=True)
-        subprocess.run(['openssl', 'req', '-x509', '-new', '-nodes', '-key', 'cert.key', '-days', days, '-out', 'cert.crt', '-config', 'server.conf', '-extensions', 'v3_ext'], check=True)
+        subprocess.run(['openssl', 'req', '-x509', '-new', '-nodes', '-key', 'cert.key', '-days', days, '-out', 'cert.crt', '-config', 'server.conf', '-extensions', 'req_ext'], check=True)
         
         # Создание PFX файла без пароля
         subprocess.run(['openssl', 'pkcs12', '-export', '-out', 'cert.pfx', '-inkey', 'cert.key', '-in', 'cert.crt', '-password', 'pass:'], check=True)
@@ -889,21 +858,17 @@ def fetch_certificate_from_server():
     output_file = f'{server}_certificates.pem'
 
     try:
-        # Команда для запуска openssl и отправки команды QUIT
-        command = f'echo | openssl s_client -showcerts -servername {server} -connect {server}:443'
-        
-        # Запускаем процесс OpenSSL для получения сертификатов
+        # Открываем процесс для команды openssl
         process = subprocess.Popen(
-            command,
+            ['openssl', 's_client', '-showcerts', '-servername', server, '-connect', f'{server}:443'],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            shell=True,
-            text=True,
-            executable='/bin/bash'  # Для Linux важно явно указать интерпретатор
+            stdin=subprocess.PIPE,
+            text=True
         )
 
-        # Читаем вывод команды OpenSSL
-        stdout, stderr = process.communicate(timeout=15)
+        # Отправляем EOF сразу после запуска команды
+        stdout, stderr = process.communicate(input='\n', timeout=10)  # Ждем завершения до 10 секунд
 
         # Проверяем, успешно ли завершилось выполнение команды
         if process.returncode != 0:
@@ -922,27 +887,26 @@ def fetch_certificate_from_server():
         print(f"Ошибка получения сертификатов: {e}")
     except Exception as e:
         print(f"Произошла ошибка: {e}")
-
         
 # MENU ====================================================================================
 
 def main():
     while True:
-        print("=============================================")
+        print("===========================================")
         print("Конвертор сертификатов и ключей")
-        print("---------------------------------------------")
-        print("1. Разбить контейнер PFX/P12 на CRT + KEY")
+        print("-------------------------------------------")
+        print("1. Разбить контейнер PFX/P12 на 2 части PEM")
         print("2. Преобразовать из одного формата в другой")
         print("3. Собрать 2 части в контейнер PFX/P12")
-        print("4. Смена кодировки DER/PEM(Base-64)")
+        print("4. CER/CRT - смена формата PEM/DER")
         print("5. Разбить цепочку сертификатов")
         print("6. Сбор сертификатов в цепочку")
         print("7. Извлечение корневого сертификата")
         print("8. Генерация самоподписанного сертификата RSA")
         print("9. Получение сертификата с сервера")
-        print("---------------------------------------------")
+        print("-------------------------------------------")
         print("0. Выход")
-        print("=============================================")
+        print("===========================================")
         choice = input("Выберите номер меню: ")
 
         if choice == '0':
