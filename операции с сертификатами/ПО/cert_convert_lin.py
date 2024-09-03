@@ -30,15 +30,20 @@ from shutil import copyfile
 # Указываем путь к системным библиотекам OpenSSL
 #os.environ['LD_LIBRARY_PATH'] = "/usr/lib:/usr/local/lib:"
 
-# Определяем путь к исполняемому файлу (где будут находиться библиотеки)
-base_path = os.path.dirname(sys.executable)
+# Определяем путь к временной директории, куда распаковывается бинарник
+if hasattr(sys, '_MEIPASS'):
+    base_path = sys._MEIPASS
+else:
+    base_path = os.path.dirname(os.path.abspath(__file__))
+
+# Устанавливаем PATH и LD_LIBRARY_PATH для использования локальных библиотек OpenSSL
 os.environ['PATH'] = f"{base_path}:{os.environ.get('PATH', '')}"
 os.environ['LD_LIBRARY_PATH'] = f"{base_path}:{os.environ.get('LD_LIBRARY_PATH', '')}"
 
 #print(f"PATH установлен на: {os.environ['PATH']}")
 #print(f"LD_LIBRARY_PATH установлен на: {os.environ.get('LD_LIBRARY_PATH', '')}")
 
-# Проверка доступности библиотек OpenSSL для Linux
+# Проверка доступности библиотек OpenSSL
 try:
     ctypes.CDLL("libcrypto.so.3")
     ctypes.CDLL("libssl.so.3")
