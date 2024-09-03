@@ -287,3 +287,34 @@ nano /etc/indeed/indeed-pam/docker-compose.management-server.yml
  cd /etc/indeed/indeed-pam/logs/
  cat /etc/indeed/indeed-pam/logs/idp/errors.log
 ```
+
+### Run Indeed-Wizard docker on same VM/server
+
+1. rename `pam-ca-certificates` to `pam-ca-certificates1`
+
+2. ```nano /home/rusrat/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/docker-compose.web-wizard.yml```
+
+```diff
+    ports:
+-      - "${HOST_IP}:80:8090"
+-      - "${HOST_IP}:443:5443"
++      - "${HOST_IP}:8080:8090"
++      - "${HOST_IP}:8443:5443"
+```
+```diff
+networks:
+  default:
+    name: pam-default-network
++    external: true
+  web-wizard-api-network:
+    name: pam-web-wizard-api-network
+    driver: bridge
+
+volumes:
+  pam-ca-cert-store:
+    name: pam-ca-cert-store
++    external: true
+```
+```bash
+sudo ./run-wizard.sh -vvv
+```
