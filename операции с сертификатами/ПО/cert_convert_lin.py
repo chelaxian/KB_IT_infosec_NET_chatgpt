@@ -5,6 +5,10 @@
 #LIBCRYPTO_PATH=$(ldconfig -p | grep libcrypto.so | awk '{print $4}' | head -1)
 #LIBSSL_PATH=$(ldconfig -p | grep libssl.so | awk '{print $4}' | head -1)
 
+##OPENSSL_BIN_PATH=/bin/openssl
+##LIBCRYPTO_PATH=/usr/lib/x86_64-linux-gnu/libcrypto.so.3
+##LIBSSL_PATH=/usr/lib/x86_64-linux-gnu/libssl.so
+
 # Собираем бинарник с PyInstaller, добавляя найденные файлы
 #/usr/local/bin/pyinstaller --onefile --clean \
 #--hidden-import ctypes --hidden-import shutil --hidden-import OpenSSL --hidden-import cryptography --hidden-import certifi --hidden-import requests \
