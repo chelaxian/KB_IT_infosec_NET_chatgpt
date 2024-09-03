@@ -1,6 +1,6 @@
 #pip install pyopenssl requests cryptography certifi #pyinstaller
 
-# Определите пути к openssl, libcrypto и libssl, а затем используйте их в команде:
+## Определите пути к openssl, libcrypto и libssl, а затем используйте их в команде:
 #OPENSSL_BIN_PATH=$(which openssl)
 #LIBCRYPTO_PATH=$(ldconfig -p | grep libcrypto.so | awk '{print $4}' | head -1)
 #LIBSSL_PATH=$(ldconfig -p | grep libssl.so | awk '{print $4}' | head -1)
@@ -9,7 +9,7 @@
 ##LIBCRYPTO_PATH=/usr/lib/x86_64-linux-gnu/libcrypto.so.3
 ##LIBSSL_PATH=/usr/lib/x86_64-linux-gnu/libssl.so
 
-# Собираем бинарник с PyInstaller, добавляя найденные файлы
+## Собираем бинарник с PyInstaller, добавляя найденные файлы
 #/usr/local/bin/pyinstaller --onefile --clean \
 #--hidden-import ctypes --hidden-import shutil --hidden-import OpenSSL --hidden-import cryptography --hidden-import certifi --hidden-import requests \
 #--add-binary "${OPENSSL_BIN_PATH}:." \
@@ -25,25 +25,27 @@ import subprocess
 from OpenSSL import crypto
 from shutil import copyfile
 
-# Указываем путь к системным бинарным файлам OpenSSL
-#os.environ['PATH'] = "/usr/bin:"
-# Указываем путь к системным библиотекам OpenSSL
-#os.environ['LD_LIBRARY_PATH'] = "/usr/lib:/usr/local/lib:"
+## Указываем путь к системным бинарным файлам OpenSSL
+os.environ['PATH'] = "/usr/bin:"
+## Указываем путь к системным библиотекам OpenSSL
+os.environ['LD_LIBRARY_PATH'] = "/usr/lib:/usr/local/lib:"
 
-# Определяем путь к временной директории, куда распаковывается бинарник
-if hasattr(sys, '_MEIPASS'):
-    base_path = sys._MEIPASS
-else:
-    base_path = os.path.dirname(os.path.abspath(__file__))
+# # Раскомментить строки ниже вместо 2 строк выше при сборке в Pyinstaller
+#
+# # Определяем путь к временной директории, куда распаковывается бинарник
+# if hasattr(sys, '_MEIPASS'):
+#    base_path = sys._MEIPASS
+# else:
+#    base_path = os.path.dirname(os.path.abspath(__file__))
+#
+# # Устанавливаем PATH и LD_LIBRARY_PATH для использования локальных библиотек OpenSSL
+# os.environ['PATH'] = f"{base_path}:{os.environ.get('PATH', '')}"
+# os.environ['LD_LIBRARY_PATH'] = f"{base_path}:{os.environ.get('LD_LIBRARY_PATH', '')}"
+#
+# #print(f"PATH установлен на: {os.environ['PATH']}")
+# #print(f"LD_LIBRARY_PATH установлен на: {os.environ.get('LD_LIBRARY_PATH', '')}")
 
-# Устанавливаем PATH и LD_LIBRARY_PATH для использования локальных библиотек OpenSSL
-os.environ['PATH'] = f"{base_path}:{os.environ.get('PATH', '')}"
-os.environ['LD_LIBRARY_PATH'] = f"{base_path}:{os.environ.get('LD_LIBRARY_PATH', '')}"
-
-#print(f"PATH установлен на: {os.environ['PATH']}")
-#print(f"LD_LIBRARY_PATH установлен на: {os.environ.get('LD_LIBRARY_PATH', '')}")
-
-# Проверка доступности библиотек OpenSSL
+## Проверка доступности библиотек OpenSSL
 try:
     ctypes.CDLL("libcrypto.so.3")
     ctypes.CDLL("libssl.so.3")
