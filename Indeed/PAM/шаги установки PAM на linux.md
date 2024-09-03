@@ -290,7 +290,7 @@ nano /etc/indeed/indeed-pam/docker-compose.management-server.yml
 
 ### Run Indeed-Wizard docker on same VM/server
 
-1. rename `pam-ca-certificates` to `pam-ca-certificates1`
+1. rename docker container `pam-ca-certificates` to `pam-ca-certificates1`
 
 2. ```nano /home/rusrat/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/docker-compose.web-wizard.yml```
 
