@@ -1,3 +1,11 @@
+Введите в CMD:
+```cmd
+runas /user:DomainName\username "cmd.exe"
+#ввести логин/пароль
+```
+
+###Альтернатива
+
 Открыть powershell, вставить команды:
 
 ```powershell
