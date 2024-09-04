@@ -4,7 +4,7 @@ runas /user:DomainName\username "cmd.exe"
 #ввести логин/пароль
 ```
 
-###Альтернатива
+### Альтернатива
 
 Открыть powershell, вставить команды:
 
