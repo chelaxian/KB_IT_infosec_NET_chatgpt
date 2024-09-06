@@ -47,7 +47,7 @@ sudo docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -
 ### Download Installer, Copy certs and configs to folders and start Deploy
 Create `ca.crt`, `cert.pfx`, Edit and Prepare `vars.yml`, `config.json` and place them into `~home` directory
 ```bash
-cd /home/$(whoami)/
+cd ~
 ```
 ```bash
 wget -O IndeedPAM_2.10.1_RU.zip \
@@ -60,11 +60,11 @@ curl -L -o IndeedPAM_2.10.1_RU.zip \
 ```
 ```bash
 unzip IndeedPAM_2.10.1_RU.zip
-cp ca.crt /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/ca-certificates/
-cp cert.pfx /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/certs/
-cp vars.yml /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/scripts/ansible/
-cp config.json /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/
-cd /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/
+cp ca.crt ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/ca-certificates/
+cp cert.pfx ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/certs/
+cp vars.yml ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/scripts/ansible/
+cp config.json ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/
+cd ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/
 ```
 ```bash
 sudo chmod 777 *.sh
@@ -151,16 +151,16 @@ sudo bash run-deploy.sh -vvv
   
 ### Fix permissons
 ```bash
-sudo mkdir -p /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/temp
-sudo mkdir -p /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/backups
-sudo mkdir -p /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs
-sudo mkdir -p /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/cis-benchmark
-sudo mkdir -p /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/selfsigned
+sudo mkdir -p ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/temp
+sudo mkdir -p ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/backups
+sudo mkdir -p ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs
+sudo mkdir -p ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/cis-benchmark
+sudo mkdir -p ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/selfsigned
 
-sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/temp
-sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/backups
-sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/
-sudo chmod 777 -R /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state
+sudo chmod 777 -R ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/temp
+sudo chmod 777 -R ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/backups
+sudo chmod 777 -R ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/
+sudo chmod 777 -R ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/state
 ```
 </details>
 
@@ -293,11 +293,11 @@ nano /etc/indeed/indeed-pam/docker-compose.management-server.yml
 0. stop PAM ant try to run wizard
 ```bash
 sudo bash /etc/indeed/indeed-pam/scripts/stop-pam.sh
-sudo bash /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/run-wizard.sh
+sudo bash ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/run-wizard.sh
 ```
 1. if it not helps - rename docker container `pam-ca-certificates` to `pam-ca-certificates1`
 
-2. ```nano /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/docker-compose.web-wizard.yml```
+2. ```nano ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/docker-compose.web-wizard.yml```
 
 ```diff
     ports:
