@@ -328,8 +328,8 @@ sudo ./run-wizard.sh -vvv
 ```bash
  sudo bash /etc/indeed/indeed-pam/tools/protector.sh unprotect
 ```
-Copy `"GatewaySecret": "XxXXXXXXXXxXXXXXXXXxXXXXXXXXXXXXXXxXxXXxXxx=",` string to
-`C:\Program Files\Indeed\Indeed PAM\Gateway\ProxyApp\appsettings.json` on Windows RDS server
+Copy `"GatewaySecret": "XxXXXXXXXXxXXXXXXXXxXXXXXXXXXXXXXXxXxXXxXxx=",` string to \
+`C:\Program Files\Indeed\Indeed PAM\Gateway\ProxyApp\appsettings.json` on Windows RDS server \
 fill in Core and Auth(IDP) sections
 <details><summary>appsettings.json</summary>
   
@@ -347,8 +347,8 @@ fill in Core and Auth(IDP) sections
 ```
 </details>
 
-Copy `"GatewaySecret": "XxXXXXXXXXxXXXXXXXXxXXXXXXXXXXXXXXxXxXXxXxx=",` string to
-`C:\Program Files\Indeed\Indeed PAM\Gateway\Pam.Gateway.Service\appsettings.json` on Windows RDS server
+Copy `"GatewaySecret": "XxXXXXXXXXxXXXXXXXXxXXXXXXXXXXXXXXxXxXXxXxx=",` string to \
+`C:\Program Files\Indeed\Indeed PAM\Gateway\Pam.Gateway.Service\appsettings.json` on Windows RDS server \
 fill in Core and Auth(IDP) sections
 <details><summary>appsettings.json</summary>
   
