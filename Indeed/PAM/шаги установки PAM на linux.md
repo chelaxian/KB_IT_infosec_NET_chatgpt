@@ -517,8 +517,8 @@ Curl should work both for DC and for DOMAIN. If curl for DOMAIN not work - you s
 DNS.1 = dc.domain.com
 DNS.2 = domain.com
 ```
-[1](https://docs.inno.tech/ru/linux-configuration-manager/latest/maintenance-guide/integrations/ad-integration/set-ldap-over-ssl/)
-[2](https://winitpro.ru/index.php/2014/10/02/aktiviruem-ldap-over-ssl-ldaps-v-windows-server-2012-r2/)
+[how to 1](https://docs.inno.tech/ru/linux-configuration-manager/latest/maintenance-guide/integrations/ad-integration/set-ldap-over-ssl/) \
+[how to 2](https://winitpro.ru/index.php/2014/10/02/aktiviruem-ldap-over-ssl-ldaps-v-windows-server-2012-r2/)
 ### Change settings from LDAP to LDAPS
 ```bash
  nano /etc/indeed/indeed-pam/core/appsettings.json
