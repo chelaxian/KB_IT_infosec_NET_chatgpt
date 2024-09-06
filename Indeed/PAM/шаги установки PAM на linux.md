@@ -290,7 +290,11 @@ nano /etc/indeed/indeed-pam/docker-compose.management-server.yml
 
 ### Run Indeed-Wizard docker on same VM/server
 
-1. rename docker container `pam-ca-certificates` to `pam-ca-certificates1`
+0. stop PAM ant try to run wizard
+```bash
+bash /etc/indeed/indeed-pam/scripts/stop-pam.sh
+```
+1. if it not helps - rename docker container `pam-ca-certificates` to `pam-ca-certificates1`
 
 2. ```nano /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/docker-compose.web-wizard.yml```
 
@@ -318,3 +322,5 @@ volumes:
 ```bash
 sudo ./run-wizard.sh -vvv
 ```
+
+
