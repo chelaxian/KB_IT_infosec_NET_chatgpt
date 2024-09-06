@@ -575,11 +575,14 @@ bash /etc/indeed/indeed-pam/scripts/run-pam.sh
 
 ### Run Indeed-Wizard docker on same VM/server
 <details><summary>Spoiler (for non-All-in-One installations - if you need to add Windows RDS or other PAM components)</summary>
+  
 0. stop PAM ant try to run wizard
+   
 ```bash
 sudo bash /etc/indeed/indeed-pam/scripts/stop-pam.sh
 sudo bash ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/run-wizard.sh
 ```
+
 1. if it not helps - rename docker container `pam-ca-certificates` to `pam-ca-certificates1`
 
 2. ```nano ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/docker-compose.web-wizard.yml```
