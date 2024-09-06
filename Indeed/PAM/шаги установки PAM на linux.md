@@ -519,6 +519,7 @@ DNS.2 = domain.com
 ```
 [how to 1](https://docs.inno.tech/ru/linux-configuration-manager/latest/maintenance-guide/integrations/ad-integration/set-ldap-over-ssl/) \
 [how to 2](https://winitpro.ru/index.php/2014/10/02/aktiviruem-ldap-over-ssl-ldaps-v-windows-server-2012-r2/)
+
 ### Change settings from LDAP to LDAPS
 ```bash
  nano /etc/indeed/indeed-pam/core/appsettings.json
@@ -548,8 +549,11 @@ bash /etc/indeed/indeed-pam/scripts/set-permissions.sh
 bash /etc/indeed/indeed-pam/scripts/run-pam.sh
 ```
 
-### Add /etc/hosts entry to docker containers (if needed)
-nano /etc/indeed/indeed-pam/docker-compose.management-server.yml
+### Add /etc/hosts entry to docker containers
+<details><summary>Spoiler (If needed)</summary>
+
+`nano /etc/indeed/indeed-pam/docker-compose.management-server.yml`
+
 ```diff
   core:
     [...]
@@ -561,7 +565,8 @@ nano /etc/indeed/indeed-pam/docker-compose.management-server.yml
 +    extra_hosts:
 +      - "domain.net:10.x.x.x"
 ```
-
+</details>
+  
 ### Check LOGS to MONITOR and FIX ERRORS
 ```bash
  cd /etc/indeed/indeed-pam/logs/
