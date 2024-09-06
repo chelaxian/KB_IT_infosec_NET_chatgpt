@@ -679,6 +679,100 @@ add this lines to the end of file and check json
     }
   }
 }
+```
+</details>
+
+full config
+<details><summary>appsettings.json</summary>
+
+```json
+{
+  "Local": {
+    "MediaDataRootDirectory": "C:\\ProgramData\\Indeed\\Indeed PAM\\MediaTemp"
+  },
+
+  "Storage": {
+    "Type": "SMB",
+    "Settings": {
+      "Root": "\\\\IP.IP.IP.IP\\IPAMStorage",
+      "Domain": "FULL.DOMAIN.NAME",
+      "Login": "USER",
+      "Password": "PASSWORD"
+   }
+  },
+
+  "Cors": {
+    "AllowedOrigins": "*",
+    "AllowedMethods": "*",
+    "AllowedHeaders": "*"
+  },
+
+  "EnableSwagger": false,
+
+  "NLog": {
+    "variables": {
+      "minLevel": "Info",
+      "dbMinLevel": "Info"
+    },
+    "rules": {
+      "1_StandardError": {
+        "logger": "*",
+        "minLevel": "Warn",
+        "writeTo": "errorConsole",
+        "enabled": false
+      },
+      "2_StandardOut": {
+        "enabled": false,
+        "logger": "*",
+        "maxLevel": "Warn",
+        "minLevel": "${minLevel}",
+        "writeTo": "console"
+      },
+
+      // Copy all errors to separate file
+      "20_Errors": {
+        "logger": "*",
+        "minLevel": "Error",
+        "writeTo": "errorsFile"
+      },
+
+      // Write everything to single file with traceId
+      // Skip non-critical Microsoft logs
+      "50_MicrosoftAspNetCoreIgnored": {
+        "logger": "Microsoft.AspNetCore.*",
+        "maxLevel": "Info",
+        "final": true
+      },
+      "50_MicrosoftExtensionsIgnored": {
+        "logger": "Microsoft.Extensions.*",
+        "maxLevel": "Info",
+        "final": true
+      },
+      "51_SystemIgnored": {
+        "logger": "System.*",
+        "maxLevel": "Info",
+        "final": true
+      },
+      "90_Full": {
+        "logger": "*",
+        "minLevel": "${minLevel}",
+        "writeTo": "fullFile"
+}    
+}
+  },
+  "Kestrel": {
+    "Endpoints": {
+      "HttpsInlineCertStore": {
+        "Url": "https://0.0.0.0:5443",
+        "Certificate": {
+          "Subject": "win-rds.domain.ru",
+          "Store": "My",
+          "Location": "LocalMachine",
+          "AllowInvalid": "False"
+        }
+      }
+    }
+  }
 }
 ```
 </details>
