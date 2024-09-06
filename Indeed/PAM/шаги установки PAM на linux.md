@@ -339,7 +339,7 @@ You can generate Encryption key by
 `IndeedPAM_2.10.1_RU\indeed-pam-tools\key-gen\IndeedPAM.KeyGen.exe` - AES
 or
 ```bash
-opensopenssl rand -hex 32
+openssl rand -hex 32
 ```
 </details>
 
