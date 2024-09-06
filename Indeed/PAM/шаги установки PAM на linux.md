@@ -493,7 +493,7 @@ openssl x509 -req -in server.csr -CA pam-ca.crt -CAkey pam-ca.key -CAcreateseria
 ```
 </details>
 
-rename certs as listed below
+rename certs as listed below and copy
 ```bash
 cp pam-ca.crt /etc/indeed/indeed-pam/ca-certificates/
 cp pam.crt /etc/indeed/indeed-pam/certs/pam.crt
