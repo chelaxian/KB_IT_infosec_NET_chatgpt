@@ -66,6 +66,275 @@ cp vars.yml ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/scripts/ansible/
 cp config.json ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/
 cd ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/
 ```
+<details><summary>vars.yml</summary>
+
+```diff
+selfsigned:
+  ca_crt: "{{ selfsigned_dir }}/ca.crt"
+  ca_key: "{{ selfsigned_dir }}/ca.key"
+  info: "{{ selfsigned_dir }}/ca_info.yml"
+  key_name: "pam-selfsigned.key"
+  crt_name: "pam-selfsigned.crt"
+  # Enable or disable automatic server certificate generation when certificates are not found or not valid
+  # This setting does not affect pilot mode and access-server self-signed sertificates
+- auto_gen: false
++ auto_gen: true
+```
+full config
+```yml
+---
+# Default file and directory path variables
+dest_path: "/etc/indeed/indeed-pam"
+dest_img_temp: ".indeed/indeed-pam/deploy/"
+
+config_file: "{{ data_dir }}/config.json"
+state_dir: "{{ data_dir }}/state"
+temp_dir: "{{ data_dir }}/temp"
+selfsigned_dir: "{{ state_dir }}/selfsigned"
+core_conf: "{{ state_dir }}/core/appsettings.json"
+protector_conf: "{{ state_dir }}/tools/protector-appsettings.json"
+wizard_api_conf: "{{ state_dir }}/web-wizard/config.prod.json"
+img_path: "{{ data_dir }}/images/"
+backup_dir: "{{ data_dir }}/backups"
+sshkey_dir: "{{ state_dir }}/keys/ssh-proxy"
+pam_user: "23041"
+aa_profile_dir: "/etc/apparmor.d/indeed-pam"
+gw_local_url: "http://gateway-service:8090/gw"
+
+# Proxy protocol settings for haproxy configurations
+# Send protocol setting
+# To use version 1 set "send-proxy" (default)
+# To use version 2 set "send-proxy-v2"
+proxy_protocol_send: "send-proxy"
+# Receive protocol setting
+# "accept-proxy" detects both Proxy protocol versions
+proxy_protocol_accept: "accept-proxy"
+
+# Docker prune settings
+prune:
+  enabled: true
+  cmd: "docker system prune -f"
+  schedule: "Sat 23:00"
+
+# Initial values of common variables
+data_dir: "/pam-deploy"
+tasks_dir: "{{ playbook_dir }}/tasks"
+min_free_gb: 10
+report_progress: true
+pilot_mode: false
+
+# Certificate generation related variables
+ca_dir: "{{ state_dir }}/ca-certificates"
+certs_dir: "{{ state_dir }}/certs"
+rdp_dir: "{{ state_dir }}/keys/rdp-proxy"
+ca_crt: "{{ ca_dir }}/ca.crt"
+key_name: "pam.key"
+crt_name: "pam.crt"
+
+selfsigned:
+  ca_crt: "{{ selfsigned_dir }}/ca.crt"
+  ca_key: "{{ selfsigned_dir }}/ca.key"
+  info: "{{ selfsigned_dir }}/ca_info.yml"
+  key_name: "pam-selfsigned.key"
+  crt_name: "pam-selfsigned.crt"
+  # Enable or disable automatic server certificate generation when certificates are not found or not valid
+  # This setting does not affect pilot mode and access-server self-signed sertificates
+  auto_gen: true
+
+# Uncomment the line below to use pfx passphrase
+# pfx_pass: "ENTER_HERE"
+
+# Uncomment the line below  to override public fqdn of host (used in certificate validation check)
+# public_fqdn: "ENTER_HERE"
+
+# Uncomment the line below to set virtual ip in multiple haproxy scenario
+# vr_ip: "ENTER_HERE"
+
+# Docker related variables
+local_docker: "localhost"
+compose_bin: "docker-compose"
+tools_img: "indeed-pam-tools:latest"
+daemon_json: "/etc/docker/daemon.json"
+daemon_cfg:
+  # By default, selinux-enabled parameter will be set to true if SELinux installed and enabled on the target hosts
+  # Uncomment this line to override default behavior
+  #"selinux-enabled": false
+  "icc": false
+  "live-restore": true
+  "userland-proxy": false
+  "no-new-privileges": true
+# Uncomment lines below to configure remote logging in docker daemon
+#  "log-driver": "syslog"
+#  "log-opts":
+#    "syslog-address": "udp://syslog-server-address:514"
+
+# Container logging options, default "local"
+docker_logging:
+  driver: "local"
+  options:
+     max-size: "20m"
+     max-file: "10"
+# Use lines below to configure remote logging in compose files
+# NOTE: multiple logging drivers is NOT supported
+#  driver: "syslog"
+#  options:
+#    syslog-address: "udp://syslog-server-address:514"
+
+# Use this option to enable rclone in management server, disable by default
+# When setting this option to true, be sure to fill rclone config with run-storage-conf.sh
+rclone_enabled: false
+# Shared folder on remote media-data host, for example: pamshare/data
+# Leave it empty to mount remote root directory
+rclone_path: ""
+
+# Docker bench for security
+bench_log_dir: "{{ data_dir }}/logs/cis-benchmark"
+bench_img: "nexus.indeed-id.hq:5050/pam/docker-bench-security:1.6.0"
+bench_target_score: 15
+bench_ignore: false
+
+# Access server proxy recycling settings
+proxy_recycling:
+  enabled: false
+  # Proxy types to recycle
+  proxies: [rdp,ssh]
+  # Master replica count
+  replicas:
+    rdp_proxy: 1
+    ssh_proxy: 1
+  # Rotation settings
+  rotation_hours: 168
+  session_hours: 24
+
+# Inventory group docker related variables
+images:
+  access:
+    - access
+    - tools
+  management:
+    - management
+    - nginx
+    - tools
+  haproxy:
+    - haproxy
+
+compose_files:
+  access:
+    - docker-compose.access-server.yml
+  management:
+    - docker-compose.management-server.yml
+  haproxy:
+    - docker-compose.management-server-haproxy.yml
+    - docker-compose.access-server-haproxy.yml
+
+state_files:
+  access:
+    - ca-certificates
+    - keys/rdp-proxy
+    - keys/ssh-proxy
+    - keys/shared
+    - logs/rdp
+    - logs/ssh
+    - logs/gateway-service
+    - rdp-proxy
+    - scripts
+    - ssh-proxy
+    - gateway-service
+    - media-data
+    - tools/protector-appsettings.json
+    - tools/protector.sh
+    - docker-compose.rdp-proxy.yml
+    - docker-compose.ssh-proxy.yml
+    - apparmor/pam-certs
+    - apparmor/pam-gw-service
+    - apparmor/pam-rdp-proxy
+    - apparmor/pam-ssh-proxy
+    - apparmor/pam-tools
+    - media-data
+    - media-temp
+    - dumps
+  management:
+    - ca-certificates
+    - core
+    - idp
+    - keys/idp
+    - keys/shared
+    - logs/core
+    - logs/idp
+    - logs/ls
+    - logs/nginx
+    - logs/mc
+    - logs/uc
+    - logs/rclone
+    - ls
+    - mc
+    - nginx
+    - scripts
+    - uc
+    - media-data
+    - tools/protector-appsettings.json
+    - tools/protector.sh
+    - tools/migrator-appsettings.json
+    - tools/migrator.sh
+    - tools/dump-appsettings.json
+    - tools/dump.sh
+    - tools/key-rotator-appsettings.json
+    - tools/key-rotator.sh
+    - tools/stats-appsettings.json
+    - tools/stats.sh
+    - apparmor/pam-certs
+    - apparmor/pam-nginx
+    - apparmor/pam-management
+    - apparmor/pam-ls
+    - apparmor/pam-tools
+  haproxy:
+    - ca-certificates
+    - haproxy
+    - scripts
+    - .env-haproxy
+    - apparmor/pam-haproxy
+    - apparmor/pam-keepalived
+```
+</details>
+
+<details><summary>config.json</summary>
+
+```json
+{
+  "DefaultServer": "TARGET_SERVER_FQDN", // к заполнению
+  "DefaultDbServer": "pgsql",
+  "DefaultDbUser": "admin",
+  "DefaultDbPassword": "Q1w2e3r4",
+  "IdpAdminSids": [
+    "AD_ADMIN_SID" // к заполнению
+  ],
+ "CoreServiceStorageConfiguration": {
+    "Type": "FileSystem",
+    "Settings": {
+    "Root": "/mnt/storage"
+    }
+  },
+  "GatewayServiceStorageConfiguration": {
+    "Type": "FileSystem",
+    "Settings": {
+    "Root": "/mnt/storage"
+    }
+  },
+  "Database": "pgsql",
+ "LogServerUrl": "http://ls:5080/api",
+  "EncryptionKey": "3227cff10b834ee60ad285588c6510ea1b4ded5b24704cf644a51d2a9db3b7e5", // к заполнению
+  "ActiveDirectoryDomain": "AD_FQDN", //к заполнению
+  "ActiveDirectoryContainerPath": "USER_CONTAINER_DN", // к заполнению
+  "ActiveDirectoryUserName": "AD_SERVICE_USER_NAME", // к заполнению
+  "ActiveDirectoryPassword": "AD_SERVICE_USER_PASSWORD", // к заполнению
+  "ActiveDirectorySsl": true, // или false
+  "IsLinux": true,
+  "ThreadPoolSize": 8,
+  "Enable2faByDefault": true,
+  "enableOrganizationalUnits": false
+}
+```
+</details>
 ```bash
 sudo chmod 777 *.sh
 sudo bash run-deploy.sh --bench-skip -vvv
