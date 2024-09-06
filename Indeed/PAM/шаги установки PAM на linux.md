@@ -411,3 +411,13 @@ bash /etc/indeed/indeed-pam/scripts/run-pam.sh
 ```
 </details>
 
+Make [security settings](https://docs.indeed-company.ru/privileged-access-manager/2.10/security-recommendations/access-server-security-settings/)
+```
+cd IndeedPAM_2.10.1_RU\Indeed-pam-windows\MISC\ConfigurationProtector\
+```
+```
+.\Pam.Tools.Configuration.Protector.exe apply-gateway-security
+```
+```
+.\Pam.Tools.Configuration.Protector.exe validate-gateway-security
+```
