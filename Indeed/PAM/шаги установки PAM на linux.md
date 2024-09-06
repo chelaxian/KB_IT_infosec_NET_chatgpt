@@ -345,6 +345,10 @@ fill in Core and Auth(IDP) sections
     "GatewaySecret": "XxXXXXXXXXxXXXXXXXXxXXXXXXXXXXXXXXxXxXXxXxx="
   },
 ```
+```json
+  "GatewayService": {
+    "Url": "https://win-rds.domain.net:5443/"
+```
 </details>
 
 Copy `"GatewaySecret": "XxXXXXXXXXxXXXXXXXXxXXXXXXXXXXXXXXxXxXXxXxx=",` string to \
@@ -360,10 +364,6 @@ fill in Core and Auth(IDP) sections
       "Domain": "FULL.DOMAIN.NAME",
       "Login": "USER",
       "Password": "PASSWORD"
-```
-```json
-  "GatewayService": {
-    "Url": "https://win-rds.domain.net:5443/"
 ```
 add this lines to the end of file and check json
 ```json
