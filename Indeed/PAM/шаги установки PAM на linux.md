@@ -450,7 +450,8 @@ You may ignore that.
 </details>
 
 ### Add Corporate certs or Generate Self-Signed certs and change default one
-
+<details><summary>For Prod. You can skip it for PoV/Pilot.</summary>
+  
 [generate self-signed cert on windows](https://github.com/chelaxian/KB_IT_infosec_NET_chatgpt/blob/main/%D0%BE%D0%BF%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D0%B8%20%D1%81%20%D1%81%D0%B5%D1%80%D1%82%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%82%D0%B0%D0%BC%D0%B8/%D0%B3%D0%B5%D0%BD%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D1%8F%20%D1%81%D0%B5%D1%80%D1%82%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%82%D0%B0%20(powershell%20-%20windows).md)
 
 <details><summary>Spoiler (if you don't have corporate CA and cert)</summary>
@@ -508,8 +509,11 @@ cp pam-ca.crt /etc/indeed/indeed-pam/ca-certificates/
 cp pam.crt /etc/indeed/indeed-pam/certs/pam.crt
 cp pam.key /etc/indeed/indeed-pam/certs/pam.key
 ```
+</details>
 
-### Add LDAPS root CA + intermediate CA and check connection
+### Add LDAPS root CA + intermediate CA and check connection (not essential)
+<details><summary>If you need to Change/Rotate passwords</summary>
+  
 ```bash
 cp ca1.cer /etc/indeed/indeed-pam/ca-certificates/ca1.crt #base64 (root CA)
 cp ca2.cer /etc/indeed/indeed-pam/ca-certificates/ca2.crt #base64 (intermediate CA)
@@ -549,6 +553,7 @@ DNS.2 = domain.com
 
 ```
 
+</details>
 </details>
 
 ### Commands to STOP / START / SET permissions after CHANGES in CONFIGS
