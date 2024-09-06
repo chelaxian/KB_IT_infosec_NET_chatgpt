@@ -5,6 +5,8 @@
 [Документация Indeed PAM](https://docs.indeed-company.ru/privileged-access-manager/2.10/intro/) \
 [База знаний](https://support.indeed-company.ru/Knowledgebase/List/Index/50/indeed-privileged-access-manager) 
 
+---
+
 ### Install dependensies
 ```bash
 sudo apt-get update && sudo apt-get install openssh-server nano htop zip unzip net-tools curl wget python3 python-is-python3 sudo iptables tcpdump ldap-utils -y
@@ -43,6 +45,8 @@ sudo chmod 777 /var/run/docker.sock
 sudo docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v "/var/run/docker.sock:/var/run/docker.sock" -v "portainer_data:/data" portainer/portainer-ce:2.21.0
 ```
 </details>
+
+---
   
 ### Download Installer, Copy certs and configs to folders and start Deploy
 Create `ca.crt`, `cert.pfx`, Edit and Prepare `vars.yml`, `config.json` and place them into `~home` directory
@@ -347,6 +351,9 @@ openssl rand -hex 32
 sudo chmod 777 *.sh
 sudo bash run-deploy.sh --bench-skip -vvv
 ```
+
+---
+
 <details><summary>Spoiler (If you want to pass Benchmark without skipping) - not necessary</summary>
 
 ### Fix Docker Bench for Security
@@ -441,6 +448,8 @@ sudo chmod 777 -R ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/state
 ```
 </details>
 
+---
+
 ### Warnings
 
 On Debian 12 you will have visual bug - Docker Containers may look like `Unhealthy` while fully Healthy and Running.
@@ -449,7 +458,9 @@ You may ignore that.
   <img width="875" alt="image" src="https://github.com/user-attachments/assets/16cec3c1-7745-40d4-a002-63b769d8577f">
 </details>
 
-### Add Corporate certs or Generate Self-Signed certs and change default one
+---
+
+### Add Corporate certs or Generate Self-Signed certs and change default one (not essential)
 <details><summary>For Prod. You can skip it for PoV/Pilot.</summary>
   
 [generate self-signed cert on windows](https://github.com/chelaxian/KB_IT_infosec_NET_chatgpt/blob/main/%D0%BE%D0%BF%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D0%B8%20%D1%81%20%D1%81%D0%B5%D1%80%D1%82%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%82%D0%B0%D0%BC%D0%B8/%D0%B3%D0%B5%D0%BD%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D1%8F%20%D1%81%D0%B5%D1%80%D1%82%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%82%D0%B0%20(powershell%20-%20windows).md)
@@ -511,6 +522,8 @@ cp pam.key /etc/indeed/indeed-pam/certs/pam.key
 ```
 </details>
 
+---
+
 ### Add LDAPS root CA + intermediate CA and check connection (not essential)
 <details><summary>If you need to Change/Rotate passwords</summary>
   
@@ -532,6 +545,8 @@ DNS.2 = domain.com
 ```
 [how to 1](https://docs.inno.tech/ru/linux-configuration-manager/latest/maintenance-guide/integrations/ad-integration/set-ldap-over-ssl/) \
 [how to 2](https://winitpro.ru/index.php/2014/10/02/aktiviruem-ldap-over-ssl-ldaps-v-windows-server-2012-r2/)
+
+---
 
 ### Change settings from LDAP to LDAPS
 ```bash
@@ -556,12 +571,16 @@ DNS.2 = domain.com
 </details>
 </details>
 
+---
+
 ### Commands to STOP / START / SET permissions after CHANGES in CONFIGS
 ```bash
 bash /etc/indeed/indeed-pam/scripts/stop-pam.sh
 bash /etc/indeed/indeed-pam/scripts/set-permissions.sh
 bash /etc/indeed/indeed-pam/scripts/run-pam.sh
 ```
+
+---
 
 ### Add /etc/hosts entry to docker containers
 <details><summary>Spoiler (If needed)</summary>
@@ -580,12 +599,16 @@ bash /etc/indeed/indeed-pam/scripts/run-pam.sh
 +      - "domain.net:10.x.x.x"
 ```
 </details>
+
+---
   
 ### Check LOGS to MONITOR and FIX ERRORS
 ```bash
  cd /etc/indeed/indeed-pam/logs/
  cat /etc/indeed/indeed-pam/logs/idp/errors.log
 ```
+
+---
 
 ### Run Indeed-Wizard docker on same VM/server
 
@@ -628,6 +651,8 @@ volumes:
 sudo ./run-wizard.sh -vvv
 ```
 </details>
+
+---
 
 ### Add RDS Windows Server (RemoteApp) to Linux PAM
 
