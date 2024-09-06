@@ -656,6 +656,8 @@ sudo ./run-wizard.sh -vvv
 
 ### Add RDS Windows Server (RemoteApp) to Linux PAM
 
+<details><summary>Spoiler (If you need RemoteApp/Web)</summary>
+
 ```bash
  sudo bash /etc/indeed/indeed-pam/tools/protector.sh unprotect
 ```
@@ -683,8 +685,9 @@ fill in Core and Auth(IDP) sections
 </details>
 
 Copy `"GatewaySecret": "XxXXXXXXXXxXXXXXXXXxXXXXXXXXXXXXXXxXxXXxXxx=",` string to \
-`C:\Program Files\Indeed\Indeed PAM\Gateway\Pam.Gateway.Service\appsettings.json` on Windows RDS server \
-fill in Core and Auth(IDP) sections
+`C:\Program Files\Indeed\Indeed PAM\Gateway\Pam.Gateway.Service\appsettings.json` \ 
+on Windows RDS server and fill in Core and Auth(IDP) sections
+
 <details><summary>appsettings.json</summary>
   
 ```json
@@ -874,4 +877,4 @@ check on windows
 ```cmd
 netstat -an | findstr 5443
 ```
-
+</details>
