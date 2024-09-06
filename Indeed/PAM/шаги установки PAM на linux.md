@@ -60,7 +60,7 @@ curl -L -o IndeedPAM_2.10.1_RU.zip \
 ```
 ```bash
 unzip IndeedPAM_2.10.1_RU.zip
-#if you have your own certs
+#we will add certs later
 #cp ca.crt ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/ca-certificates/
 #cp cert.pfx ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/certs/
 cp vars.yml ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/scripts/ansible/
