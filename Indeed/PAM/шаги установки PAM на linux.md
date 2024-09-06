@@ -578,7 +578,7 @@ bash /etc/indeed/indeed-pam/scripts/run-pam.sh
 
 ### Run Indeed-Wizard docker on same VM/server
 
-<details><summary>Spoiler (for non-All-in-One installations - if you need to add Windows RDS or other PAM components)</summary>
+<details><summary>Spoiler (for non-All-in-One installations - if you need to add Windows RDS or other PAM components)</summary> \
 
   
 0. stop PAM ant try to run wizard
