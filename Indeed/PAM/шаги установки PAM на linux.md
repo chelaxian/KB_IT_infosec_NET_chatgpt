@@ -347,7 +347,7 @@ openssl rand -hex 32
 sudo chmod 777 *.sh
 sudo bash run-deploy.sh --bench-skip -vvv
 ```
-<details><summary>Spoiler (If you want to pass Benchmark without skipping)</summary>
+<details><summary>Spoiler (If you want to pass Benchmark without skipping) - not necessary</summary>
 
 ### Fix Docker Bench for Security
 
@@ -424,7 +424,7 @@ sudo bash run-deploy.sh -vvv
 ```
 </details>
 
-<details><summary>Spoiler (If you have problems with permissions while Deploying)</summary>
+<details><summary>Spoiler (If you have problems with permissions while Deploying) - not necessary</summary>
   
 ### Fix permissons
 ```bash
