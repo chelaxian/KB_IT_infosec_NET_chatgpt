@@ -716,3 +716,28 @@ cd IndeedPAM_2.10.1_RU\Indeed-pam-windows\MISC\ConfigurationProtector\
 ```
 .\Pam.Tools.Configuration.Protector.exe validate-gateway-security
 ```
+
+#### Rename this file and restart RDS service
+
+`C:\Program Files\Indeed\Indeed PAM\Gateway\ProcessCreateHook.sample`
+
+to
+
+`C:\Program Files\Indeed\Indeed PAM\Gateway\ProcessCreateHook`
+<details><summary>screenshot</summary>
+<img width="598" alt="image" src="https://github.com/user-attachments/assets/a283ac3a-cf1d-4021-b9ff-0a4aef94e717">
+</details>
+
+
+#### Allow Firewall for 5443 port
+<details><summary>screenshot</summary>
+<img width="338" alt="image" src="https://github.com/user-attachments/assets/82f78782-0c9e-47ea-9d2a-c8f6a411f442">
+<img width="332" alt="image" src="https://github.com/user-attachments/assets/34598578-0ff2-4ffc-9c81-6671901405c2">
+</details>
+
+check from linux
+```bash
+curl -ik https://win-rds.domain.net:5443/ --cacert /etc/indeed/indeed-pam/ca-certificates/ca-pem.crt
+```
+
+
