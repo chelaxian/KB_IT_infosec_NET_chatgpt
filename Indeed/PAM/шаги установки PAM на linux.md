@@ -561,7 +561,7 @@ DNS.2 = domain.com
 "LdapServerType": "ActiveDirectory",
 "Domain": "domain.net",
 -"Port": 389,
-+"Port": 689,
++"Port": 636,
 "AuthType": "Basic",
 -"SecureSocketLayer": false,
 +"SecureSocketLayer": true,
