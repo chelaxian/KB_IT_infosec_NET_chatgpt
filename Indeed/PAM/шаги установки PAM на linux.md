@@ -292,7 +292,8 @@ nano /etc/indeed/indeed-pam/docker-compose.management-server.yml
 
 0. stop PAM ant try to run wizard
 ```bash
-bash /etc/indeed/indeed-pam/scripts/stop-pam.sh
+sudo bash /etc/indeed/indeed-pam/scripts/stop-pam.sh
+sudo bash /home/$(whoami)/IndeedPAM_2.10.1_RU/indeed-pam-linux/run-wizard.sh
 ```
 1. if it not helps - rename docker container `pam-ca-certificates` to `pam-ca-certificates1`
 
