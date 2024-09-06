@@ -173,7 +173,7 @@ You may ignore that.
 </details>
 
 ### Generate Self-Signed certificate and change default one
-<details><summary>Spoiler</summary>
+<details><summary>Spoiler (if you don't have corporate CA and cert)</summary>
 
 ```bash
 openssl genrsa -out pam-ca.key 2048
@@ -292,7 +292,7 @@ nano /etc/indeed/indeed-pam/docker-compose.management-server.yml
 ```
 
 ### Run Indeed-Wizard docker on same VM/server
-<details><summary>spiler</summary>
+<details><summary>Spoiler (for non-All-in-One installations - if you need to add Windows RDS or other PAM components)</summary>
 0. stop PAM ant try to run wizard
 ```bash
 sudo bash /etc/indeed/indeed-pam/scripts/stop-pam.sh
