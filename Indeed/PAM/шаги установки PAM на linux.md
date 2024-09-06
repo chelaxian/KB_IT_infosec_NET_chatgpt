@@ -353,16 +353,13 @@ fill in Core and Auth(IDP) sections
 <details><summary>appsettings.json</summary>
   
 ```json
-{
-  "Core": {
-    "Url": "https://pam.domain.net/core",
-    "RequestTimeout": "00:01:00"
-  },
-  "Auth": {
-    "IdpUrl": "https://pam.domain.net/idp",
-    "IdpRequiresHttps": true,
-    "GatewaySecret": "XxXXXXXXXXxXXXXXXXXxXXXXXXXXXXXXXXxXxXXxXxx="
-  },
+  "Storage": {
+    "Type": "SMB",
+    "Settings": {
+      "Root": "\\\\IP.IP.IP.IP\\IPAMStorage",
+      "Domain": "FULL.DOMAIN.NAME",
+      "Login": "USER",
+      "Password": "PASSWORD"
 ```
 ```json
   "GatewayService": {
