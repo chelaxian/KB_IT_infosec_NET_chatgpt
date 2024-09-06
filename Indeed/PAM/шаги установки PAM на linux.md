@@ -463,9 +463,9 @@ You may ignore that.
 ### Add Corporate certs or Generate Self-Signed certs and change default one (not essential)
 <details><summary>For Prod. You can skip it for PoV/Pilot.</summary>
   
-[generate self-signed cert on windows](https://github.com/chelaxian/KB_IT_infosec_NET_chatgpt/blob/main/%D0%BE%D0%BF%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D0%B8%20%D1%81%20%D1%81%D0%B5%D1%80%D1%82%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%82%D0%B0%D0%BC%D0%B8/%D0%B3%D0%B5%D0%BD%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D1%8F%20%D1%81%D0%B5%D1%80%D1%82%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%82%D0%B0%20(powershell%20-%20windows).md)
-
 <details><summary>Spoiler (if you don't have corporate CA and cert)</summary>
+
+[generate self-signed cert on windows](https://github.com/chelaxian/KB_IT_infosec_NET_chatgpt/blob/main/%D0%BE%D0%BF%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D0%B8%20%D1%81%20%D1%81%D0%B5%D1%80%D1%82%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%82%D0%B0%D0%BC%D0%B8/%D0%B3%D0%B5%D0%BD%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D1%8F%20%D1%81%D0%B5%D1%80%D1%82%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%82%D0%B0%20(powershell%20-%20windows).md)
 
 ```bash
 openssl genrsa -out pam-ca.key 2048
