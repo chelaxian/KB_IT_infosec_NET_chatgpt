@@ -289,7 +289,7 @@ nano /etc/indeed/indeed-pam/docker-compose.management-server.yml
 ```
 
 ### Run Indeed-Wizard docker on same VM/server
-
+<details><summary>spiler</summary>
 0. stop PAM ant try to run wizard
 ```bash
 sudo bash /etc/indeed/indeed-pam/scripts/stop-pam.sh
@@ -323,6 +323,7 @@ volumes:
 ```bash
 sudo ./run-wizard.sh -vvv
 ```
+</details>
 ### Add RDS Windows Server (RemoteApp) to Linux PAM
 
 ```bash
