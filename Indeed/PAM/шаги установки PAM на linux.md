@@ -694,10 +694,10 @@ full config
   "Storage": {
     "Type": "SMB",
     "Settings": {
-      "Root": "\\\\IP.IP.IP.IP\\IPAMStorage",
-      "Domain": "FULL.DOMAIN.NAME",
-      "Login": "USER",
-      "Password": "PASSWORD"
+      "Root": "\\\\IP.IP.IP.IP\\IPAMStorage", //change me
+      "Domain": "FULL.DOMAIN.NAME", //change me
+      "Login": "USER", //change me
+      "Password": "PASSWORD" //change me
    }
   },
 
@@ -765,7 +765,7 @@ full config
       "HttpsInlineCertStore": {
         "Url": "https://0.0.0.0:5443",
         "Certificate": {
-          "Subject": "win-rds.domain.ru",
+          "Subject": "win-rds.domain.ru", //change me
           "Store": "My",
           "Location": "LocalMachine",
           "AllowInvalid": "False"
