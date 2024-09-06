@@ -1,0 +1,6221 @@
+{
+  "log": {
+    "level": "debug",
+    "output": "box.log",
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      {
+        "tag": "dns-remote",
+        "address": "1.1.1.2",
+        "address_resolver": "dns-direct"
+      },
+      {
+        "tag": "dns-trick-direct",
+        "address": "https://sky.rethinkdns.com/",
+        "detour": "direct-fragment"
+      },
+      {
+        "tag": "dns-direct",
+        "address": "10.11.0.1",
+        "address_resolver": "dns-local",
+        "detour": "direct"
+      },
+      {
+        "tag": "dns-local",
+        "address": "local",
+        "detour": "direct"
+      },
+      {
+        "tag": "dns-block",
+        "address": "rcode://success"
+      }
+    ],
+    "rules": [
+      {
+        "domain": "cp.cloudflare.com",
+        "server": "dns-remote",
+        "rewrite_ttl": 3000
+      },
+      {
+        "domain_suffix": ".ru",
+        "server": "dns-direct"
+      },
+      {
+        "rule_set": [
+          "geoip-ru",
+          "geosite-ru"
+        ],
+        "server": "dns-direct"
+      }
+    ],
+    "final": "dns-remote",
+    "static_ips": {
+      "sky.rethinkdns.com": [
+        "104.17.147.22",
+        "104.17.148.22",
+        "104.21.83.62",
+        "172.67.214.246",
+        "2606:4700:3030::6815:533e",
+        "2606:4700:3030::ac43:d6f6"
+      ]
+    },
+    "independent_cache": true
+  },
+  "inbounds": [
+    {
+      "type": "tun",
+      "tag": "tun-in",
+      "mtu": 9000,
+      "inet4_address": "172.19.0.1/28",
+      "auto_route": true,
+      "endpoint_independent_nat": true,
+      "stack": "gvisor",
+      "sniff": true
+    },
+    {
+      "type": "mixed",
+      "tag": "mixed-in",
+      "listen": "127.0.0.1",
+      "listen_port": 12334,
+      "sniff": true,
+      "sniff_override_destination": true
+    },
+    {
+      "type": "direct",
+      "tag": "dns-in",
+      "listen": "127.0.0.1",
+      "listen_port": 16450
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "selector",
+      "tag": "select",
+      "outbounds": [
+        "auto",
+        " Польша [VMess - tcp]",
+        " Канада [VMess - tcp]",
+        " Великобритания[R] [VMess - tcp]",
+        " Великобритания [VMess - tcp]",
+        " США(Даллас) [VMess - tcp]",
+        " США(Чикаго) [VMess - tcp]",
+        " Норвегия [VMess - tcp]",
+        " Румыния [VMess - tcp]",
+        " Эстония [VMess - tcp]",
+        " Россия(Москва) [VMess - tcp]",
+        " Россия(Санкт-Петербург) [VMess - tcp]",
+        " Германия [VMess - tcp]",
+        " Германия[R2] [VMess - tcp]",
+        " Германия[R3] [VMess - tcp]",
+        " Казахстан [VMess - tcp]",
+        " Швеция [VMess - tcp]",
+        " Индия [VMess - tcp]",
+        " Беларусь [VMess - tcp]",
+        " ОАЭ [VMess - tcp]",
+        " Бразилия [VMess - tcp]",
+        " Гонконг [VMess - tcp]",
+        " Япония [VMess - tcp]",
+        " Греция [VMess - tcp]",
+        " Израиль [VMess - tcp]",
+        " Израиль[R] [VMess - tcp]",
+        " Финляндия [VMess - tcp]",
+        " Нидерланды [VMess - tcp]",
+        " Нидерланды[R] [VMess - tcp]",
+        " Латвия [VMess - tcp]",
+        " Литва [VMess - tcp]",
+        " Франция [VMess - tcp]",
+        " Италия [VMess - tcp]",
+        " Турция [VMess - tcp]",
+        " Турция[R] [VMess - tcp]",
+        " Румыния[R] [VMess - tcp]",
+        " Польша[R] [VMess - tcp]",
+        " Беларусь[R] [VMess - tcp]",
+        " Франция[R] [VMess - tcp]",
+        " Австрия [VMess - tcp]",
+        " Нидерланды[R2] [VMess - tcp]",
+        " Италия[R] [VMess - tcp]",
+        " Казахстан[R] [VMess - tcp]",
+        " Армения [VMess - tcp]",
+        "Швейцария [VMess - tcp]",
+        " США(Феникс) [VMess - tcp]",
+        " Польша [VMess - ws]",
+        " Канада [VMess - ws]",
+        " Великобритания[R] [VMess - ws]",
+        " Великобритания [VMess - ws]",
+        " США(Даллас) [VMess - ws]",
+        " США(Чикаго) [VMess - ws]",
+        " Норвегия [VMess - ws]",
+        " Румыния [VMess - ws]",
+        " Эстония [VMess - ws]",
+        " Россия(Москва) [VMess - ws]",
+        " Россия(Санкт-Петербург) [VMess - ws]",
+        " Германия [VMess - ws]",
+        " Германия[R] [VMess - ws]",
+        " Германия[R2] [VMess - ws]",
+        " Казахстан [VMess - ws]",
+        " Швеция [VMess - ws]",
+        " Индия [VMess - ws]",
+        " Беларусь [VMess - ws]",
+        " ОАЭ [VMess - ws]",
+        " Бразилия [VMess - ws]",
+        " Гонконг [VMess - ws]",
+        " Япония [VMess - ws]",
+        " Греция [VMess - ws]",
+        " Израиль [VMess - ws]",
+        " Израиль[R] [VMess - ws]",
+        " Финляндия [VMess - ws]",
+        " Нидерланды [VMess - ws]",
+        " Нидерланды[R] [VMess - ws]",
+        " Латвия [VMess - ws]",
+        " Литва [VMess - ws]",
+        " Франция [VMess - ws]",
+        " Италия [VMess - ws]",
+        " Турция [VMess - ws]",
+        " Турция[R] [VMess - ws]",
+        " Румыния[R] [VMess - ws]",
+        " Польша[R] [VMess - ws]",
+        " Беларусь[R] [VMess - ws]",
+        " Франция[R] [VMess - ws]",
+        " Австрия [VMess - ws]",
+        " Нидерланды[R2] [VMess - ws]",
+        " Италия[R] [VMess - ws]",
+        " Казахстан[R] [VMess - ws]",
+        " Армения [VMess - ws]",
+        "Швейцария [VMess - ws]",
+        " США(Феникс) [VMess - ws]",
+        " Польша [VLESS - tcp]",
+        " Канада [VLESS - tcp]",
+        " Великобритания[R][VLESS - tcp]",
+        " Великобритания [VLESS - tcp]",
+        " США(Даллас) [VLESS - tcp]",
+        " США(Чикаго) [VLESS - tcp]",
+        " Норвегия [VLESS - tcp]",
+        " Румыния [VLESS - tcp]",
+        " Эстония [VLESS - tcp]",
+        " Россия(Москва) [VLESS - tcp]",
+        " Россия(Санкт-Петербург) [VLESS - tcp]",
+        " Германия [VLESS - tcp]",
+        " Германия[R] [VLESS - tcp]",
+        " Германия[R2] [VLESS - tcp]",
+        " Казахстан [VLESS - tcp]",
+        " Швеция [VLESS - tcp]",
+        " Индия [VLESS - tcp]",
+        " Беларусь [VLESS - tcp]",
+        " ОАЭ [VLESS - tcp]",
+        " Бразилия [VLESS - tcp]",
+        " Гонконг [VLESS - tcp]",
+        " Япония [VLESS - tcp]",
+        " Греция [VLESS - tcp]",
+        " Израиль [VLESS - tcp]",
+        " Израиль[R] [VLESS - tcp]",
+        " Финляндия [VLESS - tcp]",
+        " Нидерланды [VLESS - tcp]",
+        " Нидерланды[R] [VLESS - tcp]",
+        " Латвия [VLESS - tcp]",
+        " Литва [VLESS - tcp]",
+        " Франция [VLESS - tcp]",
+        " Италия [VLESS - tcp]",
+        " Турция [VLESS - tcp]",
+        " Турция[R] [VLESS - tcp]",
+        " Румыния[R] [VLESS - tcp]",
+        " Польша[R] [VLESS - tcp]",
+        " Беларусь[R] [VLESS - tcp]",
+        " Франция[R] [VLESS - tcp]",
+        " Австрия [VLESS - tcp]",
+        " Нидерланды[R2] [VLESS - tcp]",
+        " Италия[R] [VLESS - tcp]",
+        " Казахстан[R] [VLESS - tcp]",
+        " Армения [VLESS - tcp]",
+        "Швейцария [VLESS - tcp]",
+        " США(Феникс) [VLESS - tcp]",
+        " Польша [VLESS - grpc]",
+        " Канада [VLESS - grpc]",
+        " Великобритания[R] [VLESS - grpc]",
+        " Великобритания [VLESS - grpc]",
+        " США(Даллас) [VLESS - grpc]",
+        " США(Чикаго) [VLESS - grpc]",
+        " Норвегия [VLESS - grpc]",
+        " Румыния [VLESS - grpc]",
+        " Эстония [VLESS - grpc]",
+        " Россия(Москва) [VLESS - grpc]",
+        " Россия(Санкт-Петербург) [VLESS - grpc]",
+        " Германия [VLESS - grpc]",
+        " Германия[R] [VLESS - grpc]",
+        " Германия[R2] [VLESS - grpc]",
+        " Казахстан [VLESS - grpc]",
+        " Швеция [VLESS - grpc]",
+        " Индия [VLESS - grpc]",
+        " Беларусь [VLESS - grpc]",
+        " ОАЭ [VLESS - grpc]",
+        " Бразилия [VLESS - grpc]",
+        " Гонконг [VLESS - grpc]",
+        " Япония [VLESS - grpc]",
+        " Греция [VLESS - grpc]",
+        " Израиль [VLESS - grpc]",
+        " Израиль[R] [VLESS - grpc]",
+        " Финляндия [VLESS - grpc]",
+        " Нидерланды [VLESS - grpc]",
+        " Нидерланды[R] [VLESS - grpc]",
+        " Латвия [VLESS - grpc]",
+        " Литва [VLESS - grpc]",
+        " Франция [VLESS - grpc]",
+        " Италия [VLESS - grpc]",
+        " Турция [VLESS - grpc]",
+        " Турция[R] [VLESS - grpc]",
+        " Румыния[R] [VLESS - grpc]",
+        " Польша[R] [VLESS - grpc]",
+        " Беларусь[R] [VLESS - grpc]",
+        " Франция[R] [VLESS - grpc]",
+        " Австрия [VLESS - grpc]",
+        " Нидерланды[R2] [VLESS - grpc]",
+        " Италия[R] [VLESS - grpc]",
+        " Казахстан[R] [VLESS - grpc]",
+        " Армения [VLESS - grpc]",
+        "Швейцария [VLESS - grpc]",
+        " США(Феникс) [VLESS - grpc]",
+        " Польша [Trojan - ws]",
+        " Канада [Trojan - ws]",
+        " Великобритания[R] [Trojan - ws]",
+        " Великобритания [Trojan - ws]",
+        " США(Даллас) [Trojan - ws]",
+        " США(Чикаго) [Trojan - ws]",
+        " Норвегия [Trojan - ws]",
+        " Румыния [Trojan - ws]",
+        " Эстония [Trojan - ws]",
+        " Россия(Москва) [Trojan - ws]",
+        " Россия(Санкт-Петербург) [Trojan - ws]",
+        " Германия [Trojan - ws]",
+        " Германия[R] [Trojan - ws]",
+        " Германия[R] [Trojan - ws] ",
+        " Казахстан [Trojan - ws]",
+        " Швеция [Trojan - ws]",
+        " Индия [Trojan - ws]",
+        " Беларусь [Trojan - ws]",
+        " ОАЭ [Trojan - ws]",
+        " Бразилия [Trojan - ws]",
+        " Гонконг [Trojan - ws]",
+        " Япония [Trojan - ws]",
+        " Греция [Trojan - ws]",
+        " Израиль [Trojan - ws]",
+        " Израиль[R] [Trojan - ws]",
+        " Финляндия [Trojan - ws]",
+        " Нидерланды [Trojan - ws]",
+        " Нидерланды[R] [Trojan - ws]",
+        " Латвия [Trojan - ws]",
+        " Литва [Trojan - ws]",
+        " Франция [Trojan - ws]",
+        " Италия [Trojan - ws]",
+        " Турция [Trojan - ws]",
+        " Турция[R] [Trojan - ws]",
+        " Румыния[R] [Trojan - ws]",
+        " Польша[R] [Trojan - ws]",
+        " Беларусь[R] [Trojan - ws]",
+        " Франция[R] [Trojan - ws]",
+        " Австрия [Trojan - ws]",
+        " Нидерланды[R2] [Trojan - ws]",
+        " Италия[R] [Trojan - ws]",
+        " Казахстан[R] [Trojan - ws]",
+        " Армения [Trojan - ws]",
+        "Швейцария [Trojan - ws]",
+        " США(Феникс) [Trojan - ws]",
+        " Польша [Shadowsocks - tcp]",
+        " Канада [Shadowsocks - tcp]",
+        " Великобритания[R] [Shadowsocks - tcp]",
+        " Великобритания [Shadowsocks - tcp]",
+        " США(Даллас) [Shadowsocks - tcp]",
+        " США(Чикаго) [Shadowsocks - tcp]",
+        " Норвегия [Shadowsocks - tcp]",
+        " Румыния [Shadowsocks - tcp]",
+        " Эстония [Shadowsocks - tcp]",
+        " Россия(Москва) [Shadowsocks - tcp]",
+        " Россия(Санкт-Петербург) [Shadowsocks - tcp]",
+        " Германия [Shadowsocks - tcp]",
+        " Германия[R] [Shadowsocks - tcp]",
+        " Германия[R2] [Shadowsocks - tcp] ",
+        " Казахстан [Shadowsocks - tcp]",
+        " Швеция [Shadowsocks - tcp]",
+        " Индия [Shadowsocks - tcp]",
+        " Беларусь [Shadowsocks - tcp]",
+        " ОАЭ [Shadowsocks - tcp]",
+        " Бразилия [Shadowsocks - tcp]",
+        " Гонконг [Shadowsocks - tcp]",
+        " Япония [Shadowsocks - tcp]",
+        " Греция [Shadowsocks - tcp]",
+        " Израиль [Shadowsocks - tcp]",
+        " Израиль[R] [Shadowsocks - tcp]",
+        " Финляндия [Shadowsocks - tcp]",
+        " Нидерланды [Shadowsocks - tcp]",
+        " Нидерланды[R] [Shadowsocks - tcp]",
+        " Латвия [Shadowsocks - tcp]",
+        " Литва [Shadowsocks - tcp]",
+        " Франция [Shadowsocks - tcp]",
+        " Италия [Shadowsocks - tcp]",
+        " Турция [Shadowsocks - tcp]",
+        " Турция[R] [Shadowsocks - tcp]",
+        " Румыния[R] [Shadowsocks - tcp]",
+        " Польша[R] [Shadowsocks - tcp]",
+        " Беларусь[R] [Shadowsocks - tcp]",
+        " Франция[R] [Shadowsocks - tcp]",
+        " Австрия [Shadowsocks - tcp]",
+        " Нидерланды[R2] [Shadowsocks - tcp]",
+        " Италия[R] [Shadowsocks - tcp]",
+        " Казахстан[R] [Shadowsocks - tcp]",
+        " Армения [Shadowsocks - tcp]",
+        "Швейцария [Shadowsocks - tcp]",
+        " США(Феникс) [Shadowsocks - tcp]"
+      ],
+      "default": "auto",
+      "interrupt_exist_connections": true
+    },
+    {
+      "type": "urltest",
+      "tag": "auto",
+      "outbounds": [
+        " Польша [VMess - tcp]",
+        " Канада [VMess - tcp]",
+        " Великобритания[R] [VMess - tcp]",
+        " Великобритания [VMess - tcp]",
+        " США(Даллас) [VMess - tcp]",
+        " США(Чикаго) [VMess - tcp]",
+        " Норвегия [VMess - tcp]",
+        " Румыния [VMess - tcp]",
+        " Эстония [VMess - tcp]",
+        " Россия(Москва) [VMess - tcp]",
+        " Россия(Санкт-Петербург) [VMess - tcp]",
+        " Германия [VMess - tcp]",
+        " Германия[R2] [VMess - tcp]",
+        " Германия[R3] [VMess - tcp]",
+        " Казахстан [VMess - tcp]",
+        " Швеция [VMess - tcp]",
+        " Индия [VMess - tcp]",
+        " Беларусь [VMess - tcp]",
+        " ОАЭ [VMess - tcp]",
+        " Бразилия [VMess - tcp]",
+        " Гонконг [VMess - tcp]",
+        " Япония [VMess - tcp]",
+        " Греция [VMess - tcp]",
+        " Израиль [VMess - tcp]",
+        " Израиль[R] [VMess - tcp]",
+        " Финляндия [VMess - tcp]",
+        " Нидерланды [VMess - tcp]",
+        " Нидерланды[R] [VMess - tcp]",
+        " Латвия [VMess - tcp]",
+        " Литва [VMess - tcp]",
+        " Франция [VMess - tcp]",
+        " Италия [VMess - tcp]",
+        " Турция [VMess - tcp]",
+        " Турция[R] [VMess - tcp]",
+        " Румыния[R] [VMess - tcp]",
+        " Польша[R] [VMess - tcp]",
+        " Беларусь[R] [VMess - tcp]",
+        " Франция[R] [VMess - tcp]",
+        " Австрия [VMess - tcp]",
+        " Нидерланды[R2] [VMess - tcp]",
+        " Италия[R] [VMess - tcp]",
+        " Казахстан[R] [VMess - tcp]",
+        " Армения [VMess - tcp]",
+        "Швейцария [VMess - tcp]",
+        " США(Феникс) [VMess - tcp]",
+        " Польша [VMess - ws]",
+        " Канада [VMess - ws]",
+        " Великобритания[R] [VMess - ws]",
+        " Великобритания [VMess - ws]",
+        " США(Даллас) [VMess - ws]",
+        " США(Чикаго) [VMess - ws]",
+        " Норвегия [VMess - ws]",
+        " Румыния [VMess - ws]",
+        " Эстония [VMess - ws]",
+        " Россия(Москва) [VMess - ws]",
+        " Россия(Санкт-Петербург) [VMess - ws]",
+        " Германия [VMess - ws]",
+        " Германия[R] [VMess - ws]",
+        " Германия[R2] [VMess - ws]",
+        " Казахстан [VMess - ws]",
+        " Швеция [VMess - ws]",
+        " Индия [VMess - ws]",
+        " Беларусь [VMess - ws]",
+        " ОАЭ [VMess - ws]",
+        " Бразилия [VMess - ws]",
+        " Гонконг [VMess - ws]",
+        " Япония [VMess - ws]",
+        " Греция [VMess - ws]",
+        " Израиль [VMess - ws]",
+        " Израиль[R] [VMess - ws]",
+        " Финляндия [VMess - ws]",
+        " Нидерланды [VMess - ws]",
+        " Нидерланды[R] [VMess - ws]",
+        " Латвия [VMess - ws]",
+        " Литва [VMess - ws]",
+        " Франция [VMess - ws]",
+        " Италия [VMess - ws]",
+        " Турция [VMess - ws]",
+        " Турция[R] [VMess - ws]",
+        " Румыния[R] [VMess - ws]",
+        " Польша[R] [VMess - ws]",
+        " Беларусь[R] [VMess - ws]",
+        " Франция[R] [VMess - ws]",
+        " Австрия [VMess - ws]",
+        " Нидерланды[R2] [VMess - ws]",
+        " Италия[R] [VMess - ws]",
+        " Казахстан[R] [VMess - ws]",
+        " Армения [VMess - ws]",
+        "Швейцария [VMess - ws]",
+        " США(Феникс) [VMess - ws]",
+        " Польша [VLESS - tcp]",
+        " Канада [VLESS - tcp]",
+        " Великобритания[R][VLESS - tcp]",
+        " Великобритания [VLESS - tcp]",
+        " США(Даллас) [VLESS - tcp]",
+        " США(Чикаго) [VLESS - tcp]",
+        " Норвегия [VLESS - tcp]",
+        " Румыния [VLESS - tcp]",
+        " Эстония [VLESS - tcp]",
+        " Россия(Москва) [VLESS - tcp]",
+        " Россия(Санкт-Петербург) [VLESS - tcp]",
+        " Германия [VLESS - tcp]",
+        " Германия[R] [VLESS - tcp]",
+        " Германия[R2] [VLESS - tcp]",
+        " Казахстан [VLESS - tcp]",
+        " Швеция [VLESS - tcp]",
+        " Индия [VLESS - tcp]",
+        " Беларусь [VLESS - tcp]",
+        " ОАЭ [VLESS - tcp]",
+        " Бразилия [VLESS - tcp]",
+        " Гонконг [VLESS - tcp]",
+        " Япония [VLESS - tcp]",
+        " Греция [VLESS - tcp]",
+        " Израиль [VLESS - tcp]",
+        " Израиль[R] [VLESS - tcp]",
+        " Финляндия [VLESS - tcp]",
+        " Нидерланды [VLESS - tcp]",
+        " Нидерланды[R] [VLESS - tcp]",
+        " Латвия [VLESS - tcp]",
+        " Литва [VLESS - tcp]",
+        " Франция [VLESS - tcp]",
+        " Италия [VLESS - tcp]",
+        " Турция [VLESS - tcp]",
+        " Турция[R] [VLESS - tcp]",
+        " Румыния[R] [VLESS - tcp]",
+        " Польша[R] [VLESS - tcp]",
+        " Беларусь[R] [VLESS - tcp]",
+        " Франция[R] [VLESS - tcp]",
+        " Австрия [VLESS - tcp]",
+        " Нидерланды[R2] [VLESS - tcp]",
+        " Италия[R] [VLESS - tcp]",
+        " Казахстан[R] [VLESS - tcp]",
+        " Армения [VLESS - tcp]",
+        "Швейцария [VLESS - tcp]",
+        " США(Феникс) [VLESS - tcp]",
+        " Польша [VLESS - grpc]",
+        " Канада [VLESS - grpc]",
+        " Великобритания[R] [VLESS - grpc]",
+        " Великобритания [VLESS - grpc]",
+        " США(Даллас) [VLESS - grpc]",
+        " США(Чикаго) [VLESS - grpc]",
+        " Норвегия [VLESS - grpc]",
+        " Румыния [VLESS - grpc]",
+        " Эстония [VLESS - grpc]",
+        " Россия(Москва) [VLESS - grpc]",
+        " Россия(Санкт-Петербург) [VLESS - grpc]",
+        " Германия [VLESS - grpc]",
+        " Германия[R] [VLESS - grpc]",
+        " Германия[R2] [VLESS - grpc]",
+        " Казахстан [VLESS - grpc]",
+        " Швеция [VLESS - grpc]",
+        " Индия [VLESS - grpc]",
+        " Беларусь [VLESS - grpc]",
+        " ОАЭ [VLESS - grpc]",
+        " Бразилия [VLESS - grpc]",
+        " Гонконг [VLESS - grpc]",
+        " Япония [VLESS - grpc]",
+        " Греция [VLESS - grpc]",
+        " Израиль [VLESS - grpc]",
+        " Израиль[R] [VLESS - grpc]",
+        " Финляндия [VLESS - grpc]",
+        " Нидерланды [VLESS - grpc]",
+        " Нидерланды[R] [VLESS - grpc]",
+        " Латвия [VLESS - grpc]",
+        " Литва [VLESS - grpc]",
+        " Франция [VLESS - grpc]",
+        " Италия [VLESS - grpc]",
+        " Турция [VLESS - grpc]",
+        " Турция[R] [VLESS - grpc]",
+        " Румыния[R] [VLESS - grpc]",
+        " Польша[R] [VLESS - grpc]",
+        " Беларусь[R] [VLESS - grpc]",
+        " Франция[R] [VLESS - grpc]",
+        " Австрия [VLESS - grpc]",
+        " Нидерланды[R2] [VLESS - grpc]",
+        " Италия[R] [VLESS - grpc]",
+        " Казахстан[R] [VLESS - grpc]",
+        " Армения [VLESS - grpc]",
+        "Швейцария [VLESS - grpc]",
+        " США(Феникс) [VLESS - grpc]",
+        " Польша [Trojan - ws]",
+        " Канада [Trojan - ws]",
+        " Великобритания[R] [Trojan - ws]",
+        " Великобритания [Trojan - ws]",
+        " США(Даллас) [Trojan - ws]",
+        " США(Чикаго) [Trojan - ws]",
+        " Норвегия [Trojan - ws]",
+        " Румыния [Trojan - ws]",
+        " Эстония [Trojan - ws]",
+        " Россия(Москва) [Trojan - ws]",
+        " Россия(Санкт-Петербург) [Trojan - ws]",
+        " Германия [Trojan - ws]",
+        " Германия[R] [Trojan - ws]",
+        " Германия[R] [Trojan - ws] ",
+        " Казахстан [Trojan - ws]",
+        " Швеция [Trojan - ws]",
+        " Индия [Trojan - ws]",
+        " Беларусь [Trojan - ws]",
+        " ОАЭ [Trojan - ws]",
+        " Бразилия [Trojan - ws]",
+        " Гонконг [Trojan - ws]",
+        " Япония [Trojan - ws]",
+        " Греция [Trojan - ws]",
+        " Израиль [Trojan - ws]",
+        " Израиль[R] [Trojan - ws]",
+        " Финляндия [Trojan - ws]",
+        " Нидерланды [Trojan - ws]",
+        " Нидерланды[R] [Trojan - ws]",
+        " Латвия [Trojan - ws]",
+        " Литва [Trojan - ws]",
+        " Франция [Trojan - ws]",
+        " Италия [Trojan - ws]",
+        " Турция [Trojan - ws]",
+        " Турция[R] [Trojan - ws]",
+        " Румыния[R] [Trojan - ws]",
+        " Польша[R] [Trojan - ws]",
+        " Беларусь[R] [Trojan - ws]",
+        " Франция[R] [Trojan - ws]",
+        " Австрия [Trojan - ws]",
+        " Нидерланды[R2] [Trojan - ws]",
+        " Италия[R] [Trojan - ws]",
+        " Казахстан[R] [Trojan - ws]",
+        " Армения [Trojan - ws]",
+        "Швейцария [Trojan - ws]",
+        " США(Феникс) [Trojan - ws]",
+        " Польша [Shadowsocks - tcp]",
+        " Канада [Shadowsocks - tcp]",
+        " Великобритания[R] [Shadowsocks - tcp]",
+        " Великобритания [Shadowsocks - tcp]",
+        " США(Даллас) [Shadowsocks - tcp]",
+        " США(Чикаго) [Shadowsocks - tcp]",
+        " Норвегия [Shadowsocks - tcp]",
+        " Румыния [Shadowsocks - tcp]",
+        " Эстония [Shadowsocks - tcp]",
+        " Россия(Москва) [Shadowsocks - tcp]",
+        " Россия(Санкт-Петербург) [Shadowsocks - tcp]",
+        " Германия [Shadowsocks - tcp]",
+        " Германия[R] [Shadowsocks - tcp]",
+        " Германия[R2] [Shadowsocks - tcp] ",
+        " Казахстан [Shadowsocks - tcp]",
+        " Швеция [Shadowsocks - tcp]",
+        " Индия [Shadowsocks - tcp]",
+        " Беларусь [Shadowsocks - tcp]",
+        " ОАЭ [Shadowsocks - tcp]",
+        " Бразилия [Shadowsocks - tcp]",
+        " Гонконг [Shadowsocks - tcp]",
+        " Япония [Shadowsocks - tcp]",
+        " Греция [Shadowsocks - tcp]",
+        " Израиль [Shadowsocks - tcp]",
+        " Израиль[R] [Shadowsocks - tcp]",
+        " Финляндия [Shadowsocks - tcp]",
+        " Нидерланды [Shadowsocks - tcp]",
+        " Нидерланды[R] [Shadowsocks - tcp]",
+        " Латвия [Shadowsocks - tcp]",
+        " Литва [Shadowsocks - tcp]",
+        " Франция [Shadowsocks - tcp]",
+        " Италия [Shadowsocks - tcp]",
+        " Турция [Shadowsocks - tcp]",
+        " Турция[R] [Shadowsocks - tcp]",
+        " Румыния[R] [Shadowsocks - tcp]",
+        " Польша[R] [Shadowsocks - tcp]",
+        " Беларусь[R] [Shadowsocks - tcp]",
+        " Франция[R] [Shadowsocks - tcp]",
+        " Австрия [Shadowsocks - tcp]",
+        " Нидерланды[R2] [Shadowsocks - tcp]",
+        " Италия[R] [Shadowsocks - tcp]",
+        " Казахстан[R] [Shadowsocks - tcp]",
+        " Армения [Shadowsocks - tcp]",
+        "Швейцария [Shadowsocks - tcp]",
+        " США(Феникс) [Shadowsocks - tcp]"
+      ],
+      "url": "http://cp.cloudflare.com",
+      "interval": "10m0s",
+      "tolerance": 1,
+      "idle_timeout": "30m0s",
+      "interrupt_exist_connections": true
+    },
+    {
+      "type": "vmess",
+      "tag": " Польша [VMess - tcp]",
+      "server": "38.180.110.211",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Канада [VMess - tcp]",
+      "server": "38.180.12.119",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Великобритания[R] [VMess - tcp]",
+      "server": "147.45.179.40",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Великобритания [VMess - tcp]",
+      "server": "38.180.139.17",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " США(Даллас) [VMess - tcp]",
+      "server": "38.180.136.44",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " США(Чикаго) [VMess - tcp]",
+      "server": "95.181.173.189",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Норвегия [VMess - tcp]",
+      "server": "38.180.77.242",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Румыния [VMess - tcp]",
+      "server": "38.180.35.46",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Эстония [VMess - tcp]",
+      "server": "38.180.45.95",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Россия(Москва) [VMess - tcp]",
+      "server": "89.23.113.49",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Россия(Санкт-Петербург) [VMess - tcp]",
+      "server": "85.192.56.142",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Германия [VMess - tcp]",
+      "server": "147.45.178.88",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Германия[R2] [VMess - tcp]",
+      "server": "217.144.190.48",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Германия[R3] [VMess - tcp]",
+      "server": "77.221.156.151",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Казахстан [VMess - tcp]",
+      "server": "38.180.38.127",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Швеция [VMess - tcp]",
+      "server": "109.120.135.98",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Индия [VMess - tcp]",
+      "server": "103.248.61.174",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Беларусь [VMess - tcp]",
+      "server": "45.128.205.41",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " ОАЭ [VMess - tcp]",
+      "server": "91.132.48.160",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Бразилия [VMess - tcp]",
+      "server": "147.45.116.22",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Гонконг [VMess - tcp]",
+      "server": "141.98.234.33",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Япония [VMess - tcp]",
+      "server": "147.45.49.66",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Греция [VMess - tcp]",
+      "server": "185.39.207.42",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Израиль [VMess - tcp]",
+      "server": "185.239.48.2",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Израиль[R] [VMess - tcp]",
+      "server": "45.144.172.4",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Финляндия [VMess - tcp]",
+      "server": "38.135.53.33",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Нидерланды [VMess - tcp]",
+      "server": "37.1.221.201",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Нидерланды[R] [VMess - tcp]",
+      "server": "46.29.234.204",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Латвия [VMess - tcp]",
+      "server": "193.124.22.225",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Литва [VMess - tcp]",
+      "server": "46.29.234.204",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Франция [VMess - tcp]",
+      "server": "185.87.151.56",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Италия [VMess - tcp]",
+      "server": "62.76.234.240",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Турция [VMess - tcp]",
+      "server": "194.87.39.229",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Турция[R] [VMess - tcp]",
+      "server": "83.217.9.64",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Румыния[R] [VMess - tcp]",
+      "server": "38.180.35.123",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Польша[R] [VMess - tcp]",
+      "server": "77.83.246.83",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Беларусь[R] [VMess - tcp]",
+      "server": "95.128.71.119",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Франция[R] [VMess - tcp]",
+      "server": "77.105.166.239",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Австрия [VMess - tcp]",
+      "server": "212.113.106.91",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Нидерланды[R2] [VMess - tcp]",
+      "server": "217.144.185.101",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Италия[R] [VMess - tcp]",
+      "server": "147.45.51.70",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Казахстан[R] [VMess - tcp]",
+      "server": "45.136.58.91",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Армения [VMess - tcp]",
+      "server": "194.156.103.15",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": "Швейцария [VMess - tcp]",
+      "server": "45.95.232.68",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " США(Феникс) [VMess - tcp]",
+      "server": "212.18.104.127",
+      "server_port": 8081,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "http",
+        "host": "google.com",
+        "path": "/",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Польша [VMess - ws]",
+      "server": "38.180.110.211",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Канада [VMess - ws]",
+      "server": "38.180.12.119",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Великобритания[R] [VMess - ws]",
+      "server": "147.45.179.40",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Великобритания [VMess - ws]",
+      "server": "38.180.139.17",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " США(Даллас) [VMess - ws]",
+      "server": "38.180.136.44",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " США(Чикаго) [VMess - ws]",
+      "server": "95.181.173.189",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Норвегия [VMess - ws]",
+      "server": "38.180.77.242",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Румыния [VMess - ws]",
+      "server": "38.180.35.46",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Эстония [VMess - ws]",
+      "server": "38.180.45.95",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Россия(Москва) [VMess - ws]",
+      "server": "89.23.113.49",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Россия(Санкт-Петербург) [VMess - ws]",
+      "server": "85.192.56.142",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Германия [VMess - ws]",
+      "server": "147.45.178.88",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Германия[R] [VMess - ws]",
+      "server": "217.144.190.48",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Германия[R2] [VMess - ws]",
+      "server": "77.221.156.151",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Казахстан [VMess - ws]",
+      "server": "38.180.38.127",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Швеция [VMess - ws]",
+      "server": "109.120.135.98",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Индия [VMess - ws]",
+      "server": "103.248.61.174",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Беларусь [VMess - ws]",
+      "server": "45.128.205.41",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " ОАЭ [VMess - ws]",
+      "server": "91.132.48.160",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Бразилия [VMess - ws]",
+      "server": "147.45.116.22",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Гонконг [VMess - ws]",
+      "server": "141.98.234.33",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Япония [VMess - ws]",
+      "server": "147.45.49.66",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Греция [VMess - ws]",
+      "server": "185.39.207.42",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Израиль [VMess - ws]",
+      "server": "185.239.48.2",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Израиль[R] [VMess - ws]",
+      "server": "45.144.172.4",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Финляндия [VMess - ws]",
+      "server": "38.135.53.33",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Нидерланды [VMess - ws]",
+      "server": "37.1.221.201",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Нидерланды[R] [VMess - ws]",
+      "server": "89.23.103.185",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Латвия [VMess - ws]",
+      "server": "193.124.22.225",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Литва [VMess - ws]",
+      "server": "46.29.234.204",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Франция [VMess - ws]",
+      "server": "185.87.151.56",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Италия [VMess - ws]",
+      "server": "62.76.234.240",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Турция [VMess - ws]",
+      "server": "194.87.39.229",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Турция[R] [VMess - ws]",
+      "server": "83.217.9.64",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Румыния[R] [VMess - ws]",
+      "server": "38.180.35.123",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Польша[R] [VMess - ws]",
+      "server": "77.83.246.83",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Беларусь[R] [VMess - ws]",
+      "server": "95.128.71.119",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Франция[R] [VMess - ws]",
+      "server": "77.105.166.239",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Австрия [VMess - ws]",
+      "server": "212.113.106.91",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Нидерланды[R2] [VMess - ws]",
+      "server": "217.144.185.101",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Италия[R] [VMess - ws]",
+      "server": "147.45.51.70",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Казахстан[R] [VMess - ws]",
+      "server": "45.136.58.91",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " Армения [VMess - ws]",
+      "server": "194.156.103.15",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": "Швейцария [VMess - ws]",
+      "server": "45.95.232.68",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": " США(Феникс) [VMess - ws]",
+      "server": "212.18.104.127",
+      "server_port": 8080,
+      "uuid": "85f9ec11-5aa0-4d75-a243-8180955992ae",
+      "security": "",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "google.com"
+        }
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Польша [VLESS - tcp]",
+      "server": "38.180.110.211",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Канада [VLESS - tcp]",
+      "server": "38.180.12.119",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Великобритания[R][VLESS - tcp]",
+      "server": "147.45.179.40",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Великобритания [VLESS - tcp]",
+      "server": "38.180.139.17",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " США(Даллас) [VLESS - tcp]",
+      "server": "38.180.136.44",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " США(Чикаго) [VLESS - tcp]",
+      "server": "95.181.173.189",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Норвегия [VLESS - tcp]",
+      "server": "38.180.77.242",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Румыния [VLESS - tcp]",
+      "server": "38.180.35.46",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Эстония [VLESS - tcp]",
+      "server": "38.180.45.95",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Россия(Москва) [VLESS - tcp]",
+      "server": "89.23.113.49",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Россия(Санкт-Петербург) [VLESS - tcp]",
+      "server": "85.192.56.142",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Германия [VLESS - tcp]",
+      "server": "147.45.178.88",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Германия[R] [VLESS - tcp]",
+      "server": "217.144.190.48",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Германия[R2] [VLESS - tcp]",
+      "server": "77.221.156.151",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Казахстан [VLESS - tcp]",
+      "server": "38.180.38.127",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Швеция [VLESS - tcp]",
+      "server": "109.120.135.98",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Индия [VLESS - tcp]",
+      "server": "103.248.61.174",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Беларусь [VLESS - tcp]",
+      "server": "45.128.205.41",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " ОАЭ [VLESS - tcp]",
+      "server": "91.132.48.160",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Бразилия [VLESS - tcp]",
+      "server": "147.45.116.22",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Гонконг [VLESS - tcp]",
+      "server": "141.98.234.33",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Япония [VLESS - tcp]",
+      "server": "147.45.49.66",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Греция [VLESS - tcp]",
+      "server": "185.39.207.42",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Израиль [VLESS - tcp]",
+      "server": "185.239.48.2",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Израиль[R] [VLESS - tcp]",
+      "server": "45.144.172.4",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Финляндия [VLESS - tcp]",
+      "server": "38.135.53.33",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Нидерланды [VLESS - tcp]",
+      "server": "37.1.221.201",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Нидерланды[R] [VLESS - tcp]",
+      "server": "89.23.103.185",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Латвия [VLESS - tcp]",
+      "server": "193.124.22.225",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Литва [VLESS - tcp]",
+      "server": "46.29.234.204",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Франция [VLESS - tcp]",
+      "server": "185.87.151.56",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Италия [VLESS - tcp]",
+      "server": "62.76.234.240",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Турция [VLESS - tcp]",
+      "server": "194.87.39.229",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Турция[R] [VLESS - tcp]",
+      "server": "83.217.9.64",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Румыния[R] [VLESS - tcp]",
+      "server": "38.180.35.123",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Польша[R] [VLESS - tcp]",
+      "server": "77.83.246.83",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Беларусь[R] [VLESS - tcp]",
+      "server": "95.128.71.119",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Франция[R] [VLESS - tcp]",
+      "server": "77.105.166.239",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Австрия [VLESS - tcp]",
+      "server": "212.113.106.91",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Нидерланды[R2] [VLESS - tcp]",
+      "server": "217.144.185.101",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Италия[R] [VLESS - tcp]",
+      "server": "147.45.51.70",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Казахстан[R] [VLESS - tcp]",
+      "server": "45.136.58.91",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Армения [VLESS - tcp]",
+      "server": "194.156.103.15",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": "Швейцария [VLESS - tcp]",
+      "server": "45.95.232.68",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " США(Феникс) [VLESS - tcp]",
+      "server": "212.18.104.127",
+      "server_port": 8443,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Польша [VLESS - grpc]",
+      "server": "38.180.110.211",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Канада [VLESS - grpc]",
+      "server": "38.180.12.119",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Великобритания[R] [VLESS - grpc]",
+      "server": "147.45.179.40",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Великобритания [VLESS - grpc]",
+      "server": "38.180.139.17",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " США(Даллас) [VLESS - grpc]",
+      "server": "38.180.136.44",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " США(Чикаго) [VLESS - grpc]",
+      "server": "95.181.173.189",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Норвегия [VLESS - grpc]",
+      "server": "38.180.77.242",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Румыния [VLESS - grpc]",
+      "server": "38.180.35.46",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Эстония [VLESS - grpc]",
+      "server": "38.180.45.95",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Россия(Москва) [VLESS - grpc]",
+      "server": "89.23.113.49",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Россия(Санкт-Петербург) [VLESS - grpc]",
+      "server": "85.192.56.142",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Германия [VLESS - grpc]",
+      "server": "147.45.178.88",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Германия[R] [VLESS - grpc]",
+      "server": "217.144.190.48",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Германия[R2] [VLESS - grpc]",
+      "server": "77.221.156.151",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Казахстан [VLESS - grpc]",
+      "server": "38.180.38.127",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Швеция [VLESS - grpc]",
+      "server": "109.120.135.98",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Индия [VLESS - grpc]",
+      "server": "103.248.61.174",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Беларусь [VLESS - grpc]",
+      "server": "45.128.205.41",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " ОАЭ [VLESS - grpc]",
+      "server": "91.132.48.160",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Бразилия [VLESS - grpc]",
+      "server": "147.45.116.22",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Гонконг [VLESS - grpc]",
+      "server": "141.98.234.33",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Япония [VLESS - grpc]",
+      "server": "147.45.49.66",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Греция [VLESS - grpc]",
+      "server": "185.39.207.42",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Израиль [VLESS - grpc]",
+      "server": "185.239.48.2",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Израиль[R] [VLESS - grpc]",
+      "server": "45.144.172.4",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Финляндия [VLESS - grpc]",
+      "server": "38.135.53.33",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Нидерланды [VLESS - grpc]",
+      "server": "37.1.221.201",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Нидерланды[R] [VLESS - grpc]",
+      "server": "89.23.103.185",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Латвия [VLESS - grpc]",
+      "server": "193.124.22.225",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Литва [VLESS - grpc]",
+      "server": "46.29.234.204",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Франция [VLESS - grpc]",
+      "server": "185.87.151.56",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Италия [VLESS - grpc]",
+      "server": "62.76.234.240",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Турция [VLESS - grpc]",
+      "server": "194.87.39.229",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Турция[R] [VLESS - grpc]",
+      "server": "83.217.9.64",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Румыния[R] [VLESS - grpc]",
+      "server": "38.180.35.123",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Польша[R] [VLESS - grpc]",
+      "server": "77.83.246.83",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Беларусь[R] [VLESS - grpc]",
+      "server": "95.128.71.119",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Франция[R] [VLESS - grpc]",
+      "server": "77.105.166.239",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Австрия [VLESS - grpc]",
+      "server": "212.113.106.91",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Нидерланды[R2] [VLESS - grpc]",
+      "server": "217.144.185.101",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Италия[R] [VLESS - grpc]",
+      "server": "147.45.51.70",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Казахстан[R] [VLESS - grpc]",
+      "server": "45.136.58.91",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " Армения [VLESS - grpc]",
+      "server": "194.156.103.15",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": "Швейцария [VLESS - grpc]",
+      "server": "45.95.232.68",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "vless",
+      "tag": " США(Феникс) [VLESS - grpc]",
+      "server": "212.18.104.127",
+      "server_port": 2053,
+      "uuid": "d76728aa-b4cd-4527-b1f8-b9f21068fdb9",
+      "tls": {
+        "enabled": true,
+        "server_name": "cdn.discordapp.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc"
+        }
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "grpc",
+        "service_name": "xyz",
+        "idle_timeout": "15s",
+        "ping_timeout": "15s"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Польша [Trojan - ws]",
+      "server": "38.180.110.211",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "8b8c6f66b31addf0.metric.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Канада [Trojan - ws]",
+      "server": "38.180.12.119",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "31d9ad527ee03a04.metric.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Великобритания[R] [Trojan - ws]",
+      "server": "147.45.179.40",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "9322a0637fcbfa29.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Великобритания [Trojan - ws]",
+      "server": "38.180.139.17",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "0e64b8056ad8a6d3.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " США(Даллас) [Trojan - ws]",
+      "server": "38.180.136.44",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " США(Чикаго) [Trojan - ws]",
+      "server": "95.181.173.189",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "333ffa72fbf447c3.metric.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Норвегия [Trojan - ws]",
+      "server": "38.180.77.242",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "a5bf778278954809.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Румыния [Trojan - ws]",
+      "server": "38.180.35.46",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "49333d4883a9c9d1.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Эстония [Trojan - ws]",
+      "server": "38.180.45.95",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "2b6f523c296d2f40.metric.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Россия(Москва) [Trojan - ws]",
+      "server": "89.23.113.49",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "e08156fa35da2ff8.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Россия(Санкт-Петербург) [Trojan - ws]",
+      "server": "85.192.56.142",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "af46f46b4d71e251.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Германия [Trojan - ws]",
+      "server": "147.45.178.88",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "bc311b05c81562e6.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Германия[R] [Trojan - ws]",
+      "server": "217.144.190.48",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Германия[R] [Trojan - ws] ",
+      "server": "77.221.156.151",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "fd33e2b2bdc1f5d8.metric.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Казахстан [Trojan - ws]",
+      "server": "38.180.38.127",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "8346f932bc6bd584.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Швеция [Trojan - ws]",
+      "server": "109.120.135.98",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "175deedf6b94e068.metric.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Индия [Trojan - ws]",
+      "server": "103.248.61.174",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Беларусь [Trojan - ws]",
+      "server": "45.128.205.41",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "eab96855d8e0c22b.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " ОАЭ [Trojan - ws]",
+      "server": "91.132.48.160",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "38a336056e82ac30.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Бразилия [Trojan - ws]",
+      "server": "147.45.116.22",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Гонконг [Trojan - ws]",
+      "server": "141.98.234.33",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "930dd8a2379939ad.metric.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Япония [Trojan - ws]",
+      "server": "147.45.49.66",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "6dc22cab9098d59d.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Греция [Trojan - ws]",
+      "server": "185.39.207.42",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Израиль [Trojan - ws]",
+      "server": "185.239.48.2",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "398b92f1bd700850.metric.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Израиль[R] [Trojan - ws]",
+      "server": "45.144.172.4",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "47435573d1935b4a.metric.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Финляндия [Trojan - ws]",
+      "server": "38.135.53.33",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "f03c731392e28d59.metric.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Нидерланды [Trojan - ws]",
+      "server": "37.1.221.201",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "41b3f1258b2d37b9.metric.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Нидерланды[R] [Trojan - ws]",
+      "server": "89.23.103.185",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "b9ce3909d35c34ab.metric.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Латвия [Trojan - ws]",
+      "server": "193.124.22.225",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Литва [Trojan - ws]",
+      "server": "46.29.234.204",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "e1d6e528c2764c6c.metric.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Франция [Trojan - ws]",
+      "server": "185.87.151.56",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "2fdd9e03a2e8a65a.metric.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Италия [Trojan - ws]",
+      "server": "62.76.234.240",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Турция [Trojan - ws]",
+      "server": "194.87.39.229",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "86b6fb7130ae6d4f.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Турция[R] [Trojan - ws]",
+      "server": "83.217.9.64",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "7aee0e5eaed15acc.metric.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Румыния[R] [Trojan - ws]",
+      "server": "38.180.35.123",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "0bab9e7f2df2c4e8.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Польша[R] [Trojan - ws]",
+      "server": "77.83.246.83",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "b553e5abcead3435.metric.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Беларусь[R] [Trojan - ws]",
+      "server": "95.128.71.119",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Франция[R] [Trojan - ws]",
+      "server": "77.105.166.239",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Австрия [Trojan - ws]",
+      "server": "212.113.106.91",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "6c0f8149a2e7f009.metric.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Нидерланды[R2] [Trojan - ws]",
+      "server": "217.144.185.101",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "1c8915bcbe733b9d.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Италия[R] [Trojan - ws]",
+      "server": "147.45.51.70",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "5e6739910dd13338.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Казахстан[R] [Trojan - ws]",
+      "server": "45.136.58.91",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "efaf14b6e9615c94.metric.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " Армения [Trojan - ws]",
+      "server": "194.156.103.15",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "4efdfcd35bbb3e28.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": "Швейцария [Trojan - ws]",
+      "server": "45.95.232.68",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "3f9fa2cf91cce83a.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": " США(Феникс) [Trojan - ws]",
+      "server": "212.18.104.127",
+      "server_port": 2083,
+      "password": "9pzz80q06IdHCVRzb3gXAw",
+      "tls": {
+        "enabled": true,
+        "server_name": "a9db7d4c78660bff.metric.gstatic.com"
+      },
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      },
+      "transport": {
+        "type": "ws"
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Польша [Shadowsocks - tcp]",
+      "server": "38.180.110.211",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Канада [Shadowsocks - tcp]",
+      "server": "38.180.12.119",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Великобритания[R] [Shadowsocks - tcp]",
+      "server": "147.45.179.40",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Великобритания [Shadowsocks - tcp]",
+      "server": "38.180.139.17",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " США(Даллас) [Shadowsocks - tcp]",
+      "server": "38.180.136.44",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " США(Чикаго) [Shadowsocks - tcp]",
+      "server": "95.181.173.189",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Норвегия [Shadowsocks - tcp]",
+      "server": "38.180.77.242",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Румыния [Shadowsocks - tcp]",
+      "server": "38.180.35.46",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Эстония [Shadowsocks - tcp]",
+      "server": "38.180.45.95",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Россия(Москва) [Shadowsocks - tcp]",
+      "server": "89.23.113.49",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Россия(Санкт-Петербург) [Shadowsocks - tcp]",
+      "server": "85.192.56.142",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Германия [Shadowsocks - tcp]",
+      "server": "147.45.178.88",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Германия[R] [Shadowsocks - tcp]",
+      "server": "217.144.190.48",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Германия[R2] [Shadowsocks - tcp] ",
+      "server": "77.221.156.151",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Казахстан [Shadowsocks - tcp]",
+      "server": "38.180.38.127",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Швеция [Shadowsocks - tcp]",
+      "server": "109.120.135.98",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Индия [Shadowsocks - tcp]",
+      "server": "103.248.61.174",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Беларусь [Shadowsocks - tcp]",
+      "server": "45.128.205.41",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " ОАЭ [Shadowsocks - tcp]",
+      "server": "91.132.48.160",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Бразилия [Shadowsocks - tcp]",
+      "server": "147.45.116.22",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Гонконг [Shadowsocks - tcp]",
+      "server": "141.98.234.33",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Япония [Shadowsocks - tcp]",
+      "server": "147.45.49.66",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Греция [Shadowsocks - tcp]",
+      "server": "185.39.207.42",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Израиль [Shadowsocks - tcp]",
+      "server": "185.239.48.2",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Израиль[R] [Shadowsocks - tcp]",
+      "server": "45.144.172.4",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Финляндия [Shadowsocks - tcp]",
+      "server": "38.135.53.33",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Нидерланды [Shadowsocks - tcp]",
+      "server": "37.1.221.201",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Нидерланды[R] [Shadowsocks - tcp]",
+      "server": "89.23.103.185",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Латвия [Shadowsocks - tcp]",
+      "server": "193.124.22.225",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Литва [Shadowsocks - tcp]",
+      "server": "46.29.234.204",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Франция [Shadowsocks - tcp]",
+      "server": "185.87.151.56",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Италия [Shadowsocks - tcp]",
+      "server": "62.76.234.240",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Турция [Shadowsocks - tcp]",
+      "server": "194.87.39.229",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Турция[R] [Shadowsocks - tcp]",
+      "server": "83.217.9.64",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Румыния[R] [Shadowsocks - tcp]",
+      "server": "38.180.35.123",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Польша[R] [Shadowsocks - tcp]",
+      "server": "77.83.246.83",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Беларусь[R] [Shadowsocks - tcp]",
+      "server": "95.128.71.119",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Франция[R] [Shadowsocks - tcp]",
+      "server": "77.105.166.239",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Австрия [Shadowsocks - tcp]",
+      "server": "212.113.106.91",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Нидерланды[R2] [Shadowsocks - tcp]",
+      "server": "217.144.185.101",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Италия[R] [Shadowsocks - tcp]",
+      "server": "147.45.51.70",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Казахстан[R] [Shadowsocks - tcp]",
+      "server": "45.136.58.91",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " Армения [Shadowsocks - tcp]",
+      "server": "194.156.103.15",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": "Швейцария [Shadowsocks - tcp]",
+      "server": "45.95.232.68",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": " США(Феникс) [Shadowsocks - tcp]",
+      "server": "212.18.104.127",
+      "server_port": 1080,
+      "method": "chacha20-ietf-poly1305",
+      "password": "bzfov_W30ESmEtfCJapjFg",
+      "network": "tcp",
+      "multiplex": {
+        "protocol": "h2mux",
+        "max_streams": 8
+      }
+    },
+    {
+      "type": "dns",
+      "tag": "dns-out"
+    },
+    {
+      "type": "direct",
+      "tag": "direct"
+    },
+    {
+      "type": "direct",
+      "tag": "direct-fragment",
+      "tls_fragment": {
+        "enabled": true,
+        "size": "10-30",
+        "sleep": "2-8"
+      }
+    },
+    {
+      "type": "direct",
+      "tag": "bypass"
+    },
+    {
+      "type": "block",
+      "tag": "block"
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "inbound": "dns-in",
+        "outbound": "dns-out"
+      },
+      {
+        "port": 53,
+        "outbound": "dns-out"
+      },
+      {
+        "domain_suffix": ".ru",
+        "outbound": "direct"
+      },
+      {
+        "rule_set": [
+          "geoip-ru",
+          "geosite-ru"
+        ],
+        "outbound": "direct"
+      }
+    ],
+    "rule_set": [
+      {
+        "type": "remote",
+        "tag": "geoip-ru",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/hiddify/hiddify-geo/rule-set/country/geoip-ru.srs",
+        "update_interval": "120h0m0s"
+      },
+      {
+        "type": "remote",
+        "tag": "geosite-ru",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/hiddify/hiddify-geo/rule-set/country/geosite-ru.srs",
+        "update_interval": "120h0m0s"
+      }
+    ],
+    "final": "select",
+    "auto_detect_interface": true,
+    "override_android_vpn": true
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": true,
+      "path": "clash.db"
+    },
+    "clash_api": {
+      "external_controller": "127.0.0.1:16756",
+      "secret": "MRgUFAsLwN5S8QfE"
+    }
+  }
+}
