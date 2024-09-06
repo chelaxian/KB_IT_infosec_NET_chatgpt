@@ -739,5 +739,8 @@ check from linux
 ```bash
 curl -ik https://win-rds.domain.net:5443/ --cacert /etc/indeed/indeed-pam/ca-certificates/ca-pem.crt
 ```
-
+check on windows
+```cmd
+netstat -an | findstr 5443
+```
 
