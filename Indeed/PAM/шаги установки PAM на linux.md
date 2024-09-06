@@ -504,7 +504,7 @@ cp pam.key /etc/indeed/indeed-pam/certs/pam.key
 ```bash
 cp ca1.cer /etc/indeed/indeed-pam/ca-certificates/ca1.crt #base64 (root CA)
 cp ca2.cer /etc/indeed/indeed-pam/ca-certificates/ca2.crt #base64 (intermediate CA)
-cat ca1.crt ca2.crt > /etc/indeed/indeed-pam/ca-certificates/ca-pem.crt
+cat ca1.cer ca2.cer > /etc/indeed/indeed-pam/ca-certificates/ca-pem.crt
 ```
 check with CURL ldaps connection
 ```bash
