@@ -335,8 +335,8 @@ state_files:
   "enableOrganizationalUnits": false
 }
 ```
-You can generate Encryption key by
-`IndeedPAM_2.10.1_RU\indeed-pam-tools\key-gen\IndeedPAM.KeyGen.exe` - AES
+You can generate `Encryption key` by
+`IndeedPAM_2.10.1_RU\indeed-pam-tools\key-gen\IndeedPAM.KeyGen.exe` - AES \
 or
 ```bash
 openssl rand -hex 32
