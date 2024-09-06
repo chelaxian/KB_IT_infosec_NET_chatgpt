@@ -173,6 +173,7 @@ You may ignore that.
 </details>
 
 ### Generate Self-Signed certificate and change default one
+<details><summary>Spoiler</summary>
 ```bash
 openssl genrsa -out pam-ca.key 2048
 openssl req -x509 -new -nodes -key pam-ca.key -subj "/CN=indeed-pam" -days 10000 -out pam-ca.crt
@@ -221,6 +222,7 @@ cp pam-ca.crt /etc/indeed/indeed-pam/ca-certificates/
 cp pam.crt /etc/indeed/indeed-pam/certs/pam.crt
 cp pam.key /etc/indeed/indeed-pam/certs/pam.key
 ```
+</details>
 
 ### Add LDAPS root CA + intermediate CA and check connection
 ```bash
