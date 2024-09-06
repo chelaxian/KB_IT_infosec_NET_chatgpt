@@ -490,11 +490,14 @@ subjectAltName=@alt_names
 ```bash
 openssl req -new -key pam.key -out server.csr -config server.conf
 openssl x509 -req -in server.csr -CA pam-ca.crt -CAkey pam-ca.key -CAcreateserial -out pam.crt -days 10000 -extensions v3_ext -extfile server.conf
+```
+</details>
+
+```bash
 cp pam-ca.crt /etc/indeed/indeed-pam/ca-certificates/
 cp pam.crt /etc/indeed/indeed-pam/certs/pam.crt
 cp pam.key /etc/indeed/indeed-pam/certs/pam.key
 ```
-</details>
 
 ### Add LDAPS root CA + intermediate CA and check connection
 ```bash
