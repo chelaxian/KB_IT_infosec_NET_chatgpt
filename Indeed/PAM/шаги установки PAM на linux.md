@@ -364,6 +364,10 @@ fill in Core and Auth(IDP) sections
     "GatewaySecret": "XxXXXXXXXXxXXXXXXXXxXXXXXXXXXXXXXXxXxXXxXxx="
   },
 ```
+```json
+  "GatewayService": {
+    "Url": "https://win-rds.domain.net:5443/"
+```
 add this lines to the end of file and check json
 ```json
 }    
@@ -374,7 +378,7 @@ add this lines to the end of file and check json
       "HttpsInlineCertStore": {
         "Url": "https://0.0.0.0:5443",
         "Certificate": {
-          "Subject": "mdgkd-pam-test.int.kronshtadt.ru",
+          "Subject": "win-rds.domain.net",
           "Store": "My",
           "Location": "LocalMachine",
           "AllowInvalid": "False"
