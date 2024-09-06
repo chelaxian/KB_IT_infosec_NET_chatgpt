@@ -332,7 +332,8 @@ Copy `"GatewaySecret": "XxXXXXXXXXxXXXXXXXXxXXXXXXXXXXXXXXxXxXXxXxx=",` string t
 `C:\Program Files\Indeed\Indeed PAM\Gateway\ProxyApp\appsettings.json` on Windows RDS server
 fill in Core and Auth(IDP) sections
 <details><summary>appsettings.json</summary>
-```bash
+  
+```json
 {
   "Core": {
     "Url": "https://pam.domain.net/core",
@@ -346,9 +347,12 @@ fill in Core and Auth(IDP) sections
 ```
 </details>
 
+Copy `"GatewaySecret": "XxXXXXXXXXxXXXXXXXXxXXXXXXXXXXXXXXxXxXXxXxx=",` string to
+`C:\Program Files\Indeed\Indeed PAM\Gateway\Pam.Gateway.Service\appsettings.json` on Windows RDS server
 fill in Core and Auth(IDP) sections
 <details><summary>appsettings.json</summary>
-```bash
+  
+```json
 {
   "Core": {
     "Url": "https://pam.domain.net/core",
@@ -359,6 +363,27 @@ fill in Core and Auth(IDP) sections
     "IdpRequiresHttps": true,
     "GatewaySecret": "XxXXXXXXXXxXXXXXXXXxXXXXXXXXXXXXXXxXxXXxXxx="
   },
+```
+add this lines to the end of file and check json
+```json
+}    
+}
+  },
+  "Kestrel": {
+    "Endpoints": {
+      "HttpsInlineCertStore": {
+        "Url": "https://0.0.0.0:5443",
+        "Certificate": {
+          "Subject": "mdgkd-pam-test.int.kronshtadt.ru",
+          "Store": "My",
+          "Location": "LocalMachine",
+          "AllowInvalid": "False"
+        }
+      }
+    }
+  }
+}
+}
 ```
 </details>
 
@@ -369,7 +394,7 @@ fill in Core and Auth(IDP) sections
 
 <details><summary>appsettings.json</summary>
 
-```bash
+```json
   "Storage": {
     "Type": "SMB",
     "Settings": {
