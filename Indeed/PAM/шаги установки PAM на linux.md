@@ -323,5 +323,26 @@ volumes:
 ```bash
 sudo ./run-wizard.sh -vvv
 ```
+### Add RDS Windows Server (RemoteApp) to Linux PAM
+```bash
+ nano /etc/indeed/indeed-pam/core/appsettings.json
+ nano /etc/indeed/indeed-pam/gateway-service/appsettings.json
+```
+<details><summary>appsettings.json</summary>
 
+```bash
+  "Storage": {
+    "Type": "SMB",
+    "Settings": {
+      "Root": "\\\\IP.IP.IP.IP\\IPAMStorage",
+      "Domain": "FULL.DOMAIN.NAME",
+      "Login": "USER",
+      "Password": "PASSWORD"
+```
+```bash
+bash /etc/indeed/indeed-pam/scripts/stop-pam.sh
+bash /etc/indeed/indeed-pam/scripts/set-permissions.sh
+bash /etc/indeed/indeed-pam/scripts/run-pam.sh
+```
+</details>
 
