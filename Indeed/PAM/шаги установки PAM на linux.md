@@ -324,10 +324,49 @@ volumes:
 sudo ./run-wizard.sh -vvv
 ```
 ### Add RDS Windows Server (RemoteApp) to Linux PAM
+
+```bash
+ sudo bash /etc/indeed/indeed-pam/tools/protector.sh unprotect
+```
+Copy `"GatewaySecret": "XxXXXXXXXXxXXXXXXXXxXXXXXXXXXXXXXXxXxXXxXxx=",` string to
+`C:\Program Files\Indeed\Indeed PAM\Gateway\ProxyApp\appsettings.json` on Windows RDS server
+fill in Core and Auth(IDP) sections
+<details><summary>appsettings.json</summary>
+```bash
+{
+  "Core": {
+    "Url": "https://pam.domain.net/core",
+    "RequestTimeout": "00:01:00"
+  },
+  "Auth": {
+    "IdpUrl": "https://pam.domain.net/idp",
+    "IdpRequiresHttps": true,
+    "GatewaySecret": "XxXXXXXXXXxXXXXXXXXxXXXXXXXXXXXXXXxXxXXxXxx="
+  },
+```
+</details>
+
+fill in Core and Auth(IDP) sections
+<details><summary>appsettings.json</summary>
+```bash
+{
+  "Core": {
+    "Url": "https://pam.domain.net/core",
+    "RequestTimeout": "00:01:00"
+  },
+  "Auth": {
+    "IdpUrl": "https://pam.domain.net/idp",
+    "IdpRequiresHttps": true,
+    "GatewaySecret": "XxXXXXXXXXxXXXXXXXXxXXXXXXXXXXXXXXxXxXXxXxx="
+  },
+```
+</details>
+
 ```bash
  nano /etc/indeed/indeed-pam/core/appsettings.json
  nano /etc/indeed/indeed-pam/gateway-service/appsettings.json
 ```
+
 <details><summary>appsettings.json</summary>
 
 ```bash
