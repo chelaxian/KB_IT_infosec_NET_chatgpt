@@ -813,6 +813,7 @@ full config
 ```
 </details>
 
+Add settings to `application.json` on linux
 ```bash
  nano /etc/indeed/indeed-pam/core/appsettings.json
  nano /etc/indeed/indeed-pam/gateway-service/appsettings.json
