@@ -34,27 +34,19 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 ```bash
 # Install required packages
 sudo dnf install -y yum-utils
-
 # Add Docker's official GPG key
 sudo rpm --import https://download.docker.com/linux/centos/gpg
-
 # Add the repository to DNF sources
 sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-
 # Install Docker
 sudo dnf install -y docker-ce-cli
 sudo dnf install -y docker-buildx-plugin
-
 # Unmask the Docker service and socket unit files
 sudo systemctl unmask docker.service
 sudo systemctl unmask docker.socket
-
 # Start and enable the Docker service and socket
 sudo systemctl enable docker.service --now
 sudo systemctl enable docker.socket
-
-# Verify that Docker is installed correctly
-sudo docker --version
 ```
 #### Other's distro
 https://docs.docker.com/engine/install/
