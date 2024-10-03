@@ -39,8 +39,7 @@ sudo rpm --import https://download.docker.com/linux/centos/gpg
 # Add the repository to DNF sources
 sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 # Install Docker
-sudo dnf install -y docker-ce-cli
-sudo dnf install -y docker-buildx-plugin
+sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 # Unmask the Docker service and socket unit files
 sudo systemctl unmask docker.service
 sudo systemctl unmask docker.socket
