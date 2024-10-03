@@ -31,7 +31,7 @@ sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 ```
 #### РедОС / CentOS
-```
+```bash
 # Install required packages
 sudo dnf install -y yum-utils
 
