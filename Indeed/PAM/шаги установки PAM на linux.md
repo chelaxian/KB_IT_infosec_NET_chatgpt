@@ -71,23 +71,27 @@ Create `ca.crt`, `cert.pfx`, Edit and Prepare `vars.yml`, `config.json` and plac
 ```bash
 cd ~
 ```
-```bash
-wget -O IndeedPAM_2.10.1_RU.zip \
-"https://download.indeed-company.ru/s/q8zoOXIGhxhfR2q/download"
+```diff
+-wget -O IndeedPAM_2.10.1_RU.zip \
+-"https://download.indeed-company.ru/s/q8zoOXIGhxhfR2q/download"
++wget -O IndeedPAM_2.10.3_RU.zip \
++"https://download.indeed-company.ru/s/phaUY6BRU8fwi4O/download"
 ```
 or
-```bash
-curl -L -o IndeedPAM_2.10.1_RU.zip \
-"https://download.indeed-company.ru/s/q8zoOXIGhxhfR2q/download"
+```diff
+-curl -L -o IndeedPAM_2.10.1_RU.zip \
+-"https://download.indeed-company.ru/s/q8zoOXIGhxhfR2q/download"
++curl -L -o IndeedPAM_2.10.3_RU.zip \
++"https://download.indeed-company.ru/s/phaUY6BRU8fwi4O/download"
 ```
 ```bash
-unzip IndeedPAM_2.10.1_RU.zip
+unzip IndeedPAM_2.10.3_RU.zip
 #we will add certs later
-#cp ca.crt ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/ca-certificates/
-#cp cert.pfx ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/certs/
-cp vars.yml ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/scripts/ansible/
-cp config.json ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/
-cd ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/
+#cp ca.crt ~/IndeedPAM_2.10.3_RU/indeed-pam-linux/state/ca-certificates/
+#cp cert.pfx ~/IndeedPAM_2.10.3_RU/indeed-pam-linux/state/certs/
+cp vars.yml ~/IndeedPAM_2.10.3_RU/indeed-pam-linux/scripts/ansible/
+cp config.json ~/IndeedPAM_2.10.3_RU/indeed-pam-linux/
+cd ~/IndeedPAM_2.10.3_RU/indeed-pam-linux/
 ```
 <details><summary>vars.yml</summary>
 
@@ -358,7 +362,7 @@ state_files:
 }
 ```
 You can generate `Encryption key` by
-`IndeedPAM_2.10.1_RU\indeed-pam-tools\key-gen\IndeedPAM.KeyGen.exe` - AES \
+`IndeedPAM_2.10.3_RU\indeed-pam-tools\key-gen\IndeedPAM.KeyGen.exe` - AES \
 or
 ```bash
 openssl rand -hex 32
@@ -377,7 +381,7 @@ sudo bash run-deploy.sh --bench-skip -vvv
 ### Fix Docker Bench for Security
 
 ```bash
-IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/cis-benchmark/local.docker.log
+IndeedPAM_2.10.3_RU/indeed-pam-linux/logs/cis-benchmark/local.docker.log
 ```
   
 ```bash
@@ -453,16 +457,16 @@ sudo bash run-deploy.sh -vvv
   
 ### Fix permissons
 ```bash
-sudo mkdir -p ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/temp
-sudo mkdir -p ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/backups
-sudo mkdir -p ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs
-sudo mkdir -p ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/cis-benchmark
-sudo mkdir -p ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/selfsigned
+sudo mkdir -p ~/IndeedPAM_2.10.3_RU/indeed-pam-linux/temp
+sudo mkdir -p ~/IndeedPAM_2.10.3_RU/indeed-pam-linux/backups
+sudo mkdir -p ~/IndeedPAM_2.10.3_RU/indeed-pam-linux/logs
+sudo mkdir -p ~/IndeedPAM_2.10.3_RU/indeed-pam-linux/logs/cis-benchmark
+sudo mkdir -p ~/IndeedPAM_2.10.3_RU/indeed-pam-linux/state/selfsigned
 
-sudo chmod 777 -R ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/temp
-sudo chmod 777 -R ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/backups
-sudo chmod 777 -R ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/logs/
-sudo chmod 777 -R ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/state
+sudo chmod 777 -R ~/IndeedPAM_2.10.3_RU/indeed-pam-linux/temp
+sudo chmod 777 -R ~/IndeedPAM_2.10.3_RU/indeed-pam-linux/backups
+sudo chmod 777 -R ~/IndeedPAM_2.10.3_RU/indeed-pam-linux/logs/
+sudo chmod 777 -R ~/IndeedPAM_2.10.3_RU/indeed-pam-linux/state
 ```
 </details>
 
@@ -637,12 +641,12 @@ bash /etc/indeed/indeed-pam/scripts/run-pam.sh
    
 ```bash
 sudo bash /etc/indeed/indeed-pam/scripts/stop-pam.sh
-sudo bash ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/run-wizard.sh
+sudo bash ~/IndeedPAM_2.10.3_RU/indeed-pam-linux/run-wizard.sh
 ```
 
 1. if it not helps - rename docker container `pam-ca-certificates` to `pam-ca-certificates1`
 
-2. ```nano ~/IndeedPAM_2.10.1_RU/indeed-pam-linux/state/docker-compose.web-wizard.yml```
+2. ```nano ~/IndeedPAM_2.10.3_RU/indeed-pam-linux/state/docker-compose.web-wizard.yml```
 
 ```diff
     ports:
@@ -860,7 +864,7 @@ bash /etc/indeed/indeed-pam/scripts/run-pam.sh
 
 Make [security settings](https://docs.indeed-company.ru/privileged-access-manager/2.10/security-recommendations/access-server-security-settings/)
 ```cmd
-cd IndeedPAM_2.10.1_RU\Indeed-pam-windows\MISC\ConfigurationProtector\
+cd IndeedPAM_2.10.3_RU\Indeed-pam-windows\MISC\ConfigurationProtector\
 ```
 ```powershell
 .\Pam.Tools.Configuration.Protector.exe apply-gateway-security
