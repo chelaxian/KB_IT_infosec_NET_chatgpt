@@ -72,18 +72,14 @@ Create `ca.crt`, `cert.pfx`, Edit and Prepare `vars.yml`, `config.json` and plac
 ```bash
 cd ~
 ```
-```diff
--wget -O IndeedPAM_2.10.1_RU.zip \
--"https://download.indeed-company.ru/s/q8zoOXIGhxhfR2q/download"
-+wget -O IndeedPAM_2.10.3_RU.zip \
-+"https://download.indeed-company.ru/s/phaUY6BRU8fwi4O/download"
+```bash
+wget -O IndeedPAM_2.10.3_RU.zip \
+"https://download.indeed-company.ru/s/phaUY6BRU8fwi4O/download"
 ```
 or
-```diff
--curl -L -o IndeedPAM_2.10.1_RU.zip \
--"https://download.indeed-company.ru/s/q8zoOXIGhxhfR2q/download"
-+curl -L -o IndeedPAM_2.10.3_RU.zip \
-+"https://download.indeed-company.ru/s/phaUY6BRU8fwi4O/download"
+```bash
+curl -L -o IndeedPAM_2.10.3_RU.zip \
+"https://download.indeed-company.ru/s/phaUY6BRU8fwi4O/download"
 ```
 ```bash
 unzip IndeedPAM_2.10.3_RU.zip
