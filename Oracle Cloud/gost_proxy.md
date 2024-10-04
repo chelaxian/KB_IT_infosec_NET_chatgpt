@@ -1,7 +1,7 @@
 https://github.com/go-gost/gost
 
 ### on server (linux)
-download
+download and install
 ```bash
 bash <(curl -fsSL https://github.com/go-gost/gost/raw/master/install.sh) --install
 ```
