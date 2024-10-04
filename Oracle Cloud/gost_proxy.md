@@ -1,7 +1,7 @@
 ### on server
 manual run 
 ```bash
-gost -L relay://username:password@your.server.net:56789
+gost -L relay://username:password@:56789
 ```
 <details><summary>autostart</summary> 
   
@@ -12,7 +12,7 @@ nano /root/gost/start_gost_proxies.sh
 fill in `start_gost_proxies.sh`
 ```bash
 #!/bin/bash
-gost -L relay://username:password@your.server.net:56789
+gost -L relay://username:password@:56789
 ```
 ```bash
 sudo nano /etc/systemd/system/gost.service
