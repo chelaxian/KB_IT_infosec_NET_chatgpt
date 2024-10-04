@@ -38,10 +38,16 @@ sudo systemctl enable gost.service
 sudo systemctl start gost.service
 ```
 check
-```sudo systemctl status gost.service```
-```ss -tulpn | grep 56789```
+```
+sudo systemctl status gost.service
+```
+```
+ss -tulpn | grep 56789
+```
 or
-```netstat -tulpn | grep 56789```
+```
+netstat -tulpn | grep 56789
+```
 </details>
 
 ---
