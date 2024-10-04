@@ -1,4 +1,4 @@
-https://github.com/go-gost/gost
+https://github.com/go-gost/gost \
 https://habr.com/ru/articles/777656/
 
 ## on server (linux)
