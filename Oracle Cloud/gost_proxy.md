@@ -1,6 +1,6 @@
 https://github.com/go-gost/gost
 
-### on server (linux)
+## on server (linux)
 download and install
 ```bash
 bash <(curl -fsSL https://github.com/go-gost/gost/raw/master/install.sh) --install
@@ -58,7 +58,7 @@ netstat -tulpn | grep 56789
 
 ---
 
-### on client (windows)
+## on client (windows)
 download and extract
 https://github.com/go-gost/gost/releases/download/v3.0.0-nightly.20241002/gost_3.0.0-nightly.20241002_windows_amd64.zip
 
