@@ -59,7 +59,7 @@ netstat -tulpn | grep 56789
 ---
 
 ## on client (windows)
-download and extract
+download and extract \
 https://github.com/go-gost/gost/releases/download/v3.0.0-nightly.20241002/gost_3.0.0-nightly.20241002_windows_amd64.zip
 
 manual run
