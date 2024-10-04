@@ -15,7 +15,7 @@ add this lines
 ```bash
 acl allowed_ip src 10.0.0.0/24
 http_access allow allowed_ip
-http_port 10.0.0.XXX:3128 #change XXX to real IP
+http_port 10.0.0.XXX:3128 #change XXX to ARM IP
 ```
 
 ```bash
@@ -26,13 +26,13 @@ systemctl enable squid
 #### on AMD:
 
 ```bash
-#change XXX to real IP
+#change XXX to ARM IP
 export http_proxy="http://10.0.0.XXX:3128" 
 export https_proxy="http://10.0.0.XXX:3128" 
 ```
 
 ```bash
-#change XXX to real IP
+#change XXX to ARM IP
 echo 'export http_proxy="http://10.0.0.XXX:3128"' >> ~/.bashrc 
 echo 'export https_proxy="http://10.0.0.XXX:3128"' >> ~/.bashrc 
 ```
