@@ -1,4 +1,5 @@
 ### on server
+---
 manual run 
 ```bash
 gost -L relay://username:password@:56789
@@ -37,8 +38,9 @@ check
 or
 ```netstat -tulpn | grep 56789```
 </details>
-
+---
 ### on client
+---
 manual run
 ```cmd
 gost -L http://:8080 -L socks5://:1080 -F relay://username:password@your.server.net:56789
@@ -60,7 +62,7 @@ netstat -an | findstr :8080
 netstat -an | findstr :1080
 ```
 </details>
-
+---
 install chrome extension [Proxy SwitchyOmega 3 (ZeroOmega)](https://chromewebstore.google.com/detail/proxy-switchyomega-3-zero/pfnededegaaopdmhkdmcofjmoldfiped) and connect to 
 
 #### http - `127.0.0.1:8080` 
