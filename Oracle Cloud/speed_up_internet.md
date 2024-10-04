@@ -11,7 +11,7 @@ apt install squid -y
 nano /etc/squid/squid.conf
 ```
 
-add this lines
+add this lines on top
 ```bash
 acl allowed_ip src 10.0.0.0/24
 http_access allow allowed_ip
