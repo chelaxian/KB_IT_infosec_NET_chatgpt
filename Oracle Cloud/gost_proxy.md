@@ -65,6 +65,6 @@ install chrome extension [Proxy SwitchyOmega 3 (ZeroOmega)](https://chromewebsto
 
 #### http - `127.0.0.1:8080` 
 or 
-#### Socks5 - `127.0.0.1:1080`
+#### socks5 - `127.0.0.1:1080`
 
 check IP on https://ipleak.net/
