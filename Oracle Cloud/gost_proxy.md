@@ -67,6 +67,7 @@ manual run
 gost.exe -L http://:8080 -L socks5://:1080 -F relay://username:password@your.server.net:56789
 ```
 <details><summary>autostart</summary> 
+  
 place gost.exe in root of C:/
 ```powershell
 $Action = New-ScheduledTaskAction -Execute "C:\gost.exe" -Argument "-L http://:8080 -L socks5://:1080 -F relay://username:password@your.server.net:56789"
