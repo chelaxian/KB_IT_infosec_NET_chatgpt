@@ -1,4 +1,10 @@
+https://github.com/go-gost/gost
+
 ### on server
+download
+```bash
+bash <(curl -fsSL https://github.com/go-gost/gost/raw/master/install.sh) --install
+```
 manual run 
 ```bash
 gost -L relay://username:password@:56789
@@ -52,13 +58,16 @@ netstat -tulpn | grep 56789
 
 ---
 
-### on client
+### on client (windows)
+download and extract
+https://github.com/go-gost/gost/releases/download/v3.0.0-nightly.20241002/gost_3.0.0-nightly.20241002_windows_amd64.zip
+
 manual run
 ```cmd
-gost -L http://:8080 -L socks5://:1080 -F relay://username:password@your.server.net:56789
+gost.exe -L http://:8080 -L socks5://:1080 -F relay://username:password@your.server.net:56789
 ```
 <details><summary>autostart</summary> 
-  
+place gost.exe in root of C:/
 ```powershell
 $Action = New-ScheduledTaskAction -Execute "C:\gost.exe" -Argument "-L http://:8080 -L socks5://:1080 -F relay://username:password@your.server.net:56789"
 $Trigger = New-ScheduledTaskTrigger -AtStartup
