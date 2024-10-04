@@ -63,8 +63,8 @@ netstat -an | findstr :1080
 
 install chrome extension [Proxy SwitchyOmega 3 (ZeroOmega)](https://chromewebstore.google.com/detail/proxy-switchyomega-3-zero/pfnededegaaopdmhkdmcofjmoldfiped) and connect to 
 
-http - `127.0.0.1:8080` \
+#### http - `127.0.0.1:8080` \
 or \
-Socks5 - `127.0.0.1:1080`
+#### Socks5 - `127.0.0.1:1080`
 
 check IP on https://ipleak.net/
