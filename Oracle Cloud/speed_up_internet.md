@@ -1,6 +1,7 @@
 Bandwidth - 10 TB egress per month, speed limited to 50 Mbps on x64-based VM, 1000 Mbps * core count on ARM-based VM
 
 ### to speed up amd x64 VM:
+redirect all AMD-internet traffic via proxy on ARM
 
 #### on ARM:
 ```bash
