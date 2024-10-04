@@ -32,7 +32,13 @@ User=root
 [Install]
 WantedBy=multi-user.target
 ```
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable gost.service
+sudo systemctl start gost.service
+```
 check
+```sudo systemctl status gost.service```
 ```ss -tulpn | grep 56789```
 or
 ```netstat -tulpn | grep 56789```
