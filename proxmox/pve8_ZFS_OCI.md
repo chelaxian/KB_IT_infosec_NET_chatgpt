@@ -1,28 +1,7 @@
 ### Краткая инструкция по настройке Proxmox и ZFS в виде файла
 
-#### 1. **Установка Proxmox VE**
-1. Установите Debian 12.
-2. Добавьте репозиторий Proxmox:
-   ```bash
-   echo "deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list
-   apt update
-   apt install proxmox-ve postfix open-iscsi -y
-   ```
 
-3. Отключите репозиторий `enterprise`:
-   ```bash
-   sed -i 's/^deb/#deb/' /etc/apt/sources.list.d/pve-enterprise.list
-   apt update
-   ```
-
-4. Перезагрузите сервер:
-   ```bash
-   reboot
-   ```
-
----
-
-#### 2. **Создание ZFS в виде файла**
+#### 1. **Создание ZFS в виде файла**
 1. Создайте файл для ZFS:
    ```bash
    df -h #оценить свободное место
@@ -47,7 +26,7 @@
 
 ---
 
-#### 3. **Настройка автоматического монтирования ZFS**
+#### 2. **Настройка автоматического монтирования ZFS**
 1. Создайте сервис для подключения файла ZFS:
    ```bash
    nano /etc/systemd/system/zfs-loop.service
@@ -79,7 +58,7 @@
 
 ---
 
-#### 4. **Добавление ZFS в Proxmox**
+#### 3. **Добавление ZFS в Proxmox**
 1. Зарегистрируйте ZFS как хранилище:
    ```bash
    pvesm add zfspool zfspool-storage --pool zfspool --content images,rootdir
@@ -92,7 +71,7 @@
 
 ---
 
-#### 5. **Использование ZFS для ВМ и контейнеров**
+#### 4. **Использование ZFS для ВМ и контейнеров**
 1. При создании новой ВМ или контейнера выберите хранилище `zfspool-storage` для дисков.
 2. Для создания снапшотов используйте веб-интерфейс или команды:
    - **Для LXC контейнеров:**
@@ -106,7 +85,7 @@
 
 ---
 
-#### 6. **Полезные команды ZFS**
+#### 5. **Полезные команды ZFS**
 - Просмотр пула:
   ```bash
   zpool status
@@ -121,4 +100,3 @@
   zfs destroy zfspool@backup
   ```
 
-Эти шаги помогут быстро настроить новый хост с Proxmox и ZFS на основе файла. Если потребуется помощь, напишите!
