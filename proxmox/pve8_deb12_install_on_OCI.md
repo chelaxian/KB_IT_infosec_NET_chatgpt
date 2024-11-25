@@ -25,7 +25,7 @@ After that, disconnect from the machine. And go back to the OCI console.
 
 Click ‘Reboot’ on the top of the detail page. And check ‘Force reboot the instance by immediately powering off, then powering back on’.
 
-Now pay attention, once the machine starts to reboot, focus on the Cloud Shell page, and smash your ESC button. Until you enter a BIOS-like page like below.
+Now pay attention, once the machine starts to reboot, focus on the Cloud Shell page, and smash your ESC button. Until you enter a BIOS-like page like below. \
 ![image](https://github.com/user-attachments/assets/f6997145-1f7c-4b74-8968-804f61c97936) \
 Control the page with your arrow keys. Navigate to ‘Boot Maintenance Manager’ -> ‘Boot From File’ -> Choose your only hard disk -> ’netboot.xyz-arm64.efi’.
 
