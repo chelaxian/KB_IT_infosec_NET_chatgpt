@@ -107,19 +107,21 @@ iface enp0s3 inet static
 	netmask 255.255.0.0
 	gateway 10.0.0.1
 ```
-You should judge the netmask according to the CIDR. /16 usually means 255.255.0.0, /24 usually means 255.255.255.0, you can find converter on the Internet.
+You should judge the netmask according to the CIDR. /16 usually means `255.255.0.0`, /24 usually means `255.255.255.0`, you can find converter on the Internet.
 
-Add an /etc/hosts entry for your IP address
-Please make sure that your machine's hostname is resolvable via /etc/hosts, i.e. you need an entry in /etc/hosts which assigns an address to its hostname.
+---
 
-Make sure that you have configured one of the following addresses in /etc/hosts for your hostname:
+Add an `/etc/hosts` entry for your IP address
+Please make sure that your machine's hostname is resolvable via `/etc/hosts`, i.e. you need an entry in `/etc/hosts` which assigns an address to its hostname.
+
+Make sure that you have configured one of the following addresses in `/etc/hosts` for your hostname:
 ```
 1 IPv4 or
 1 IPv6 or
 1 IPv4 and 1 IPv6
 Note: This also means removing the address 127.0.1.1 that might be present as default.
 ```
-For instance, if your IP address is 192.168.15.77, and your hostname prox4m1, then your /etc/hosts file could look like:
+For instance, if your IP address is `192.168.15.77`, and your hostname prox4m1, then your `/etc/hosts` file could look like:
 ```bash
 127.0.0.1       localhost.localdomain localhost
 192.168.15.77   prox4m1.proxmox.com prox4m1
@@ -165,6 +167,8 @@ Configure packages which require user input on installation according to your ne
 If you don't know what to enter here, choose local only and leave the system name as is.
 
 Finally, you can connect to the admin web interface (https://youripaddress:8006).
+
+---
 
 After installation, we need to install some dependencies.
 
