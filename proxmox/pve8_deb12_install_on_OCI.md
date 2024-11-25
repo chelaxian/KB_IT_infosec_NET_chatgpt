@@ -1,3 +1,6 @@
+https://frank-ruan.com/2023/03/18/installing-proxmox-ve-on-oci/
+https://frank-ruan.com/2023/06/24/configuring-network-for-proxmox-ve-on-oci-arm/
+
 First, log in to your Oracle Cloud console and jump right to the ‘Instances’ page. Create an Ampere instance.
 ![image](https://github.com/user-attachments/assets/81901937-83dc-411a-a106-46035069dc74)
 The OS doesn’t matter, we will replace it later.
