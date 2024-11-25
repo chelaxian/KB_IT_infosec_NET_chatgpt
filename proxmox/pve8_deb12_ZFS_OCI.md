@@ -1,5 +1,26 @@
 ### Краткая инструкция по настройке Proxmox и ZFS в виде файла
 
+#### 0. **Установка ZFS**
+
+1. обновите репо, добавив туда `contrib`, `non-free` и `non-free-firmware`:
+   ```bash
+   nano /etc/apt/sources.list
+   ```
+
+   ```bash
+   deb http://deb.debian.org/debian bookworm main contrib non-free
+   deb http://deb.debian.org/debian bookworm-updates main contrib non-free
+   deb http://deb.debian.org/debian-security bookworm-security main contrib non-free
+
+   ```
+2. установите пакеты ZFS:
+   ```bash
+   apt update
+   apt install zfsutils-linux
+   apt install zfs-initramfs
+   apt install zfs-dkms
+   modprobe zfs
+   ```
 
 #### 1. **Создание ZFS в виде файла**
 1. Создайте файл для ZFS:
