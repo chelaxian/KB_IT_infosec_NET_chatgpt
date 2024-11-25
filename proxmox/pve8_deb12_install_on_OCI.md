@@ -1,13 +1,13 @@
 https://frank-ruan.com/2023/03/18/installing-proxmox-ve-on-oci/ \
 https://frank-ruan.com/2023/06/24/configuring-network-for-proxmox-ve-on-oci-arm/
 
-First, log in to your Oracle Cloud console and jump right to the ‘Instances’ page. Create an Ampere instance.
+First, log in to your Oracle Cloud console and jump right to the `Instances’ page. Create an Ampere instance.
 ![image](https://github.com/user-attachments/assets/81901937-83dc-411a-a106-46035069dc74)
 The OS doesn’t matter, we will replace it later.
 
 Next, set up your firewall to let all traffic go to the virtual machine.
 
-Go to ‘Console Connection’, and Click ‘Launch Cloud Shell Connection’.
+Go to `Console Connection’, and Click `Launch Cloud Shell Connection’.
 
 A Cloud Shell session would appear. Don’t do anything yet.
 ![image](https://github.com/user-attachments/assets/8d5edb75-cb16-48d1-95fa-b1efed76ac59)
@@ -23,27 +23,27 @@ wget https://boot.netboot.xyz/ipxe/netboot.xyz-arm64.efi
 
 After that, disconnect from the machine. And go back to the OCI console.
 
-Click ‘Reboot’ on the top of the detail page. And check ‘Force reboot the instance by immediately powering off, then powering back on’.
+Click `Reboot’ on the top of the detail page. And check `Force reboot the instance by immediately powering off, then powering back on’.
 
 Now pay attention, once the machine starts to reboot, focus on the Cloud Shell page, and smash your ESC button. Until you enter a BIOS-like page like below. \
 ![image](https://github.com/user-attachments/assets/f6997145-1f7c-4b74-8968-804f61c97936) \
-Control the page with your arrow keys. Navigate to ‘Boot Maintenance Manager’ -> ‘Boot From File’ -> Choose your only hard disk -> ’netboot.xyz-arm64.efi’.
+Control the page with your arrow keys. Navigate to `Boot Maintenance Manager’ -> `Boot From File’ -> Choose your only hard disk -> ’netboot.xyz-arm64.efi’.
 
 Then you will enter the iPXE interface which netboot offers.
 
 ![image](https://github.com/user-attachments/assets/14eb000a-4f75-4912-b583-103924c93a83)
 
-Navigate to ‘Linux Network Installs’ -> ‘Debian’ -> ‘Debian 11.0 (bullseye)’ -> ‘Text Based Install’
+Navigate to `Linux Network Installs’ -> `Debian’ -> `Debian 11.0 (bullseye)’ -> `Text Based Install’
 
 And you will enter the normal Debian netinst page.
 
 Now please point a domain to your machine. So if your domain is pve.contoso.com and your IP is 1.1.1.1, you should add an A record.
 
-Use ‘pve’ as your hostname, and ‘pve.contoso.com’ as your domain in this case.
+Use `pve’ as your hostname, and `pve.contoso.com’ as your domain in this case.
 
 Then finallize your Debian installation as usual.
 
-When you are setting up the partitioner, select ‘Guided - use entire disk and set up LVM’ instead of the default one. Proxmox prefers LVM.
+When you are setting up the partitioner, select `Guided - use entire disk and set up LVM’ instead of the default one. Proxmox prefers LVM.
 
 ![image](https://github.com/user-attachments/assets/ba40e7cd-d708-4121-89b4-bdf59830514c)
 
@@ -114,7 +114,7 @@ Now open /etc/hosts, delete all the content, and replace with the following.
 127.0.0.1 localhost
 PUBLIC_IP HOSTNAME.proxmox.com HOSTNAME
 ```
-Replace the ‘PUBLIC_IP’ with your machine’s public IP and ‘HOSTNAME’ with your hostname. e.g. ‘1.1.1.1 pve.contoso.com pve’.
+Replace the `PUBLIC_IP’ with your machine’s public IP and `HOSTNAME’ with your hostname. e.g. `1.1.1.1 pve.contoso.com pve’.
 
 Now reboot your machine, please.
 
