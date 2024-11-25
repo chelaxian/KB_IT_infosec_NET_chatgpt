@@ -109,13 +109,31 @@ iface enp0s3 inet static
 ```
 You should judge the netmask according to the CIDR. /16 usually means 255.255.0.0, /24 usually means 255.255.255.0, you can find converter on the Internet.
 
-Now open /etc/hosts, delete all the content, and replace with the following.
-```bash
-127.0.0.1 localhost
-PUBLIC_IP HOSTNAME.proxmox.com HOSTNAME
-```
-Replace the `PUBLIC_IP` with your machine`s public IP and `HOSTNAME` with your hostname. e.g. `1.1.1.1 pve.contoso.com pve`.
+Add an /etc/hosts entry for your IP address
+Please make sure that your machine's hostname is resolvable via /etc/hosts, i.e. you need an entry in /etc/hosts which assigns an address to its hostname.
 
+Make sure that you have configured one of the following addresses in /etc/hosts for your hostname:
+```
+1 IPv4 or
+1 IPv6 or
+1 IPv4 and 1 IPv6
+Note: This also means removing the address 127.0.1.1 that might be present as default.
+```
+For instance, if your IP address is 192.168.15.77, and your hostname prox4m1, then your /etc/hosts file could look like:
+```bash
+127.0.0.1       localhost.localdomain localhost
+192.168.15.77   prox4m1.proxmox.com prox4m1
+
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+```
+You can test if your setup is ok using the hostname command:
+```bash
+hostname --ip-address
+192.168.15.77 # should return your IP address here
+```
 Now reboot your machine, please.
 
 https://github.com/jiangcuo/Proxmox-Port/wiki/Install-Proxmox-VE-on-Debian-bookworm
