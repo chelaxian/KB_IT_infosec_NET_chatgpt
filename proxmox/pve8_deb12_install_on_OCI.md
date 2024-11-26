@@ -1,7 +1,7 @@
 
 # 1. Установка Proxmox VE на OCI
 
-ссылки на источник:
+ссылки на источник: \
 https://frank-ruan.com/2023/03/18/installing-proxmox-ve-on-oci/ \
 https://frank-ruan.com/2023/06/24/configuring-network-for-proxmox-ve-on-oci-arm/ 
 
