@@ -100,7 +100,7 @@ systemctl restart sshd
 
 ### Установка полезного ПО
 
-Установите следующие пакеты:
+Подключитесь к ВМ по SSH и установите следующие пакеты:
 
 ```bash
 apt install sudo wget curl iftop vnstat neofetch vim nano net-tools
