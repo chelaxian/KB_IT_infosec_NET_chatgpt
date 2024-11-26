@@ -60,13 +60,13 @@ wget https://boot.netboot.xyz/ipxe/netboot.xyz-arm64.efi
 
 ## 1.5. Установка Debian
 
-В интерфейсе iPXE выберите `Linux Network Installs` -> `Debian` -> `Debian 11.0 (bullseye)` -> `Text Based Install`.
+В интерфейсе iPXE выберите `Linux Network Installs` -> `Debian` -> `Debian 12.0 (bookworm)` -> `Text Based Install`.
 
 ![image](https://github.com/user-attachments/assets/14eb000a-4f75-4912-b583-103924c93a83)
 
-Укажите домен для машины. Например, если ваш домен `pve.contoso.com`, а IP `1.1.1.1`, добавьте запись A.
+Укажите домен для машины. Например, если ваш домен `pve.domain.net`, а IP `1.1.1.1`, добавьте запись A.
 
-Используйте `pve` как имя хоста и `pve.contoso.com` как домен.
+Используйте `pve` как имя хоста и `pve.domain.net` как домен.
 
 При настройке разделов выберите `Guided - use entire disk and set up LVM`, так как Proxmox предпочитает LVM.
 
