@@ -147,7 +147,7 @@ iface enp0s6 inet static
 
 ```bash
 127.0.0.1       localhost.localdomain localhost
-192.168.15.77   prox4m1.proxmox.com prox4m1
+10.0.0.132   prox4m1.proxmox.com prox4m1
 
 # The following lines are desirable for IPv6 capable hosts
 ::1     localhost ip6-localhost ip6-loopback
