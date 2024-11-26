@@ -9,7 +9,7 @@ https://frank-ruan.com/2023/06/24/configuring-network-for-proxmox-ve-on-oci-arm/
 
 ## 1.1. Настройка экземпляра
 
-Сначала войдите в консоль Oracle Cloud и перейдите на страницу `Instances`. Создайте экземпляр Ampere.
+Сначала войдите в консоль Oracle Cloud и перейдите на страницу [Instances](https://cloud.oracle.com/compute/instances). Создайте экземпляр Ampere.
 Операционная система значения не имеет, так как мы заменим её позже.
 
 ![image](https://github.com/user-attachments/assets/81901937-83dc-411a-a106-46035069dc74)
