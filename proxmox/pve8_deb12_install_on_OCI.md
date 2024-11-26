@@ -223,3 +223,8 @@ systemctl restart networking
 
 Перейдите в консоль PVE и создайте контейнер. Не забудьте предварительно скачать шаблон контейнера по ссылке:  
 https://uk.lxd.images.canonical.com/images/
+
+После входа в контейнер установите следующие пакеты и настройте доступ по SSH:
+```bash
+apt install sudo cron htop nano net-tools dnsutils wget curl git speedtest-cli openssh-server
+```
