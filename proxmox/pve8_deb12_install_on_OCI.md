@@ -52,7 +52,7 @@ wget https://boot.netboot.xyz/ipxe/netboot.xyz-arm64.efi
 
 В момент перезагрузки обратите внимание на окно Cloud Shell. Нажимайте ESC, пока не войдете в страницу, похожую на BIOS.  
 
-![image](https://github.com/user-attachments/assets/f6997145-1f7c-4b74-8968-804f61c97936) \
+![image](https://github.com/user-attachments/assets/f6997145-1f7c-4b74-8968-804f61c97936) 
 
 Управляйте стрелками и перейдите в `Boot Maintenance Manager` -> `Boot From File` -> Выберите единственный жесткий диск -> `netboot.xyz-arm64.efi`.
 
