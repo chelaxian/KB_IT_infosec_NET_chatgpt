@@ -16,7 +16,8 @@ https://frank-ruan.com/2023/06/24/configuring-network-for-proxmox-ve-on-oci-arm/
 
 Далее перейдите на страницу [Default Security List for vcn](https://cloud.oracle.com/networking/vcns/) и настройте брандмауэр, чтобы разрешить весь трафик на виртуальную машину.
 
-<img width="614" alt="image" src="https://github.com/user-attachments/assets/3823948a-7629-4584-99ec-24883b5a444b">
+<img width="992" alt="image" src="https://github.com/user-attachments/assets/ebc57b81-8c87-4b36-a985-cdbec6791298">
+
 
 ---
 
