@@ -86,6 +86,15 @@ wget https://boot.netboot.xyz/ipxe/netboot.xyz-arm64.efi
 
 По умолчанию OpenSSH Server не позволяет входить в систему root-пользователю по паролю, но это возможно с использованием SSH-ключа.
 
+Либо же можно разрешить вход под `root` с помощью внесения сообвествующих настроек: \
+`PermitRootLogin yes` и `PasswordAuthentication yes` \
+ в файлы `/etc/ssh/ssh_config` и `/etc/ssh/sshd_config` и последующего перезапуска сервиса командами
+
+```bash
+systemctl restart ssh
+systemctl restart sshd
+```
+
 ---
 
 ### Установка полезного ПО
