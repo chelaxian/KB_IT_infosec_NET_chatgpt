@@ -69,7 +69,7 @@ Check your IP using the following command.
 ```bash
 ip address
 ```
-In my case, it is 10.0.117.132.
+In my case, it is 10.0.0.132.
 
 Use your favorite editor to open /etc/network/interfaces. The default one looks like this.
 
@@ -84,8 +84,8 @@ auto lo
 iface lo inet loopback
 
 # The primary network interface
-allow-hotplug enp0s3
-iface enp0s3 inet dhcp
+allow-hotplug enp0s6
+iface enp0s6 inet dhcp
 ```
 Change to the following:
 ```bash
@@ -99,12 +99,12 @@ auto lo
 iface lo inet loopback
 
 # The primary network interface
-allow-hotplug enp0s3
-# iface enp0s3 inet dhcp
+allow-hotplug enp0s6
+# iface enp0s6 inet dhcp
 # Define Static IP
-iface enp0s3 inet static
-	address 10.0.117.132
-	netmask 255.255.0.0
+iface enp0s6 inet static
+	address 10.0.0.132
+	netmask 255.255.255.0
 	gateway 10.0.0.1
 ```
 You should judge the netmask according to the CIDR. /16 usually means `255.255.0.0`, /24 usually means `255.255.255.0`, you can find converter on the Internet.
@@ -205,3 +205,25 @@ reboot
 ```
 Hooray!
 You now have a fully functional Proxmox VE on OCI! Visit https://IP:8006 for more configurations.
+
+Now log in to your PVE console, we are going to configure the bridge.
+
+Go to Shell and open /etc/network/interfaces and add the following lines.
+```bash
+auto vmbr0
+iface vmbr0 inet static
+        address 10.200.0.1/24
+        bridge_ports none
+        bridge_stp off
+        bridge_fd 0
+        post-up echo 1 > /proc/sys/net/ipv4/ip_forward
+        post-up iptables -t nat -A POSTROUTING -s '10.200.0.0/24' -o enp0s6 -j MASQUERADE
+        post-down iptables -t nat -D POSTROUTING -s '10.200.0.0/24' -o enp0s6 -j MASQUERADE
+```
+This will create a /24 LAN CIDR, `10.200.0.0/24`, and we asked iptables to forward all traffic to our default network interface, `enp0s6`.
+
+Use systemctl restart networking to restart the networking service.
+
+Go back to the PVE console, and create a container. (Don’t forget to download the CT template first.)
+
+It is suggested to download the template from here: https://uk.lxd.images.canonical.com/images/
