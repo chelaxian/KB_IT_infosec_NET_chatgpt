@@ -26,6 +26,7 @@
    ```bash
    df -h #оценить свободное место
    #fallocate -l 31G /zfs-pool.img
+   #fallocate -l 47G /mnt/data/zfs-pool.img
    fallocate -l 73G /zfs-pool.img
    ```
 
@@ -68,6 +69,7 @@
    [Install]
    WantedBy=zfs-import.target
    ```
+   вместо `/dev/loop0` может быть `/dev/loop1` или `/dev/loop2`
 
 3. Активируйте и запустите сервис:
    ```bash
