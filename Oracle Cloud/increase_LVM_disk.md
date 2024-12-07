@@ -1,5 +1,7 @@
 я увеличил диск с 47GB до 59GB. как сначала увеличить sda до максимума а потом LVM тоже растянуть на все новое свободное место?
 
+<details><summary>Или под спойлером:</summary>
+
 ```shell
 root:~# fdisk -l
 GPT PMBR size mismatch (97677311 != 123731967) will be corrected by write.
@@ -16,6 +18,8 @@ Disk /dev/mapper/vg-root: 44.64 GiB, 47928311808 bytes, 93609984 sectors
 
 Disk /dev/mapper/vg-swap_1: 980 MiB, 1027604480 bytes, 2007040 sectors
 ```
+
+</details>
 
 Понял задачу. Увеличим сначала размер диска `sda`, затем расширим раздел `sda3`, после чего перераспределим его для LVM. Вот пошаговое руководство:
 
