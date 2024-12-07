@@ -113,7 +113,7 @@ df -h
 ```
 
 ---
-
+вот что у меня получилось
 ```shell
 root:~# parted /dev/sda
 GNU Parted 3.5
@@ -141,7 +141,7 @@ root:~# pvresize /dev/sda3
   1 physical volume(s) resized or updated / 0 physical volume(s) not resized
 root:~# vgdisplay
   --- Volume group ---
-  VG Name               root
+  VG Name               vg-root
   System ID
   Format                lvm2
   Metadata Areas        1
