@@ -12,8 +12,10 @@
 
 2. Найдите запись для хранилища `zfspool` и убедитесь, что параметр `mountpoint` отсутствует или корректен. Пример:
 ```diff
-   zfspool: zfspool
-       pool zfspool
+-   zfspool: zfspool-storage
++   zfspool: zfspool
+-       pool zfspool-storage
++       pool zfspool
        content rootdir,images
 -       mountpoint /mnt/zfs
 +       mountpoint /mnt/data
