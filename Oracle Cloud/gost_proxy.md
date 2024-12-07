@@ -22,6 +22,7 @@ fill in `start_gost_proxies.sh`
 gost -L relay://username:password@:56789
 ```
 ```bash
+chmod 777 /root/gost/start_gost_proxies.sh
 sudo nano /etc/systemd/system/gost.service
 ```
 fill in `gost.service`
