@@ -1,6 +1,6 @@
 я увеличил диск с 47GB до 59GB. как сначала увеличить sda до максимума а потом LVM тоже растянуть на все новое свободное место?
 
-<details><summary>Или под спойлером:</summary>
+<details><summary>вывод команды fdisk -l</summary>
 
 ```shell
 root:~# fdisk -l
@@ -20,6 +20,8 @@ Disk /dev/mapper/vg-swap_1: 980 MiB, 1027604480 bytes, 2007040 sectors
 ```
 
 </details>
+
+---
 
 Понял задачу. Увеличим сначала размер диска `sda`, затем расширим раздел `sda3`, после чего перераспределим его для LVM. Вот пошаговое руководство:
 
@@ -118,6 +120,8 @@ df -h
 
 ---
 вот что у меня получилось
+<details><summary>вывод всех команд по увеличению диска</summary>
+
 ```shell
 root:~# parted /dev/sda
 GNU Parted 3.5
@@ -185,6 +189,8 @@ tmpfs                          5.0M     0  5.0M   0% /run/lock
 /dev/fuse                      128M   16K  128M   1% /etc/pve
 tmpfs                          2.0G     0  2.0G   0% /run/user/0
 ```
+
+</details>
 
 ---
 
