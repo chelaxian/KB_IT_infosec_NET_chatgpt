@@ -60,6 +60,16 @@ netstat -tulpn | grep 56789
 
 ---
 
+## on client (windows)
+download and extract \
+https://github.com/go-gost/gost/releases/latest \
+https://github.com/go-gost/gost/releases/download/v3.0.0-nightly.20241002/gost_3.0.0-nightly.20241002_windows_amd64.zip
+
+manual run
+```cmd
+gost.exe -L http://:8080 -L socks5://:1080 -F relay://username:password@your.server.net:56789
+```
+
 <details><summary>autostart</summary> 
   
 place gost.exe in root of C:/
@@ -76,16 +86,6 @@ check
 tasklist | findstr gost.exe
 netstat -an | findstr :8080
 netstat -an | findstr :1080
-```
-
-## on client (windows)
-download and extract \
-https://github.com/go-gost/gost/releases/latest \
-https://github.com/go-gost/gost/releases/download/v3.0.0-nightly.20241002/gost_3.0.0-nightly.20241002_windows_amd64.zip
-
-manual run
-```cmd
-gost.exe -L http://:8080 -L socks5://:1080 -F relay://username:password@your.server.net:56789
 ```
 
 Для открытия **Планировщика задач** и настроек **Автозагрузки** в Windows можно использовать следующие команды:
