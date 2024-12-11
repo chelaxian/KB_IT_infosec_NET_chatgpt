@@ -60,6 +60,24 @@ netstat -tulpn | grep 56789
 
 ---
 
+<details><summary>autostart</summary> 
+  
+place gost.exe in root of C:/
+```powershell
+$Action = New-ScheduledTaskAction -Execute "C:\gost.exe" -Argument "-L http://:8080 -L socks5://:1080 -F relay://username:password@your.server.net:56789"
+$Trigger = New-ScheduledTaskTrigger -AtStartup
+$Principal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -RunLevel Highest
+$TaskName = "GostAutoStart"
+
+Register-ScheduledTask -Action $Action -Trigger $Trigger -Principal $Principal -TaskName $TaskName
+```
+check
+```cmd
+tasklist | findstr gost.exe
+netstat -an | findstr :8080
+netstat -an | findstr :1080
+```
+
 ## on client (windows)
 download and extract \
 https://github.com/go-gost/gost/releases/latest \
@@ -96,23 +114,6 @@ gost.exe -L http://:8080 -L socks5://:1080 -F relay://username:password@your.ser
 shell:common startup
 ```
 
-<details><summary>autostart</summary> 
-  
-place gost.exe in root of C:/
-```powershell
-$Action = New-ScheduledTaskAction -Execute "C:\gost.exe" -Argument "-L http://:8080 -L socks5://:1080 -F relay://username:password@your.server.net:56789"
-$Trigger = New-ScheduledTaskTrigger -AtStartup
-$Principal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -RunLevel Highest
-$TaskName = "GostAutoStart"
-
-Register-ScheduledTask -Action $Action -Trigger $Trigger -Principal $Principal -TaskName $TaskName
-```
-check
-```cmd
-tasklist | findstr gost.exe
-netstat -an | findstr :8080
-netstat -an | findstr :1080
-```
 </details>
 
 ---
