@@ -51,3 +51,7 @@ PS C:\Users\chelaxian> Get-AppxPackage -allusers Microsoft.WindowsStore | foreac
 PS C:\Users\chelaxian> Get-AppxPackage -AllUsers | Where-Object {$_.Name -like "*iTunes*"} | Remove-AppxPackage
 PS C:\Users\chelaxian> Get-AppxPackage *iTunes* | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml"}
 ```
+---
+
+После этого повторить установку, вручную скаченного app bundle отсюда
+https://store.rg-adguard.net/
