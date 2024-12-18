@@ -55,3 +55,12 @@ PS C:\Users\chelaxian> Get-AppxPackage *iTunes* | Foreach {Add-AppxPackage -Disa
 
 После этого повторить установку, вручную скаченного app bundle отсюда
 https://store.rg-adguard.net/
+
+
+---
+
+
+```powershell
+Get-AppxPackage -allusers Microsoft.Windows.Photos | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml"}
+
+```
