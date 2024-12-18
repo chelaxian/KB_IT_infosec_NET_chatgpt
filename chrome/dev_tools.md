@@ -116,5 +116,30 @@ console.log('Все изображения начали загружаться')
 
 ---
 
+```javascript
+// Получаем все изображения на странице
+const imageUrls = Array.from(document.querySelectorAll('img')).map(img => img.src);
+
+// Функция для удаления хвостов из ссылок на изображения
+const cleanImageUrls = imageUrls.map(url => {
+    const [baseUrl] = url.split('?'); // Разделяем строку по знаку '?'
+    return baseUrl;
+});
+
+// Выводим очищенные ссылки на изображения в консоль
+console.log(cleanImageUrls);
+
+// Опционально: сохраняем результат в текстовый файл
+const blob = new Blob([cleanImageUrls.join('\n')], { type: 'text/plain' });
+const a = document.createElement('a');
+a.href = URL.createObjectURL(blob);
+a.download = 'clean_image_urls.txt';
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
+console.log('Ссылки на изображения без параметров сохранены в clean_image_urls.txt');
+
+```
+
 Теперь скрипт ищет только ссылки на изображения (теги `<img>`), удаляет из них всё, что находится после знака `?` (включая сам знак), и сохраняет очищенные ссылки в файл `clean_image_urls.txt`. Выполните скрипт в консоли DevTools, чтобы обработать все ссылки на изображения на текущей странице. Если потребуется что-то дополнить, уточните!
 
