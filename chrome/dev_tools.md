@@ -192,6 +192,10 @@ console.log('Ссылки на посты сохранены в post_links.txt')
 4. Ссылки будут выведены в консоль и сохранены в файл `post_links.txt`.
 
 ---
+### Simple Auto-Scroll
+https://chromewebstore.google.com/detail/simple-autoscroll/fgecljolecpahpphjjhfhgiimljpkodo
+<img width="82" alt="image" src="https://github.com/user-attachments/assets/becd4b04-ecbe-4687-820a-508bc1359455" />
+
 ### Cookie-Editor
 https://chromewebstore.google.com/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm
 ```
