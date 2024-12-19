@@ -192,6 +192,26 @@ console.log('Ссылки на посты сохранены в post_links.txt')
 4. Ссылки будут выведены в консоль и сохранены в файл `post_links.txt`.
 
 ---
+### Cookie-Editor
+https://chromewebstore.google.com/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm
+```
+Export - Netscape - Save as "cookie.txt"
+```
+
+### yt-dlp
+https://github.com/yt-dlp/yt-dlp
+```
+yt-dlp.exe --cookies cookie.txt -a post_links.txt
+```
+```
+-a "C:\Users\test\Desktop\youtubeDL_list.txt"
+
+-a, --batch-file FILE           File containing URLs to download ("-" for
+                                stdin), one URL per line. Lines starting
+                                with "#", ";" or "]" are considered as
+                                comments and ignored
+```
+---
 <details><summary>Free Download Manager (FDM)</summary>
 Чтобы использовать **Free Download Manager (FDM)** для массовой загрузки изображений по списку ссылок из текстового файла, выполните следующие шаги:
 
