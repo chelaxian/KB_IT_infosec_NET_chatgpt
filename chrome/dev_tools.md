@@ -194,8 +194,7 @@ console.log('Ссылки на посты сохранены в post_links.txt')
 ---
 ### Simple Auto-Scroll
 https://chromewebstore.google.com/detail/simple-autoscroll/fgecljolecpahpphjjhfhgiimljpkodo \
-<img width="82" alt="image" src="https://github.com/user-attachments/assets/2b13c09a-6f73-478c-a581-6101e0b552fa" />
-
+<img width="82" alt="image" src="https://github.com/user-attachments/assets/e9e0ed64-b70d-456f-a9ae-d412ec59905f" />
 
 ### Cookie-Editor
 https://chromewebstore.google.com/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm
