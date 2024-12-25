@@ -87,7 +87,7 @@
            set ip 10.0.1.2 255.255.255.255
            set allowaccess ping
            set type tunnel
-           set remote-ip 10.0.1.1 255.255.255.0
+           set remote-ip 10.0.0.2 255.255.255.0
            set description "IPIP"
            set alias "IPIP"
            set snmp-index 20
