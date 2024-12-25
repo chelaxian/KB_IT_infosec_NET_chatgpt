@@ -99,13 +99,26 @@
 2. **Настройка маршрутов**
    - Добавить маршрут к удаленной сети через туннель:
      ```plaintext
-     config router static
-         edit 1
-             set dst 8.8.4.4 255.255.255.255
-             set device "IPIP-Tunnel"
-             set comment "Route to remote network via IPIP tunnel"
-         next
-     end
+      config router static
+          edit 222
+              set dst 8.8.4.4 255.255.255.255
+              set device "IPIP-Tunnel"
+              set comment "Route to remote network via IPIP tunnel"
+          next
+          edit 111
+              set distance 5
+              set priority 40
+              set device "IPIP-Tunnel"
+              set comment "Route to remote network via IPIP tunnel"
+          next
+          edit 666
+              set distance 5
+              set priority 30
+              set device "wan1"
+              set comment "[ DEFAULT GW ]"
+              set dynamic-gateway enable
+          next
+      end
      ```
 
 3. **Создание объектов для адресов**
