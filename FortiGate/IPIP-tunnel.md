@@ -105,12 +105,6 @@
               set device "IPIP-Tunnel"
               set comment "Route to remote network via IPIP tunnel"
           next
-          edit 111
-              set distance 5
-              set priority 40
-              set device "IPIP-Tunnel"
-              set comment "Route to remote network via IPIP tunnel"
-          next
           edit 666
               set distance 5
               set priority 30
