@@ -220,7 +220,13 @@ systemctl restart networking
 
 ---
 
-## 1.9. Настройка ZFS
+## 1.9. Монтирование нового диска
+
+[монтирование нового диска](https://github.com/chelaxian/KB_IT_infosec_NET_chatgpt/blob/main/proxmox/mount_new_disk.md) 
+
+---
+
+## 1.10. Настройка ZFS
 
 Если вы хотите иметь возможность делать снапшоты VM и LXC тогда вам необходимо установить файловую систему ZFS. Процесс установки описан в   
 [статье по ссылке](https://github.com/chelaxian/KB_IT_infosec_NET_chatgpt/blob/main/proxmox/pve8_deb12_ZFS_OCI.md)
@@ -385,7 +391,7 @@ reboot
 ```
 ---
 
-## 1.11. Создание контейнера
+## 1.12. Создание контейнера
 
 Перейдите в консоль PVE и создайте контейнер. Не забудьте предварительно скачать шаблон контейнера в веб-интерфейсе `Proxmox VE` в разделе `CT Templates` или по ссылке:  
 https://uk.lxd.images.canonical.com/images/
