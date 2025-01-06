@@ -220,7 +220,118 @@ systemctl restart networking
 
 ---
 
-## 1.9. Настройка ZFS
+## 1.9. Монтирование нового диска
+
+Процесс описан в
+[статье по ссылке](https://github.com/chelaxian/KB_IT_infosec_NET_chatgpt/blob/main/proxmox/mount_new_disk.md) 
+
+<details><summary>Или под спойлером:</summary>
+	
+# Инструкция по работе с новым разделом диска на Linux
+
+## Шаги создания раздела и монтирования
+
+### 1. Создание нового раздела с помощью `fdisk`
+Запустите утилиту `fdisk` для создания нового раздела:
+```bash
+fdisk /dev/sda
+```
+Пример работы с `fdisk`:
+```
+Welcome to fdisk (util-linux 2.38.1).
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+Device does not contain a recognized partition table.
+Created a new DOS (MBR) disklabel with disk identifier 0xabb0aa87.
+
+Command (m for help): n
+Partition type
+   p   primary (0 primary, 0 extended, 4 free)
+   e   extended (container for logical partitions)
+Select (default p): p
+Partition number (1-4, default 1):
+First sector (2048-123731967, default 2048):
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (2048-123731967, default 123731967):
+
+Created a new partition 1 of type 'Linux' and of size 59 GiB.
+
+Command (m for help): w
+The partition table has been altered.
+Calling ioctl() to re-read partition table.
+Syncing disks.
+```
+
+### 2. Проверка созданного раздела
+Убедитесь, что новый раздел создан, с помощью команды:
+```bash
+fdisk -l
+```
+Пример вывода:
+```
+Disk /dev/sda: 59 GiB, 63350767616 bytes, 123731968 sectors
+Disk model: BlockVolume
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 1048576 bytes
+Disklabel type: dos
+Disk identifier: 0xabb0aa87
+
+Device     Boot Start       End   Sectors Size Id Type
+/dev/sda1        2048 123731967 123729920  59G 83 Linux
+```
+
+### 3. Создание файловой системы на новом разделе
+Создайте файловую систему (например, `ext4`) на разделе `/dev/sda1`:
+```bash
+mkfs.ext4 /dev/sda1
+```
+
+### 4. Создание точки монтирования
+Создайте директорию для монтирования, если она еще не существует:
+```bash
+mkdir -p /mnt/zfs59
+```
+
+### 5. Монтирование раздела
+Смонтируйте новый раздел в созданную директорию:
+```bash
+mount /dev/sda1 /mnt/zfs59
+```
+
+### 6. Проверка монтирования
+Убедитесь, что раздел успешно смонтирован:
+```bash
+df -h
+```
+Пример вывода:
+```
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda1        59G   24K   59G   1% /mnt/zfs59
+```
+
+### 7. Добавление в автозагрузку (опционально)
+Чтобы раздел монтировался автоматически при загрузке системы, добавьте его в файл `/etc/fstab`:
+1. Узнайте UUID нового раздела:
+   ```bash
+   blkid /dev/sda1
+   ```
+   Пример вывода:
+   ```
+   /dev/sda1: UUID="123e4567-e89b-12d3-a456-426614174000" TYPE="ext4"
+   ```
+
+2. Добавьте строку в `/etc/fstab`:
+   ```plaintext
+   UUID=123e4567-e89b-12d3-a456-426614174000 /mnt/zfs59 ext4 defaults 0 2
+   ```
+
+
+</details>
+
+---
+
+## 1.10. Настройка ZFS
 
 Если вы хотите иметь возможность делать снапшоты VM и LXC тогда вам необходимо установить файловую систему ZFS. Процесс установки описан в   
 [статье по ссылке](https://github.com/chelaxian/KB_IT_infosec_NET_chatgpt/blob/main/proxmox/pve8_deb12_ZFS_OCI.md)
@@ -254,7 +365,6 @@ systemctl restart networking
    ```bash
    df -h #оценить свободное место
    #fallocate -l 31G /zfs-pool.img
-   #fallocate -l 47G /mnt/data/zfs-pool.img
    fallocate -l 73G /zfs-pool.img
    ```
 
@@ -297,7 +407,6 @@ systemctl restart networking
    [Install]
    WantedBy=zfs-import.target
    ```
-   вместо `/dev/loop0` может быть `/dev/loop1` или `/dev/loop2`
 
 3. Активируйте и запустите сервис:
    ```bash
@@ -349,62 +458,8 @@ systemctl restart networking
   ```bash
   zfs destroy zfspool@backup
   ```
-
----
-
-Чтобы удалить пул `zpool1`, который больше не существует, но продолжает отображаться в веб-интерфейсе Proxmox, можно попробовать следующие шаги:
-
-### 1. **Проверьте состояние пулов ZFS**
-Первым шагом убедитесь, что пул действительно не существует на уровне ZFS. Выполните команду:
-
-```bash
-zpool status
-```
-
-Если пул `zpool1` больше не существует, то команда не должна выводить его в списке активных пулов.
-
-### 2. **Проверьте конфигурацию Proxmox**
-Proxmox может продолжать ссылаться на этот пул в конфигурационных файлах. Откройте конфигурационный файл для хранилищ:
-
-```bash
-nano /etc/pve/storage.cfg
-```
-
-В нем найдите запись, которая относится к пулу `zpool1` и удалите или закомментируйте её. Запись может выглядеть как-то так:
-
-```
-zfspool: zpool1
-    pool zpool1
-    content images,rootdir
-    path /mnt/zfs
-```
-
-Удалите или закомментируйте эту запись.
-
-### 3. **Обновите конфигурацию Proxmox**
-После удаления записи из конфигурации перезагрузите службу Proxmox, чтобы изменения вступили в силу:
-
-```bash
-systemctl restart pvedaemon
-```
-
-### 4. **Проверьте веб-интерфейс**
-После этого обновите веб-интерфейс Proxmox, и пул `zpool1` должен исчезнуть из списка хранилищ.
-
-### 5. **Дополнительная проверка**
-Если пул продолжает отображаться в интерфейсе, возможно, нужно перезапустить веб-интерфейс:
-
-```bash
-systemctl restart pveproxy
-```
-
-После этого снова проверьте веб-интерфейс.
-
----
-
-Если пул отображается из-за другой причины или зависимости, возможно, потребуется дополнительная диагностика на уровне Proxmox, но в большинстве случаев это решается удалением записи из конфигурации и перезапуском служб.
-
 </details>
+
 
 ---
 
@@ -441,7 +496,7 @@ reboot
 ```
 ---
 
-## 1.11. Создание контейнера
+## 1.12. Создание контейнера
 
 Перейдите в консоль PVE и создайте контейнер. Не забудьте предварительно скачать шаблон контейнера в веб-интерфейсе `Proxmox VE` в разделе `CT Templates` или по ссылке:  
 https://uk.lxd.images.canonical.com/images/
