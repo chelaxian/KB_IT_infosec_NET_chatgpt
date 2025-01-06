@@ -406,10 +406,42 @@ systemctl restart pveproxy
 
 </details>
 
-
 ---
 
-## 1.10. Создание контейнера
+## 1.10. Установка AppArmor
+
+После установки нам нужно установить некоторые зависимости.
+
+Выполните следующую команду:
+
+```bash
+apt install git bison flex autoconf libtool swig gettext python3 python3-dev python3-pip -y
+git clone https://gitlab.com/apparmor/apparmor.git
+cd apparmor
+export PYTHONPATH=$(realpath libraries/libapparmor/swig/python)
+export PYTHON=/usr/bin/python3
+export PYTHON_VERSION=3
+export PYTHON_VERSIONS=python3
+cd ./libraries/libapparmor
+./autogen.sh
+./configure --prefix=/usr --with-perl --with-python
+make
+make install
+cd ../../binutils/
+make
+make install
+cd ../parser/
+make
+make install
+cd ../utils/
+make
+make install
+
+reboot
+```
+---
+
+## 1.11. Создание контейнера
 
 Перейдите в консоль PVE и создайте контейнер. Не забудьте предварительно скачать шаблон контейнера в веб-интерфейсе `Proxmox VE` в разделе `CT Templates` или по ссылке:  
 https://uk.lxd.images.canonical.com/images/
