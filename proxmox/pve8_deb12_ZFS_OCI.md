@@ -84,7 +84,7 @@
 #### 3. **Добавление ZFS в Proxmox**
 1. Зарегистрируйте ZFS как хранилище:
    ```bash
-   pvesm add zfspool zfspool-storage --pool zfspool --content images,rootdir
+   pvesm add zfspool zfspool --pool zfspool --content images,rootdir
    ```
 
 2. Убедитесь, что хранилище отображается:
