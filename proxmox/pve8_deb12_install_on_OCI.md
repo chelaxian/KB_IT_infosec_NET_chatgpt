@@ -577,3 +577,43 @@ https://uk.lxd.images.canonical.com/images/
 apt update && apt upgrade -y && apt full-upgrade -y && apt dist-upgrade -y
 apt install sudo cron htop nano net-tools dnsutils wget curl git speedtest-cli openssh-server -y
 ```
+
+## 1.13. Пробросы портов в контейнер
+
+1. Установите iptables и разрешите прохождение трафика
+
+```bash
+# su -
+# дефолтное действие - разрешить
+iptables -P INPUT ACCEPT
+iptables -P FORWARD ACCEPT
+iptables -P OUTPUT ACCEPT
+# вставить в начало - разрешить всё
+iptables -I INPUT -j ACCEPT
+iptables -I FORWARD -j ACCEPT
+iptables -I OUTPUT -j ACCEPT
+# вставить в начало - разрешить ответный трафик
+iptables -I INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -I OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -I FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+# включить SNAT для всего трафика
+iptables -t nat -I POSTROUTING -j MASQUERADE
+# включить поиск MTU и подстройку MSS в TCP трафике
+iptables -t mangle -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
+# разрешить форвардинг транзитного трафика
+echo 'net.ipv4.ip_forward=1' | tee -a /etc/sysctl.conf
+sysctl -p
+# ручное сохранение и загрузка правил
+mkdir -p /etc/iptables
+iptables-save | tee /etc/iptables/rules.v4 #сохранить правила
+iptables-restore < /etc/iptables/rules.v4 #загрузить правила
+# установка пакета для автоматической загрузки правил
+# apt-get update && apt-get install -y iptables-persistent
+
+```
+
+2. Настройте необходимые пробросы портов с IP хоста на IP контейнера
+
+```bash
+iptables -t nat -I PREROUTING -d 10.10.0.2 -p tcp -m multiport --dports 5228,2195,56789 -j DNAT --to-destination 10.200.0.2
+```
