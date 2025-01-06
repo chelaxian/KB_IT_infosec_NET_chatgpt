@@ -430,6 +430,17 @@ Filesystem      Size  Used Avail Use% Mounted on
    ```bash
    pvesm status
    ```
+3. Убедитесь, что `mountpoint` = `/mnt/zfs`:
+```bash
+nano /etc/pve/storage.cfg
+```
+
+```
+zfspool: zfspool
+        pool zfspool
+        content images,rootdir
+        mountpoint /mnt/zfs
+```
 
 ---
 
