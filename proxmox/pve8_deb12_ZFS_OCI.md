@@ -27,12 +27,12 @@
    df -h #оценить свободное место
    #fallocate -l 31G /zfs-pool.img
    #fallocate -l 47G /mnt/data/zfs-pool.img
-   fallocate -l 73G /zfs-pool.img
+   fallocate -l 55G /mnt/zfs59/zfs-pool.img
    ```
 
 2. Создайте ZFS пул:
    ```bash
-   zpool create zfspool /zfs-pool.img
+   zpool create zfspool /mnt/zfs59/zfs-pool.img
    ```
 
 3. Убедитесь, что ZFS пул создан:
@@ -42,6 +42,7 @@
 
 4. Установите точку монтирования:
    ```bash
+   mkdir -p /mnt/zfs
    zfs set mountpoint=/mnt/zfs zfspool
    ```
 
@@ -62,7 +63,7 @@
 
    [Service]
    Type=oneshot
-   ExecStart=/usr/sbin/losetup /dev/loop0 /zfs-pool.img
+   ExecStart=/usr/sbin/losetup /dev/loop0 /mnt/zfs59/zfs-pool.img
    ExecStop=/usr/sbin/losetup -d /dev/loop0
    RemainAfterExit=yes
 
