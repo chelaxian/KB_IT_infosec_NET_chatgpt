@@ -563,6 +563,6 @@ https://uk.lxd.images.canonical.com/images/
 
 После входа в контейнер установите следующие пакеты и настройте доступ по SSH:
 ```bash
-apt update && apt upgrade -y && apt full-upgrade -y && apt-dist-upgrade -y
-apt install sudo cron htop nano net-tools dnsutils wget curl git speedtest-cli openssh-server
+apt update && apt upgrade -y && apt full-upgrade -y && apt dist-upgrade -y
+apt install sudo cron htop nano net-tools dnsutils wget curl git speedtest-cli openssh-server -y
 ```
