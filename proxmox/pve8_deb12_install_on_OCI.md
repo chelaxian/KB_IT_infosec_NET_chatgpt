@@ -224,7 +224,9 @@ systemctl restart networking
 
 Процесс описан в
 [статье по ссылке](https://github.com/chelaxian/KB_IT_infosec_NET_chatgpt/blob/main/proxmox/mount_new_disk.md) 
+
 <details><summary>Или под спойлером:</summary>
+	
 # Инструкция по работе с новым разделом диска на Linux
 
 ## Шаги создания раздела и монтирования
@@ -326,6 +328,7 @@ Filesystem      Size  Used Avail Use% Mounted on
 
 
 </details>
+
 ---
 
 ## 1.10. Настройка ZFS
