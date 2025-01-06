@@ -622,7 +622,8 @@ iptables -t nat -I PREROUTING -d 10.10.0.2 -p tcp -m multiport --dports 5228,219
 
 ## 1.14. Разрешение портов в OCI
 
-Разрешите необходимые для публичного доступа порты в OCI для `0.0.0.0/0`
+Разрешите необходимые для публичного доступа порты в OCI для `0.0.0.0/0` \
 https://cloud.oracle.com/networking/vcns/
 
-![Uploading image.png…]()
+<img width="1011" alt="image" src="https://github.com/user-attachments/assets/bbe65701-dc81-4cb0-82e8-075517d9a4f8" />
+
