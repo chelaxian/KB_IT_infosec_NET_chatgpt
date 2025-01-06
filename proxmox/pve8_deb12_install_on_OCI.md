@@ -423,7 +423,7 @@ Filesystem      Size  Used Avail Use% Mounted on
 #### 3. **Добавление ZFS в Proxmox**
 1. Зарегистрируйте ZFS как хранилище:
    ```bash
-   pvesm add zfspool zfspool-storage --pool zfspool --content images,rootdir
+   pvesm add zfspool zfspool --pool zfspool --content images,rootdir
    ```
 
 2. Убедитесь, что хранилище отображается:
@@ -563,5 +563,6 @@ https://uk.lxd.images.canonical.com/images/
 
 После входа в контейнер установите следующие пакеты и настройте доступ по SSH:
 ```bash
+apt update && apt upgrade -y && apt full-upgrade -y && apt-dist-upgrade -y
 apt install sudo cron htop nano net-tools dnsutils wget curl git speedtest-cli openssh-server
 ```
