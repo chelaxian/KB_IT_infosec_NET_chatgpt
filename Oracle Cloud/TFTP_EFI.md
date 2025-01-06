@@ -158,3 +158,54 @@ tftp 111.222.33.111 arm.efi
    - Убедитесь, что пинг до сервера проходит успешно.
 
 Теперь вы готовы настроить сервер TFTP и загрузить файлы через EFI Shell!
+
+---
+
+### Разрешить подключения root по ssh
+
+[ChatGPT 4]  
+
+Вот как внести изменения в файлы `/etc/ssh/sshd_config` и `/etc/ssh/ssh_config` через команды, не открывая их редактором:  
+
+---
+
+### Для `/etc/ssh/sshd_config`  
+
+Добавьте или измените строки:  
+```bash
+sed -i '1i PermitRootLogin yes' /etc/ssh/sshd_config
+sed -i '1i PasswordAuthentication yes' /etc/ssh/sshd_config
+```
+
+Проверьте результат:  
+```bash
+grep -E 'PermitRootLogin|PasswordAuthentication' /etc/ssh/sshd_config
+```
+
+---
+
+### Для `/etc/ssh/ssh_config`  
+
+Добавьте строки в начало файла:  
+```bash
+#sed -i '1i Host *' /etc/ssh/ssh_config
+sed -i '2i     PubkeyAuthentication no' /etc/ssh/ssh_config
+sed -i '3i     PasswordAuthentication yes' /etc/ssh/ssh_config
+```
+
+Проверьте результат:  
+```bash
+grep -A 2 'Host \*' /etc/ssh/ssh_config
+```
+
+---
+
+### Применение изменений  
+
+После внесения изменений перезапустите SSH:  
+```bash
+systemctl restart ssh
+systemctl restart sshd
+```
+
+Готово! Теперь разрешено подключение по паролю и под `root`.
