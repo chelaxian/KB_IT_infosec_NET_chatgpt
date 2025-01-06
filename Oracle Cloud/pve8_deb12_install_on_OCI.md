@@ -430,6 +430,17 @@ Filesystem      Size  Used Avail Use% Mounted on
    ```bash
    pvesm status
    ```
+3. Убедитесь, что `mountpoint` = `/mnt/zfs`:
+```bash
+nano /etc/pve/storage.cfg
+```
+
+```
+zfspool: zfspool
+        pool zfspool
+        content images,rootdir
+        mountpoint /mnt/zfs
+```
 
 ---
 
@@ -565,9 +576,4 @@ https://uk.lxd.images.canonical.com/images/
 ```bash
 apt update && apt upgrade -y && apt full-upgrade -y && apt dist-upgrade -y
 apt install sudo cron htop nano net-tools dnsutils wget curl git speedtest-cli openssh-server -y
-```
-
-```bash
-iptables -t nat -I PREROUTING -d 10.10.0.2 -p tcp -m multiport --dports 5228,2195,56789 -
-j DNAT --to-destination 10.200.0.2
 ```
