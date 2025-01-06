@@ -617,3 +617,12 @@ iptables-restore < /etc/iptables/rules.v4 #загрузить правила
 ```bash
 iptables -t nat -I PREROUTING -d 10.10.0.2 -p tcp -m multiport --dports 5228,2195,56789 -j DNAT --to-destination 10.200.0.2
 ```
+
+---
+
+## 1.14. Разрешение портов в OCI
+
+Разрешите необходимые для публичного доступа порты в OCI для `0.0.0.0/0`
+https://cloud.oracle.com/networking/vcns/
+
+![Uploading image.png…]()
