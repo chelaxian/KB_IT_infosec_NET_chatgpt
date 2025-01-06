@@ -1,25 +1,17 @@
-### 1. Команда для замены содержимого файла `/etc/resolv.conf`:
+
+
+Для выполнения этой задачи можно использовать следующую строку в crontab:
 
 ```bash
-echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > /etc/resolv.conf
+* * * * * echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" | sudo tee /etc/resolv.conf /run/systemd/resolve/stub-resolv.conf > /dev/null
 ```
-
----
-
-### 2. Команда для добавления задания в `crontab`:
-
-Для выполнения команды каждые 5 минут добавьте строку в `crontab`. Например, для замены содержимого `/etc/resolv.conf`:
-
-```bash
-(crontab -l 2>/dev/null; echo "*/5 * * * * echo -e 'nameserver 8.8.8.8\nnameserver 8.8.4.4' > /etc/resolv.conf") | crontab -
-```
-
----
 
 ### Объяснение:
-- **`echo -e`**: Позволяет вставить строки с помощью символа `\n`.
-- **`>`**: Перезаписывает файл `/etc/resolv.conf`.
-- **`crontab -l 2>/dev/null`**: Выводит текущие задачи в `crontab` (если они есть).
-- **`echo ... | crontab -`**: Добавляет новое задание в `crontab`.
+1. `* * * * *`: Выполняется каждую минуту.
+2. `echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4"`: Генерирует содержимое для файла.
+3. `sudo tee /etc/resolv.conf /run/systemd/resolve/stub-resolv.conf`: Перезаписывает оба файла указанным содержимым.
+4. `> /dev/null`: Отключает вывод `tee` в консоль (чтобы не захламлять лог crontab).
 
-Теперь файл `/etc/resolv.conf` будет обновляться каждые 5 минут.
+### Важно:
+1. Убедитесь, что пользователь, выполняющий cron-задачу, имеет право на запись в эти файлы (например, добавьте задачу в crontab для root с помощью `sudo crontab -e`).
+2. Возможно, стоит отключить службу `systemd-resolved`, чтобы изменения в файле `/run/systemd/resolve/stub-resolv.conf` не перезаписывались. 
