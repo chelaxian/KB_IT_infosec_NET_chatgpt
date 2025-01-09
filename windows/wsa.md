@@ -22,3 +22,29 @@ Get-AppxPackage *Android* | Remove-AppxPackage
 ```powershell
 Get-AppxPackage MicrosoftCorporationII.WindowsSubsystemForAndroid | Remove-AppxPackage
 ```
+
+## 4. Location of WSA files
+
+`userdata.vhdx`
+`C:\Users\chelaxian\AppData\Local\Packages\MicrosoftCorporationII.WindowsSubsystemForAndroid_8wekyb3d8bbwe\LocalCache`
+
+## 5. Resize WSA disk
+
+1. Полностью завершить WSA
+2. В powershell с правами администратора выполнить:
+```powershell
+Resize-VHD -Path "C:\Users\[юзер]\AppData\Local\Packages\MicrosoftCorporationII.WindowsSubsystemForAndroid_8wekyb3d8bbwe\LocalCache\userdata.vhdx" -SizeBytes [нужный размер]
+```
+или
+```powershell
+Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All -NoRestart
+```
+```powershell
+Resize-VHD -Path "C:\Users\chelaxian\AppData\Local\Packages\MicrosoftCorporationII.WindowsSubsystemForAndroid_8wekyb3d8bbwe\LocalCache\userdata.2.vhdx" -SizeBytes 34359738368
+```
+
+## 6. Create symbol link to WSA disk
+
+Use software `Link Shell Extension`
+https://windowstips.ru/link-shell-extension-utilita-dlya-bystrogo-sozdaniya-zhestkix-i-simvolnyx-ssylok-v-windows
