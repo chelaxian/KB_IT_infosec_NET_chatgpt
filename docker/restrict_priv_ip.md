@@ -1,17 +1,17 @@
 ## 1. везде запретить на смежных ВМ доступ
 
 ```bash
-iptables -I INPUT -s 10.8.1.0/24 -d 192.168.0.0/16 -j DROP 
-iptables -I INPUT -s 10.8.1.0/24 -d 172.16.0.0/12 -j DROP 
-iptables -I INPUT -s 10.8.1.0/24 -d 192.168.0.0/16 -j DROP 
+iptables -I INPUT -s 10.8.0.0/23 -d 192.168.0.0/16 -j DROP 
+iptables -I INPUT -s 10.8.0.0/23 -d 172.16.0.0/12 -j DROP 
+iptables -I INPUT -s 10.8.0.0/23 -d 192.168.0.0/16 -j DROP 
 
-iptables -I FORWARD -s 10.8.1.0/24 -d 192.168.0.0/16 -j DROP 
-iptables -I FORWARD -s 10.8.1.0/24 -d 172.16.0.0/12 -j DROP 
-iptables -I FORWARD -s 10.8.1.0/24 -d 10.0.0.0/8 -j DROP 
+iptables -I FORWARD -s 10.8.0.0/23 -d 192.168.0.0/16 -j DROP 
+iptables -I FORWARD -s 10.8.0.0/23 -d 172.16.0.0/12 -j DROP 
+iptables -I FORWARD -s 10.8.0.0/23 -d 10.0.0.0/8 -j DROP 
 
-iptables -t nat -I POSTROUTING -s 10.8.1.0/24 -d 10.0.0.0/8 -j RETURN 
-iptables -t nat -I POSTROUTING -s 10.8.1.0/24 -d 172.16.0.0/12 -j RETURN 
-iptables -t nat -I POSTROUTING -s 10.8.1.0/24 -d 192.168.0.0/16 -j RETURN 
+iptables -t nat -I POSTROUTING -s 10.8.0.0/23 -d 10.0.0.0/8 -j RETURN 
+iptables -t nat -I POSTROUTING -s 10.8.0.0/23 -d 172.16.0.0/12 -j RETURN 
+iptables -t nat -I POSTROUTING -s 10.8.0.0/23 -d 192.168.0.0/16 -j RETURN 
 
 
 iptables -L -v -n
@@ -24,17 +24,17 @@ iptables-save > /etc/iptables/rules.v4
 ## 2. так же запретить доступ внутри контейнера
 
 ```bash
-iptables -I INPUT -s 10.8.1.0/24 -d 192.168.0.0/16 -j DROP 
-iptables -I INPUT -s 10.8.1.0/24 -d 172.16.0.0/12 -j DROP 
-iptables -I INPUT -s 10.8.1.0/24 -d 192.168.0.0/16 -j DROP 
+iptables -I INPUT -s 10.8.0.0/23 -d 192.168.0.0/16 -j DROP 
+iptables -I INPUT -s 10.8.0.0/23 -d 172.16.0.0/12 -j DROP 
+iptables -I INPUT -s 10.8.0.0/23 -d 192.168.0.0/16 -j DROP 
 
-iptables -I FORWARD -s 10.8.1.0/24 -d 192.168.0.0/16 -j DROP 
-iptables -I FORWARD -s 10.8.1.0/24 -d 172.16.0.0/12 -j DROP 
-iptables -I FORWARD -s 10.8.1.0/24 -d 10.0.0.0/8 -j DROP 
+iptables -I FORWARD -s 10.8.0.0/23 -d 192.168.0.0/16 -j DROP 
+iptables -I FORWARD -s 10.8.0.0/23 -d 172.16.0.0/12 -j DROP 
+iptables -I FORWARD -s 10.8.0.0/23 -d 10.0.0.0/8 -j DROP 
 
-iptables -t nat -I POSTROUTING -s 10.8.1.0/24 -d 10.0.0.0/8 -j RETURN 
-iptables -t nat -I POSTROUTING -s 10.8.1.0/24 -d 172.16.0.0/12 -j RETURN 
-iptables -t nat -I POSTROUTING -s 10.8.1.0/24 -d 192.168.0.0/16 -j RETURN 
+iptables -t nat -I POSTROUTING -s 10.8.0.0/23 -d 10.0.0.0/8 -j RETURN 
+iptables -t nat -I POSTROUTING -s 10.8.0.0/23 -d 172.16.0.0/12 -j RETURN 
+iptables -t nat -I POSTROUTING -s 10.8.0.0/23 -d 192.168.0.0/16 -j RETURN 
 
 
 iptables -L -v -n
