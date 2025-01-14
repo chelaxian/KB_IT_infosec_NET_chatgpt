@@ -11,4 +11,7 @@ chmod 440 /etc/sudoers
 
 chown root:root /etc/sudoers.d/90-incus /etc/sudoers.d/README
 chmod 644 /etc/sudoers.d/90-incus /etc/sudoers.d/README
+
+chown root:root /etc/sudoers.d
+chmod 755 /etc/sudoers.d
 ```
