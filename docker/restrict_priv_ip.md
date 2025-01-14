@@ -22,8 +22,8 @@ iptables-save > /etc/iptables/rules.v4
 ```
 
 ## 2. так же запретить доступ внутри контейнера
-`docker exec -it amnezia-wireguard sh`
-`docker exec -it amnezia-openvpn sh`
+`docker exec -it amnezia-wireguard sh` \
+`docker exec -it amnezia-openvpn sh` \
 `docker exec -it amnezia-wireguard sh`
 
 ```bash
