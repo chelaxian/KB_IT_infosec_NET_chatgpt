@@ -24,7 +24,9 @@ iptables-save > /etc/iptables/rules.v4
 ## 2. так же запретить доступ внутри контейнера
 `docker exec -it amnezia-wireguard sh` \
 `docker exec -it amnezia-openvpn sh` \
-`docker exec -it amnezia-wg-easy sh`
+`docker exec -it amnezia-awg sh ` \
+`#docker exec -it amnezia-wg-easy sh`
+
 
 ```bash
 iptables -I INPUT -s 10.8.0.0/23 -d 192.168.0.0/16 -j DROP 
@@ -88,8 +90,9 @@ Requires=docker.service
 Restart=always
 ExecStartPre=/bin/sleep 5
 ExecStart=/usr/bin/docker exec amnezia-wireguard sh -c "/etc/local.d/iptables.start"
-ExecStartPost=/usr/bin/docker exec amnezia-wg-easy sh -c "/etc/local.d/iptables.start"
 ExecStartPost=/usr/bin/docker exec amnezia-openvpn sh -c "/etc/local.d/iptables.start"
+ExecStartPost=/usr/bin/docker exec amnezia-awg sh -c "/etc/local.d/iptables.start"
+#ExecStartPost=/usr/bin/docker exec amnezia-wg-easy sh -c "/etc/local.d/iptables.start"
 
 [Install]
 WantedBy=multi-user.target
@@ -113,11 +116,16 @@ docker exec amnezia-wireguard iptables -t nat -L -n -v
 ```
 
 ```bash
-docker exec amnezia-wg-easy iptables -L -n -v
-docker exec amnezia-wg-easy iptables -t nat -L -n -v
+docker exec amnezia-awg iptables -L -n -v
+docker exec amnezia-awg iptables -t nat -L -n -v
 ```
 
 ```bash
 docker exec amnezia-openvpn iptables -L -n -v
 docker exec amnezia-openvpn iptables -t nat -L -n -v
+```
+
+```bash
+#docker exec amnezia-wg-easy iptables -L -n -v
+#docker exec amnezia-wg-easy iptables -t nat -L -n -v
 ```
