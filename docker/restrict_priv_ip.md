@@ -13,11 +13,10 @@ iptables -t nat -I POSTROUTING -s 10.8.0.0/23 -d 10.0.0.0/8 -j RETURN
 iptables -t nat -I POSTROUTING -s 10.8.0.0/23 -d 172.16.0.0/12 -j RETURN 
 iptables -t nat -I POSTROUTING -s 10.8.0.0/23 -d 192.168.0.0/16 -j RETURN 
 
-
 iptables -L -v -n
 iptables -t nat -L -v -n
 
-
+mkdir -p /etc/iptables/
 iptables-save > /etc/iptables/rules.v4
 ```
 
@@ -39,11 +38,10 @@ iptables -t nat -I POSTROUTING -s 10.8.0.0/23 -d 10.0.0.0/8 -j RETURN
 iptables -t nat -I POSTROUTING -s 10.8.0.0/23 -d 172.16.0.0/12 -j RETURN 
 iptables -t nat -I POSTROUTING -s 10.8.0.0/23 -d 192.168.0.0/16 -j RETURN 
 
-
 iptables -L -v -n
 iptables -t nat -L -v -n
 
-
+iptables -L -v -n
 iptables-save > /etc/iptables/rules.v4
 ```
 
