@@ -128,3 +128,17 @@ docker exec amnezia-openvpn iptables -t nat -L -n -v
 #docker exec amnezia-wg-easy iptables -L -n -v
 #docker exec amnezia-wg-easy iptables -t nat -L -n -v
 ```
+## 5. исключения
+
+пример:
+
+```bash
+iptables -I INPUT -p udp -m multiport --dports 53,5353 -j ACCEPT
+iptables -I FORWARD -p udp -m multiport --dports 53,5353 -j ACCEPT
+iptables -t nat -I POSTROUTING -p udp -m multiport --dports 53,5353 -j ACCEPT
+
+iptables -L -v -n
+iptables -t nat -L -v -n
+
+iptables-save > /etc/iptables/rules.v4
+```
