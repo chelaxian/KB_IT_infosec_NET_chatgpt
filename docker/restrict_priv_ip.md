@@ -147,3 +147,9 @@ iptables -t nat -L -v -n
 
 iptables-save > /etc/iptables/rules.v4
 ```
+
+## 6. редирект DNS на хосте
+
+```bash
+#iptables -t nat -A PREROUTING -d 1.1.1.0/30 -p udp -m udp --dport 53 -j DNAT --to-destination 77.88.8.8:53
+```
