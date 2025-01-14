@@ -19,6 +19,7 @@ iptables -t nat -L -v -n
 mkdir -p /etc/iptables/
 iptables-save > /etc/iptables/rules.v4
 ```
+`apt-get update && apt-get install -y iptables-persistent`
 
 ## 2. так же запретить доступ внутри контейнера
 `docker exec -it amnezia-wireguard sh` \
