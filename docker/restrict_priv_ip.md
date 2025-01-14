@@ -135,7 +135,12 @@ docker exec amnezia-openvpn iptables -t nat -L -n -v
 ```bash
 iptables -I INPUT -p udp -m multiport --dports 53,5353 -j ACCEPT
 iptables -I FORWARD -p udp -m multiport --dports 53,5353 -j ACCEPT
-iptables -t nat -I POSTROUTING -p udp -m multiport --dports 53,5353 -j ACCEPT
+
+iptables -I INPUT -p tcp --dport 53 -j ACCEPT
+iptables -I FORWARD -p tcp --dport 53 -j ACCEPT
+
+iptables -t nat -I POSTROUTING -p udp -m multiport --dports 53,5353 -j MASQUERADE 
+iptables -t nat -I POSTROUTING -p tcp -m multiport --dports 53 -j MASQUERADE 
 
 iptables -L -v -n
 iptables -t nat -L -v -n
