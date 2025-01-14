@@ -99,6 +99,7 @@ WantedBy=multi-user.target
 ```
 sudo systemctl daemon-reload
 sudo systemctl start amnezia-no-private.service
+sudo systemctl enable amnezia-no-private.service
 sudo systemctl status amnezia-no-private.service
 ```
 
