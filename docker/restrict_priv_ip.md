@@ -77,8 +77,8 @@ ExecStart=/usr/bin/docker exec amnezia-wireguard sh -c "/etc/local.d/iptables.st
 WantedBy=multi-user.target
 ```
 
-если контейнеров несколько то можно так:
-
+<details><summary>если контейнеров несколько то можно так:</summary>
+  
 ```service
 [Unit]
 Description=Amnezia WireGuard Docker Container
@@ -96,7 +96,8 @@ ExecStartPost=/usr/bin/docker exec amnezia-openvpn sh -c "/etc/local.d/iptables.
 [Install]
 WantedBy=multi-user.target
 ```
-
+</details>
+    
 ```
 sudo systemctl daemon-reload
 sudo systemctl start amnezia-wireguard.service
