@@ -128,7 +128,7 @@ docker exec amnezia-openvpn iptables -t nat -L -n -v
 #docker exec amnezia-wg-easy iptables -L -n -v
 #docker exec amnezia-wg-easy iptables -t nat -L -n -v
 ```
-## 5. исключения
+## 5. исключения в контейнере
 
 пример:
 
