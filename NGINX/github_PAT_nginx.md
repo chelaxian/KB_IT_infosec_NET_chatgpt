@@ -56,17 +56,20 @@ https://raw.githubusercontent.com/chelaxian/xxxxxxxxxxx/refs/heads/main/README.m
 2. Вставьте следующую конфигурацию:
 
 ```nginx
-location /xxxxxx {
-    proxy_set_header Authorization "token github_pat_1111111111111111111111_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+location /github {
+    proxy_set_header Authorization "token github_pat_xxxxxxxxxxxxxxxxxxxxxx";
     proxy_set_header Host raw.githubusercontent.com;
 
-    proxy_pass https://raw.githubusercontent.com/chelaxian/xxxxxxxxxxx/refs/heads/main/README.md;
+    # Прокидывает путь после /github в запрос к GitHub
+    rewrite ^/github/(.*)$ /chelaxian/KB_IT_infosec_NET_chatgpt/main/$1 break;
 
+    proxy_pass https://raw.githubusercontent.com;
     proxy_ssl_server_name on;
     proxy_ssl_protocols TLSv1.2 TLSv1.3;
     proxy_ssl_verify on;
     proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
 }
+
 ```
 
 ---
