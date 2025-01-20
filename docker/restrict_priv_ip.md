@@ -92,6 +92,7 @@ ExecStart=/usr/bin/docker exec amnezia-wireguard sh -c "/etc/local.d/iptables.st
 ExecStartPost=/usr/bin/docker exec amnezia-openvpn sh -c "/etc/local.d/iptables.start"
 ExecStartPost=/usr/bin/docker exec amnezia-awg sh -c "/etc/local.d/iptables.start"
 #ExecStartPost=/usr/bin/docker exec amnezia-wg-easy sh -c "/etc/local.d/iptables.start"
+#ExecStartPost=/usr/bin/docker exec wg-easy sh -c "/etc/local.d/iptables.start"
 
 [Install]
 WantedBy=multi-user.target
