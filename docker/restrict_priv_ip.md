@@ -159,3 +159,28 @@ iptables-save > /etc/iptables/rules.v4
 ```bash
 #iptables -t nat -A PREROUTING -d 1.1.1.0/30 -p udp -m udp --dport 53 -j DNAT --to-destination 77.88.8.8:53
 ```
+
+## 7. Блокировка torrent
+
+```bash
+iptables -I INPUT -p tcp -m multiport --dports 6969,6881:6889,51413 -j DROP
+iptables -I INPUT -p udp -m multiport --dports 6881:6889,51413 -j DROP
+iptables -I INPUT -p udp --dport 6881:6889 -m length --length 60:100 -j DROP
+
+iptables -I OUTPUT -p tcp -m multiport --dports 6969,6881:6889,51413 -j DROP
+iptables -I OUTPUT -p udp -m multiport --dports 6881:6889,51413 -j DROP
+iptables -I OUTPUT -p udp --dport 6881:6889 -m length --length 60:100 -j DROP
+
+iptables -I FORWARD -p tcp -m multiport --dports 6969,6881:6889,51413 -j DROP
+iptables -I FORWARD -p udp -m multiport --dports 6881:6889,51413 -j DROP
+iptables -I FORWARD -p udp --dport 6881:6889 -m length --length 60:100 -j DROP
+
+iptables -t nat -I POSTROUTING -p tcp -m multiport --dports 6969,6881:6889,51413 -j RETURN
+iptables -t nat -I POSTROUTING -p udp -m multiport --dports 6881:6889,51413 -j RETURN
+iptables -t nat -I POSTROUTING -p udp --dport 6881:6889 -m length --length 60:100 -j RETURN
+
+iptables-save > /etc/iptables/rules.v4
+
+iptables -L -n -v
+iptables -t nat -L -n -v
+```
