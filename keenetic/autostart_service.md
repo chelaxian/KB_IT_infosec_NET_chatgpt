@@ -37,40 +37,37 @@ nano /opt/etc/init.d/S99vpn_monitor
 ### Настройки
 SCRIPT_PATH="/tmp/mnt/EXT/home/ping_vpn_fgt.py"
 LOG_FILE="/tmp/mnt/EXT/home/ping_vpn_fgt.log"
+PID_FILE="/var/run/vpn_monitor.pid"
 
 start() {
     echo "Запуск VPN мониторинга..." | tee -a $LOG_FILE
-    nohup python3 $SCRIPT_PATH >> $LOG_FILE 2>&1 &
-    echo $! > /var/run/vpn_monitor.pid
+    python3 $SCRIPT_PATH >> $LOG_FILE 2>&1 &  # Запускаем без nohup
+    echo $! > $PID_FILE  # Сохраняем PID процесса
 }
 
 stop() {
     echo "Остановка VPN мониторинга..." | tee -a $LOG_FILE
-    if [ -f /var/run/vpn_monitor.pid ]; then
-        kill $(cat /var/run/vpn_monitor.pid)
-        rm -f /var/run/vpn_monitor.pid
+    if [ -f "$PID_FILE" ]; then
+        kill $(cat $PID_FILE) 2>/dev/null
+        rm -f $PID_FILE
     fi
 }
 
+restart() {
+    stop
+    sleep 2
+    start
+}
+
 case "$1" in
-    start)
-        start
-        ;;
-    stop)
-        stop
-        ;;
-    restart)
-        stop
-        sleep 2
-        start
-        ;;
-    *)
-        echo "Использование: $0 {start|stop|restart}"
-        exit 1
-        ;;
+    start) start ;;
+    stop) stop ;;
+    restart) restart ;;
+    *) echo "Использование: $0 {start|stop|restart}"; exit 1 ;;
 esac
 
 exit 0
+
 ```
 
 Сохраните (`Ctrl + X`, `Y`, `Enter`).
