@@ -1,3 +1,4 @@
+```
 config system auto-script
 
     edit "Tun1-Enable-Tun2-Disable"
@@ -34,3 +35,4 @@ end"
     next
 
 end
+```
