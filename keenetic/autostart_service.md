@@ -1,15 +1,15 @@
-### 📌 Сервис автозапуска для **Keenetic Giga**: запуск `ping_vpn_fgt.py` после ребута
+### 📌 Сервис автозапуска для **Keenetic Giga**: запуск `pexpect_ssh_fortigate.py` после ребута
 
-Этот сервис автоматически запускает `ping_vpn_fgt.py` после перезагрузки **Keenetic Giga**. Скрипт будет работать в фоне, мониторить соединение и управлять туннелями **FortiGate**.
+Этот сервис автоматически запускает `pexpect_ssh_fortigate.py` после перезагрузки **Keenetic Giga**. Скрипт будет работать в фоне, мониторить соединение и управлять туннелями **FortiGate**.
 
 ---
 
 ## 🔹 **1. Размещение Python-скрипта**
-Убедитесь, что `ping_vpn_fgt.py` находится в `/tmp/mnt/EXT/home/`:
+Убедитесь, что `pexpect_ssh_fortigate.py` находится в `/tmp/mnt/EXT/home/`:
 
 ```sh
 mkdir -p /tmp/mnt/EXT/home
-nano /tmp/mnt/EXT/home/ping_vpn_fgt.py
+nano /tmp/mnt/EXT/home/pexpect_ssh_fortigate.py
 ```
 
 Вставьте код скрипта и сохраните (`Ctrl + X`, затем `Y`, `Enter`).
@@ -17,7 +17,7 @@ nano /tmp/mnt/EXT/home/ping_vpn_fgt.py
 Дайте файлу право на выполнение:
 
 ```sh
-chmod +x /tmp/mnt/EXT/home/ping_vpn_fgt.py
+chmod +x /tmp/mnt/EXT/home/pexpect_ssh_fortigate.py
 ```
 
 ---
@@ -35,7 +35,7 @@ nano /opt/etc/init.d/S99vpn_monitor
 #!/bin/sh
 
 ### Настройки
-SCRIPT_PATH="/tmp/mnt/EXT/home/ping_vpn_fgt.py"
+SCRIPT_PATH="/tmp/mnt/EXT/home/pexpect_ssh_fortigate.py"
 LOG_FILE="/tmp/mnt/EXT/home/ping_vpn_fgt.log"
 PID_FILE="/var/run/vpn_monitor.pid"
 
@@ -90,7 +90,7 @@ chmod +x /opt/etc/init.d/S99vpn_monitor
 Проверяем работу:
 
 ```sh
-ps | grep ping_vpn_fgt.py
+ps | grep pexpect_ssh_fortigate.py
 ```
 
 ---
@@ -121,4 +121,4 @@ cat /tmp/mnt/EXT/home/ping_vpn_fgt.log
 
 Если процесс работает, значит настройка успешна!
 
-🚀 **Теперь `ping_vpn_fgt.py` автоматически стартует после перезагрузки!**
+🚀 **Теперь `pexpect_ssh_fortigate.py` автоматически стартует после перезагрузки!**
