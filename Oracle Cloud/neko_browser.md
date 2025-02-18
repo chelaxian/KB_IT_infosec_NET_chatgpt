@@ -31,7 +31,7 @@ services:
       NEKO_PASSWORD: 'neko'
       NEKO_PASSWORD_ADMIN: 'admin'
       NEKO_EPR: "52000-52100"
-      #NEKO_IMPLICIT_CONTROL: "true"
+      #NEKO_IMPLICIT_CONTROL: "true" #https://github.com/m1k1o/neko/issues/192
       #NEKO_NAT1TO1: 123.234.123.234
       NEKO_LOCKS: file_transfer
       NEKO_IPFETCH: "http://checkip.amazonaws.com"
