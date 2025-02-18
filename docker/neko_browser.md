@@ -32,7 +32,7 @@ services:
       NEKO_PASSWORD_ADMIN: 'admin'
       NEKO_EPR: "52000-52100"
       NEKO_IMPLICIT_CONTROL: "true"
-      #NEKO_NAT1TO1: 158.180.231.91
+      #NEKO_NAT1TO1: 123.234.123.234
       NEKO_LOCKS: file_transfer
       NEKO_IPFETCH: "http://checkip.amazonaws.com"
       NEKO_FILE_TRANSFER_ENABLED: "false"
@@ -42,10 +42,8 @@ services:
     volumes:
       - ./preferences.json:/tmp/preferences.json
       - ./policies.json:/tmp/policies.json
-      #- ./supervisord.conf:/tmp/supervisord.conf
       - ./policies.json:/etc/chromium/policies/managed/policies.json
       - ./preferences.json:/etc/chromium/policies/managed/preferences.json
-      #- ./supervisord.conf:/etc/supervisor/supervisord.conf
 ```
 
 #### `Dockerfile`
