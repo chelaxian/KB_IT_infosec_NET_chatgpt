@@ -1,6 +1,6 @@
-# Автоматическая загрузка файла cookie.txt в репозиторий GitHub каждые 60 секунд
+# Автоматическая загрузка файла file.txt в репозиторий GitHub каждые 60 секунд
 
-Данное руководство описывает процесс настройки автоматической загрузки файла `cookie.txt` в ваш репозиторий GitHub с использованием скрипта Bash и таймера systemd, который будет запускаться каждые 60 секунд.
+Данное руководство описывает процесс настройки автоматической загрузки файла `file.txt` в ваш репозиторий GitHub с использованием скрипта Bash и таймера systemd, который будет запускаться каждые 60 секунд.
 
 ## Предварительные требования
 
@@ -15,7 +15,7 @@
 
 Создайте Bash-скрипт, который будет выполнять следующие действия:
 
-1. Проверять наличие файла `cookie.txt`.
+1. Проверять наличие файла `file.txt`.
 2. Кодировать содержимое файла в формат Base64.
 3. Получать текущий SHA файла из репозитория (требуется для обновления существующего файла).
 4. Отправлять PUT-запрос к API GitHub для загрузки (или обновления) файла в репозитории.
@@ -25,21 +25,21 @@
 ```bash
 #!/bin/bash
 
-# Путь к файлу cookie.txt
-COOKIE_FILE=~/Telegram/tg-ytdlp-bot/cookie.txt
+# Путь к файлу file.txt
+file_FILE=~/Telegram/tg-ytdlp-bot/file.txt
 
 # Токен доступа GitHub
 GITHUB_TOKEN="ваш_персональный_токен_доступа"
 
 # Репозиторий и путь к файлу в репозитории
-REPO_OWNER="chelaxian"
-REPO_NAME="43TzY0YNMdWPWbGa"
-FILE_PATH="artifact/blob/cookie.txt"
+REPO_OWNER="USERNAME"
+REPO_NAME="REPONAME"
+FILE_PATH="path/to/file.txt"
 
-# Проверка существования файла cookie.txt
-if [[ -f "$COOKIE_FILE" ]]; then
+# Проверка существования файла file.txt
+if [[ -f "$file_FILE" ]]; then
     # Кодирование содержимого файла в base64
-    CONTENT=$(base64 -w 0 "$COOKIE_FILE")
+    CONTENT=$(base64 -w 0 "$file_FILE")
 
     # Получение текущего SHA файла из репозитория
     RESPONSE=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
@@ -50,7 +50,7 @@ if [[ -f "$COOKIE_FILE" ]]; then
     # Подготовка данных для запроса
     read -r -d '' DATA <<EOF
 {
-  "message": "Обновление cookie.txt",
+  "message": "Обновление file.txt",
   "content": "$CONTENT",
   "sha": "$SHA"
 }
@@ -63,7 +63,7 @@ EOF
         -d "$DATA" \
         "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contents/$FILE_PATH"
 else
-    echo "Файл $COOKIE_FILE не найден."
+    echo "Файл $file_FILE не найден."
 fi
 ```
 
@@ -71,12 +71,12 @@ fi
 
 - Замените `ваш_персональный_токен_доступа` на ваш действительный PAT.
 - Убедитесь, что переменные `REPO_OWNER`, `REPO_NAME` и `FILE_PATH` правильно указывают на ваш репозиторий и путь к файлу.
-- Скрипт предполагает, что файл `cookie.txt` уже существует по указанному пути.
+- Скрипт предполагает, что файл `file.txt` уже существует по указанному пути.
 
-Сохраните этот скрипт, например, как `/usr/local/bin/update_cookies.sh`, и сделайте его исполняемым:
+Сохраните этот скрипт, например, как `/usr/local/bin/update_files.sh`, и сделайте его исполняемым:
 
 ```bash
-chmod +x /usr/local/bin/update_cookies.sh
+chmod +x /usr/local/bin/update_files.sh
 ```
 
 ## Шаг 2: Создание службы systemd
@@ -85,15 +85,15 @@ chmod +x /usr/local/bin/update_cookies.sh
 
 **Пример файла службы:**
 
-Создайте файл `/etc/systemd/system/update_cookies.service` со следующим содержимым:
+Создайте файл `/etc/systemd/system/update_files.service` со следующим содержимым:
 
 ```ini
 [Unit]
-Description=Обновление cookie.txt и загрузка в GitHub
+Description=Обновление file.txt и загрузка в GitHub
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/update_cookies.sh
+ExecStart=/usr/local/bin/update_files.sh
 ```
 
 **Примечания:**
@@ -107,11 +107,11 @@ ExecStart=/usr/local/bin/update_cookies.sh
 
 **Пример файла таймера:**
 
-Создайте файл `/etc/systemd/system/update_cookies.timer` со следующим содержимым:
+Создайте файл `/etc/systemd/system/update_files.timer` со следующим содержимым:
 
 ```ini
 [Unit]
-Description=Таймер для обновления cookie.txt каждые 60 секунд
+Description=Таймер для обновления file.txt каждые 60 секунд
 
 [Timer]
 OnBootSec=60
@@ -135,10 +135,10 @@ WantedBy=timers.target
 sudo systemctl daemon-reload
 
 # Активация таймера при старте системы
-sudo systemctl enable update_cookies.timer
+sudo systemctl enable update_files.timer
 
 # Немедленный запуск таймера
-sudo systemctl start update_cookies.timer
+sudo systemctl start update_files.timer
 ```
 
 
