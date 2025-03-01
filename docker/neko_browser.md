@@ -14,40 +14,49 @@ git clone https://github.com/m1k1o/neko
 ### 2️⃣ Создание необходимых файлов
 #### `docker-compose.yaml`
 ```yaml
+version: "3.4"
+
+networks:
+  restricted_net:
+    external: true
+
 services:
   neko:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    shm_size: 2gb
+    networks:
+      - restricted_net
+    image: "ghcr.io/m1k1o/neko/arm-chromium:latest"
+    restart: "unless-stopped"
+    shm_size: "2gb"
     ports:
       - "8080:8080"
       - "52000-52100:52000-52100/udp"
+    environment:
+      #NEKO_SCREEN: 640×512@60
+      NEKO_SCREEN: 1920x1080@30
+      NEKO_PASSWORD: USERPASSWORD
+      NEKO_PASSWORD_ADMIN: ADMINPASSWORD
+      NEKO_EPR: 52000-52100
+      #NEKO_IMPLICIT_CONTROL: "true"
+      NEKO_FILE_TRANSFER_ENABLED: "false"
+      NEKO_ICELITE: 1
+      #NEKO_NAT1TO1: 10.10.1.1
+      #NEKO_NAT1TO1: 123.234.123.234
+      NEKO_IPFETCH: "http://checkip.amazonaws.com"
+      NEKO_LOCKS: file_transfer
+      #NEKO_CMD: "chromium-browser --app=https://www.youtube.com/?app=desktop --kiosk --force-dark-mode"
+      #ENV_USER: "neko"
+      #ENV_DISPLAY: ":0"
     cap_add:
       - SYS_ADMIN
-    environment:
-      NEKO_SCREEN: "1920x1080@30"
-      NEKO_PASSWORD: 'neko'
-      NEKO_PASSWORD_ADMIN: 'admin'
-      NEKO_EPR: "52000-52100"
-      #NEKO_IMPLICIT_CONTROL: "true" #https://github.com/m1k1o/neko/issues/192
-      #NEKO_NAT1TO1: 123.234.123.234
-      NEKO_LOCKS: file_transfer
-      NEKO_IPFETCH: "http://checkip.amazonaws.com"
-      NEKO_FILE_TRANSFER_ENABLED: "false"
-      #NEKO_CMD: "chromium-browser --kiosk --app=https://chatgpt.com --noerrdialogs --disable-session-crashed-bubble --disable-infobars"
-      ENV_USER: "neko"
-      ENV_DISPLAY: ":0"
     volumes:
-      - ./preferences.json:/tmp/preferences.json
-      - ./policies.json:/tmp/policies.json
       - ./policies.json:/etc/chromium/policies/managed/policies.json
       - ./preferences.json:/etc/chromium/policies/managed/preferences.json
+
 ```
 
 #### `Dockerfile`
 ```dockerfile
+
 FROM ghcr.io/m1k1o/neko/arm-chromium:latest
 
 # Устанавливаем Xvfb (если он не включён в базовый образ)
@@ -76,6 +85,7 @@ RUN chmod +x /docker-entrypoint.sh
 
 # Задаем точку входа
 ENTRYPOINT ["/docker-entrypoint.sh"]
+
 ```
 
 #### `policies.json`
@@ -83,7 +93,7 @@ ENTRYPOINT ["/docker-entrypoint.sh"]
 {
   "AutofillAddressEnabled": false,
   "AutofillCreditCardEnabled": false,
-  "BrowserSignin": 0,
+  "BrowserSignin": 1,
   "DefaultNotificationsSetting": 2,
   "DeveloperToolsAvailability": 2,
   "EditBookmarksEnabled": false,
@@ -92,28 +102,52 @@ ENTRYPOINT ["/docker-entrypoint.sh"]
   "SyncDisabled": true,
   "AutoplayAllowed": true,
   "BrowserAddPersonEnabled": false,
-  "BrowserGuestModeEnabled": false,
+  "BrowserGuestModeEnabled": true,
   "DefaultPopupsSetting": 2,
   "DownloadRestrictions": 3,
   "VideoCaptureAllowed": true,
   "AllowFileSelectionDialogs": false,
   "PromptForDownloadLocation": false,
-  "BookmarkBarEnabled": false,
-  "PasswordManagerEnabled": false,
+  "BookmarkBarEnabled": true,
+  "PasswordManagerEnabled": true,
   "BrowserLabsEnabled": false,
   "URLAllowlist": [
     "file:///home/neko/Downloads"
   ],
   "URLBlocklist": [
+      "http://10.10.1.1",
+      "https://10.10.1.1",
+      "http://10.10.1.1:9443",
+      "https://10.10.1.1:9443",
+      "http://123.234.123.234",
+      "https://123.234.123.234",
+      "http://123.234.123.234:9443",
+      "https://123.234.123.234:9443",
+      "http://10.*",
+      "https://10.*",
+      "http://192.168.*",
+      "https://192.168.*",
+      "http://172.*",
+      "https://172.*",
+      "http://127.0.*",
+      "https://127.0.*",
       "file://*",
       "chrome://policy"
   ],
   "ExtensionInstallForcelist": [
+      "fhcgjolkccmbidfldomjliifgaodjagh;https://clients2.google.com/service/update2/crx",
+      "jinjaccalgkegednnccohejagnlnfdag;https://clients2.google.com/service/update2/crx",
+      "hdokiejnpimakedhajhdlcegeplioahd;https://clients2.google.com/service/update2/crx",
+      "hgeljhfekpckiiplhkigfehkdpldcggm;https://clients2.google.com/service/update2/crx",
       "hlkenndednhfkekhgcdicdfddnkalmdm;https://clients2.google.com/service/update2/crx",
       "cjpalhdlnbpafiamejdnhcphjbkeiagm;https://clients2.google.com/service/update2/crx",
       "mnjggcdmjocbbbhaepdhchncahnbgone;https://clients2.google.com/service/update2/crx"
   ],
   "ExtensionInstallAllowlist": [
+      "fhcgjolkccmbidfldomjliifgaodjagh",
+      "jinjaccalgkegednnccohejagnlnfdag",
+      "hdokiejnpimakedhajhdlcegeplioahd",
+      "hgeljhfekpckiiplhkigfehkdpldcggm",
       "hlkenndednhfkekhgcdicdfddnkalmdm",
       "cjpalhdlnbpafiamejdnhcphjbkeiagm",
       "mnjggcdmjocbbbhaepdhchncahnbgone"
@@ -122,12 +156,13 @@ ENTRYPOINT ["/docker-entrypoint.sh"]
       "*"
   ]
 }
+
 ```
 
 #### `preferences.json`
 ```json
 {
-  "homepage": "http://www.google.com",
+  "homepage": "https://www.youtube.com",
   "homepage_is_newtabpage": false,
   "first_run_tabs": [
     "https://www.google.com/_/chrome/newtab?ie=UTF-8"
@@ -233,7 +268,7 @@ ENTRYPOINT ["/docker-entrypoint.sh"]
     "using_gaia_avatar": false
   },
   "signin": {
-    "allowed": false
+    "allowed": true
   }
 }
 ```
