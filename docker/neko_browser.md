@@ -296,5 +296,54 @@ docker compose pull
 docker compose up --build -d
 ```
 
-(опционально) Теперь n.eko работает в режиме киоска с доступом только к `https://chatgpt.com`. 🚀
+(опционально) Теперь n.eko работает в режиме киоска с доступом только к `https://www.youtube.com`. 🚀
 
+---
+
+## (опционально) Сервис копирования куки из браузера в контейнере
+
+` nano /etc/systemd/system/copy-cookies.service`
+
+```bash
+
+[Unit]
+Description=Копирование файлов Cookies и Local State из контейнера
+
+[Service]
+Type=oneshot
+
+# Копирование для пользователя root:
+ExecStartPre=/usr/bin/mkdir -p /root/.config/chromium
+ExecStartPre=/usr/bin/mkdir -p /root/.config/chromium/Default
+ExecStartPre=/usr/bin/docker cp neko-neko-1:/home/neko/.config/chromium/Default/Cookies /root/.config/chromium/Default/Cookies
+ExecStartPre=/usr/bin/chmod -R 777 "/root/.config/chromium/"
+ExecStartPre=/usr/bin/docker cp "neko-neko-1:/home/neko/.config/chromium/Local State" "/root/.config/chromium/"
+ExecStartPre=/usr/bin/chown -R root:root "/root/"
+
+# Копирование для пользователя ytuser:
+ExecStartPre=/usr/bin/mkdir -p home/ytuser/.config/chromium
+ExecStartPre=/usr/bin/mkdir -p /home/ytuser/.config/chromium/Default
+ExecStart=/usr/bin/docker cp neko-neko-1:/home/neko/.config/chromium/Default/Cookies /home/ytuser/.config/chromium/Default/Cookies
+ExecStart=/usr/bin/docker cp "neko-neko-1:/home/neko/.config/chromium/Local State" "/home/ytuser/.config/chromium/"
+ExecStart=/usr/bin/chmod 777 "/home/ytuser/.config/chromium/"
+ExecStart=/usr/bin/chown -R ytuser:ytuser "/home/ytuser/"
+
+```
+
+`nano /etc/systemd/system/copy-cookies.timer`
+
+```bash
+[Unit]
+Description=Таймер для копирования Cookies каждые 306 секунд
+
+[Timer]
+# Первый запуск через 306 секунд после загрузки таймера
+OnBootSec=306sec
+# Повторять каждые 306 секунд после предыдущего выполнения
+OnUnitActiveSec=306sec
+Unit=copy-cookies.service
+
+[Install]
+WantedBy=timers.target
+
+```
