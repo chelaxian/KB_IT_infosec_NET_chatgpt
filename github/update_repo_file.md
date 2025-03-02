@@ -26,7 +26,7 @@
 #!/bin/bash
 
 # Путь к файлу file.txt
-FILE_PATH=~/Telegram/tg-ytdlp-bot/file.txt
+FILE_PATH=~/path/to/your/file.txt
 
 # Удаление старого файла
 rm -rf "$FILE_PATH"
