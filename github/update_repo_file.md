@@ -26,7 +26,10 @@
 #!/bin/bash
 
 # Путь к файлу file.txt
-file_FILE=~/Telegram/tg-ytdlp-bot/file.txt
+FILE_PATH=~/Telegram/tg-ytdlp-bot/file.txt
+
+# Удаление старых куки
+rm -rf "$FILE_PATH"
 
 # Токен доступа GitHub
 GITHUB_TOKEN="ваш_персональный_токен_доступа"
@@ -37,9 +40,9 @@ REPO_NAME="REPONAME"
 FILE_PATH="path/to/file.txt"
 
 # Проверка существования файла file.txt
-if [[ -f "$file_FILE" ]]; then
+if [[ -f "$FILE_PATH" ]]; then
     # Кодирование содержимого файла в base64
-    CONTENT=$(base64 -w 0 "$file_FILE")
+    CONTENT=$(base64 -w 0 "$FILE_PATH")
 
     # Получение текущего SHA файла из репозитория
     RESPONSE=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
@@ -63,7 +66,7 @@ EOF
         -d "$DATA" \
         "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contents/$FILE_PATH"
 else
-    echo "Файл $file_FILE не найден."
+    echo "Файл $FILE_PATH не найден."
 fi
 ```
 
