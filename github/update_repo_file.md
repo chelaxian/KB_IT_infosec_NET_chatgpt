@@ -28,7 +28,7 @@
 # Путь к файлу file.txt
 FILE_PATH=~/Telegram/tg-ytdlp-bot/file.txt
 
-# Удаление старых куки
+# Удаление старого файла
 rm -rf "$FILE_PATH"
 
 # Токен доступа GitHub
