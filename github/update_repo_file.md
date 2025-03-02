@@ -45,7 +45,7 @@ if [[ -f "$FILE_PATH" ]]; then
     # Получение текущего SHA файла из репозитория
     RESPONSE=$(curl -s -H "Authorization: token $YOUR_NEW_TOKEN" \
         -H "Accept: application/vnd.github.v3+json" \
-        "https://api.github.com/repos/chelaxian/REPONAME/path/to/your/file.txt")
+        "https://api.github.com/repos/REPO_OWNER/REPO_NAME/path/to/your/file.txt")
     SHA=$(echo "$RESPONSE" | jq -r .sha)
 
     # Подготовка данных для запроса
@@ -62,7 +62,7 @@ EOF
         -H "Authorization: token $YOUR_NEW_TOKEN" \
         -H "Content-Type: application/json" \
         -d "$DATA" \
-        "https://api.github.com/repos/chelaxian/REPONAME/path/to/your/file.txt"
+        "https://api.github.com/repos/REPO_OWNER/REPO_NAME/path/to/your/file.txt"
 else
     echo "Файл $FILE_PATH не найден."
 fi
