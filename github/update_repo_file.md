@@ -26,18 +26,16 @@
 #!/bin/bash
 
 # Путь к файлу file.txt
-FILE_PATH=~/path/to/your/file.txt
+FILE_PATH=/path/to/your/file.txt
 
-# Удаление старого файла
+# Удаление старых куки
 rm -rf "$FILE_PATH"
 
-# Токен доступа GitHub
-GITHUB_TOKEN="ваш_персональный_токен_доступа"
+# (опционально) Выполнение команды yt-dlp с использованием cookies
+# yt-dlp --cookies "$FILE_PATH" --cookies-from-browser chromium
 
-# Репозиторий и путь к файлу в репозитории
-REPO_OWNER="USERNAME"
-REPO_NAME="REPONAME"
-FILE_PATH="path/to/file.txt"
+# Github Acsess Token
+YOUR_NEW_TOKEN=github_pat_1121YGGUYguyUI___THIS_IS_YOUR_TOKEN___723624783fgfjkdfg
 
 # Проверка существования файла file.txt
 if [[ -f "$FILE_PATH" ]]; then
@@ -45,9 +43,9 @@ if [[ -f "$FILE_PATH" ]]; then
     CONTENT=$(base64 -w 0 "$FILE_PATH")
 
     # Получение текущего SHA файла из репозитория
-    RESPONSE=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+    RESPONSE=$(curl -s -H "Authorization: token $YOUR_NEW_TOKEN" \
         -H "Accept: application/vnd.github.v3+json" \
-        "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contents/$FILE_PATH")
+        "https://api.github.com/repos/chelaxian/REPONAME/path/to/your/file.txt")
     SHA=$(echo "$RESPONSE" | jq -r .sha)
 
     # Подготовка данных для запроса
@@ -60,14 +58,15 @@ if [[ -f "$FILE_PATH" ]]; then
 EOF
 
     # Загрузка файла в GitHub
-    curl -s -X PUT \
-        -H "Authorization: token $GITHUB_TOKEN" \
+    curl -X PUT \
+        -H "Authorization: token $YOUR_NEW_TOKEN" \
         -H "Content-Type: application/json" \
         -d "$DATA" \
-        "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contents/$FILE_PATH"
+        "https://api.github.com/repos/chelaxian/REPONAME/path/to/your/file.txt"
 else
     echo "Файл $FILE_PATH не найден."
 fi
+
 ```
 
 **Примечания:**
