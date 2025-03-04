@@ -1,4 +1,4 @@
-error
+error when copy BASH script *.sh from Windows to Linux
 
 ```bash
 bash /mnt/c/RUN.sh
