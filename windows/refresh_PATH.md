@@ -1,7 +1,7 @@
 Чтобы pipx запускался из любого места без перезагрузки Windows, нужно добавить в переменную PATH директорию, в которую установлены его скрипты. В вашем случае это:
 
 ```
-C:\Users\chelaxian\AppData\Roaming\Python\Python310\Scripts
+C:\Users\Administrator\AppData\Roaming\Python\Python310\Scripts
 ```
 
 Ниже привожу пошаговые рекомендации:
@@ -9,14 +9,14 @@ C:\Users\chelaxian\AppData\Roaming\Python\Python310\Scripts
 1. **Обновление PATH для текущей сессии командной строки**  
    Выполните в командной строке команду:
    ```batch
-   set PATH=%PATH%;C:\Users\chelaxian\AppData\Roaming\Python\Python310\Scripts
+   set PATH=%PATH%;C:\Users\Administrator\AppData\Roaming\Python\Python310\Scripts
    ```
    Это добавит путь в переменную PATH только для текущего окна командной строки. После этого команда `pipx` будет доступна до закрытия сессии.
 
 2. **Постоянное добавление пути**  
    Если вы хотите, чтобы данный путь сохранялся и в новых сеансах командной строки, можно воспользоваться командой:
    ```batch
-   setx PATH "%PATH%;C:\Users\chelaxian\AppData\Roaming\Python\Python310\Scripts"
+   setx PATH "%PATH%;C:\Users\Administrator\AppData\Roaming\Python\Python310\Scripts"
    ```
    Обратите внимание, что команда `setx` не обновляет переменную PATH в уже открытых окнах. Новые окна будут уже с обновлённым значением.
 
@@ -54,7 +54,7 @@ SUCCESS: Specified value was saved.
   - `C:\Windows\System32\WindowsPowerShell\v1.0\`
   - (опционально) `C:\Windows\System32\OpenSSH\` – если вы используете SSH-клиент
 - **Каталог с pipx:**
-  - `C:\Users\chelaxian\AppData\Roaming\Python\Python310\Scripts`
+  - `C:\Users\Administrator\AppData\Roaming\Python\Python310\Scripts`
 
 Если вы активно пользуетесь Python (например, запускаете другие скрипты или утилиты), возможно, вам понадобится оставить и:
 - `C:\Python310\Scripts`
@@ -64,25 +64,25 @@ SUCCESS: Specified value was saved.
 
 Пример минимального PATH для pipx (без учёта Python, если он не нужен):
 ```
-C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Users\chelaxian\AppData\Roaming\Python\Python310\Scripts
+C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Users\Administrator\AppData\Roaming\Python\Python310\Scripts
 ```
 
 Если Python вам нужен, добавьте его:
 ```
-C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Python310\Scripts;C:\Python310\;C:\Users\chelaxian\AppData\Roaming\Python\Python310\Scripts
+C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Python310\Scripts;C:\Python310\;C:\Users\Administrator\AppData\Roaming\Python\Python310\Scripts
 ```
 
 ### 3. Обновление PATH в текущей сессии
 Откройте командную строку и выполните:
 ```batch
-set PATH=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Users\chelaxian\AppData\Roaming\Python\Python310\Scripts
+set PATH=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Users\Administrator\AppData\Roaming\Python\Python310\Scripts
 ```
 Это изменение действует только в текущем окне.
 
 ### 4. Постоянное изменение PATH
 Чтобы обновлённый PATH сохранился в новых сеансах, можно использовать команду `setx`. Поскольку новый PATH не превышает 1024 символов, ограничение не будет проблемой:
 ```batch
-setx PATH "C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Users\chelaxian\AppData\Roaming\Python\Python310\Scripts"
+setx PATH "C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Users\Administrator\AppData\Roaming\Python\Python310\Scripts"
 ```
 После выполнения этой команды, чтобы изменения вступили в силу в текущей сессии, выполните:
 ```batch
