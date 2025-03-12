@@ -83,7 +83,7 @@
 // @name         Циклический вход/выход для YouTube (без проверок, по схеме)
 // @namespace    http://tampermonkey.net/
 // @version      1.0
-// @description  По схеме: ждем INTERVAL, переходим на logout, ждем 3 сек, переходим на логин, ждем 3 сек, переходим на главную. Цикл повторяется.
+// @description  По схеме: ждем INTERVAL, переходим на logout, ждем 2 сек, переходим на логин, ждем 2 сек, переходим на главную ждем 2 сек, переходим на LoFi Girl. Цикл повторяется.
 // @match        https://www.youtube.com/*
 // @match        https://accounts.google.com/v3/signin/identifier*
 // @grant        none
@@ -94,13 +94,13 @@
 
     // НАСТРАИВАЕМЫЕ ПАРАМЕТРЫ
     const INTERVAL = 300000; // 5 минут в миллисекундах (300000 мс)
-    const WAIT = 3000;       // 3 секунды в миллисекундах
+    const WAIT = 2000;       // 2 секунды в миллисекундах
 
     const LOGOUT_URL = "https://www.youtube.com/logout";
     const LOGIN_URL = "https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F%253FthemeRefresh%253D1&hl=en&ifkv=ASSHykrZmMTbrRwtTdPcCL808H2MXtIBXe4kDNr1IF_omyo6oiVwXg7ubi9zbShFz6v8Ul_ILTxIvQ&passive=true&service=youtube&uilel=3&flowName=GlifWebSignIn&flowEntry=ServiceLogin";
     const HOMEPAGE = "https://www.youtube.com/";
     const NEXTPAGE = "https://www.youtube.com/live/jfKfPfyJRdk?si=Wp1hKNv7HJh0rWfs";
-    // Считываем состояние цикла: "0", "1" или "2". Если не задано – по умолчанию "0"
+    // Считываем состояние цикла: "0", "1" или "2" или "3". Если не задано – по умолчанию "0"
     let step = localStorage.getItem("ytCycleStep") || "0";
     console.log("Запущен цикл. Текущий шаг:", step, " | Текущий URL:", window.location.href);
 
@@ -122,13 +122,21 @@
             window.location.href = LOGIN_URL;
         }, WAIT);
     }
-    // Если состояние "2": ждём WAIT и переходим на главную страницу, сбрасывая состояние до "0"
+    // Если состояние "2": ждём WAIT и переходим на главную страницу, устанавливая состояние "3"
     else if (step === "2") {
         console.log(`Шаг 2: через ${WAIT/1000} секунд выполняем переход на главную страницу.`);
         setTimeout(() => {
-            localStorage.setItem("ytCycleStep", "0");
+            localStorage.setItem("ytCycleStep", "3");
             console.log("Переход на главную страницу YouTube.");
             window.location.href = HOMEPAGE;
+        }, WAIT);
+    }
+    // Если состояние "3": ждём WAIT и переходим на следующую страницу, сбрасывая состояние до "0"
+    else if (step === "3") {
+        console.log(`Шаг 3: через ${WAIT/1000} секунд выполняем переход на следующую страницу.`);
+        setTimeout(() => {
+            localStorage.setItem("ytCycleStep", "0");
+            console.log("Переход на страницу YouTube - LoFi Girl.");
             window.location.href = NEXTPAGE;
         }, WAIT);
     }
