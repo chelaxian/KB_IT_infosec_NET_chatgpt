@@ -94,7 +94,7 @@
 
     // НАСТРАИВАЕМЫЕ ПАРАМЕТРЫ
     const INTERVAL = 300000; // 5 минут в миллисекундах (300000 мс)
-    const WAIT = 2000;       // 2 секунды в миллисекундах
+    const WAIT = 5000;       // 5 секунд в миллисекундах
 
     const LOGOUT_URL = "https://www.youtube.com/logout";
     const LOGIN_URL = "https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F%253FthemeRefresh%253D1&hl=en&ifkv=ASSHykrZmMTbrRwtTdPcCL808H2MXtIBXe4kDNr1IF_omyo6oiVwXg7ubi9zbShFz6v8Ul_ILTxIvQ&passive=true&service=youtube&uilel=3&flowName=GlifWebSignIn&flowEntry=ServiceLogin";
