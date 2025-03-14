@@ -147,3 +147,4 @@ Downloading the file 'arm.efi'
 - Использование TFTP в EFI Shell на OCI
 
 Ваш TFTP-сервер теперь полностью настроен и готов к работе!
+Далее следуйте инструкциям отсюда https://github.com/chelaxian/KB_IT_infosec_NET_chatgpt/blob/main/Oracle%20Cloud/pve8_deb12_install_on_OCI.md
