@@ -4,14 +4,14 @@
 
 ---
 
-## 0.1 Открытие сетевых доступов
+## 0 Открытие сетевых доступов
 
 Временно разрешите весь ICMP и UDP-трафик между источником и назначением в обе стороны через брандмауэр или iptables (а также в OCI консоли).
 
 Перейдите на страницу [Default Security List](https://cloud.oracle.com/networking/vcns/) for vcn и настройте брандмауэр, чтобы разрешить весь трафик на виртуальную машину.
 ![image](https://github.com/user-attachments/assets/010ce2dc-2072-49b1-89b7-0b8c3e6b343b)
 
-## 0.2 Подключение к Cloud Shell
+### Подключение к Cloud Shell
 
 Перейдите в Console Connection и нажмите Launch Cloud Shell Connection.
 Появится сессия Cloud Shell. Пока ничего не делайте.
@@ -97,8 +97,17 @@ tftp -i 123.123.123.123 GET arm.efi
 
 ## 4. Скачивание файла в OCI (EFI Shell)
 
+После этого вернитесь в консоль `OCI`.
+
+### Перезагрузка и вход в Boot Maintenance Manager
+
+Нажмите Reboot на странице деталей и выберите опцию `Force reboot the instance by immediately powering off, then powering back on`.
+В момент перезагрузки обратите внимание на окно `Cloud Shell`. Нажимайте `ESC`, пока не войдете в страницу, похожую на `BIOS`.
+![image](https://github.com/user-attachments/assets/0ae7de6f-9add-4127-80cd-33a92e70fbfb)
+Управляйте стрелками и перейдите в `Boot Manager` -> `UEFI: Built-in EFI Shell` 
+
 ### Настройка сети
-В EFI Shell назначьте IP-адреса для интерфейсов:
+В `EFI Shell` назначьте IP-адреса для интерфейсов:
 
 ```shell
 Shell> fs0:
