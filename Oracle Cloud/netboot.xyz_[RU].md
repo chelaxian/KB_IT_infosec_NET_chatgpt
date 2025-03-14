@@ -4,9 +4,22 @@
 
 ---
 
-## 0. Временно разрешите весь ICMP и UDP-трафик между источником и назначением в обе стороны через брандмауэр или iptables
+## 0.1 Открытие сетевых доступов
+
+Временно разрешите весь ICMP и UDP-трафик между источником и назначением в обе стороны через брандмауэр или iptables (а также в OCI консоли).
+
+Перейдите на страницу [Default Security List](https://cloud.oracle.com/networking/vcns/) for vcn и настройте брандмауэр, чтобы разрешить весь трафик на виртуальную машину.
+![image](https://github.com/user-attachments/assets/010ce2dc-2072-49b1-89b7-0b8c3e6b343b)
+
+## 0.2 Подключение к Cloud Shell
+
+Перейдите в Console Connection и нажмите Launch Cloud Shell Connection.
+Появится сессия Cloud Shell. Пока ничего не делайте.
+![image](https://github.com/user-attachments/assets/cd3fb36a-cd1e-4108-9142-754ffa660098)
 
 ## 1. Установка и сборка TFTP-сервера
+
+Установить TFTP-сервер можно например на соседней always free AMD64 ВМ (для примера с IP-адресом 10.0.0.2)
 
 ### Предварительные требования
 Убедитесь, что у вас установлены Git и Go. Если нет, установите их:
@@ -72,7 +85,7 @@ get arm.efi
 dism /online /Enable-Feature /FeatureName:TFTP
 ```
 
-Загрузите файл через TFTP:
+Загрузите файл через TFTP (по внешнему IP-адресу):
 
 ```powershell
 tftp -i 123.123.123.123 GET arm.efi
@@ -90,34 +103,34 @@ tftp -i 123.123.123.123 GET arm.efi
 ```shell
 Shell> fs0:
 FS0:\> cd EFI
-FS0:\EFI\> ifconfig -s eth0 static 10.0.0.111 255.255.255.0 10.0.0.1
-FS0:\EFI\> ifconfig -s eth1 static 172.16.0.111 255.255.255.0 172.16.0.1
+FS0:\EFI\> ifconfig -s eth0 static 10.0.0.24 255.255.255.0 10.0.0.1
+#FS0:\EFI\> ifconfig -s eth1 static 172.16.0.24 255.255.255.0 172.16.0.1 #если несколько сетевых адаптеров
 FS0:\EFI\> ifconfig -l eth0
-FS0:\EFI\> ifconfig -l eth1
+#FS0:\EFI\> ifconfig -l eth1
 ```
 
 ```copy-paste
 fs0:
 cd EFI
-ifconfig -s eth0 static 10.0.0.111 255.255.255.0 10.0.0.1
-ifconfig -s eth1 static 172.16.0.111 255.255.255.0 172.16.0.1
+ifconfig -s eth0 static 10.0.0.24 255.255.255.0 10.0.0.1
+#ifconfig -s eth1 static 172.16.0.24 255.255.255.0 172.16.0.1 #если несколько сетевых адаптеров
 ifconfig -l eth0
 ifconfig -l eth1
 ```
 
 ### Скачивание файла
 ```shell
-FS0:\EFI\> ping 123.123.123.123
-FS0:\EFI\> tftp 123.123.123.123 arm.efi
+FS0:\EFI\> ping 10.0.0.2
+FS0:\EFI\> tftp 10.0.0.2 arm.efi
 ```
 
 ```copy-paste
-ping 123.123.123.123
-tftp 123.123.123.123 arm.efi
+ping 10.0.0.2
+tftp 10.0.0.2 arm.efi
 ```
 
 ```result
-FS0:\EFI\> tftp 123.123.123.123 arm.efi
+FS0:\EFI\> tftp 10.0.0.2 arm.efi
 Downloading the file 'arm.efi'
 [=======================================>]    1082 Kb
 ```
