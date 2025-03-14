@@ -103,7 +103,7 @@ tftp -i 123.123.123.123 GET arm.efi
 
 Нажмите Reboot на странице деталей и выберите опцию `Force reboot the instance by immediately powering off, then powering back on`.
 В момент перезагрузки обратите внимание на окно `Cloud Shell`. Нажимайте `ESC`, пока не войдете в страницу, похожую на `BIOS`.
-![image](https://github.com/user-attachments/assets/0ae7de6f-9add-4127-80cd-33a92e70fbfb)
+![image](https://github.com/user-attachments/assets/0ae7de6f-9add-4127-80cd-33a92e70fbfb) \
 Управляйте стрелками и перейдите в `Boot Manager` -> `UEFI: Built-in EFI Shell` 
 
 ### Настройка сети
