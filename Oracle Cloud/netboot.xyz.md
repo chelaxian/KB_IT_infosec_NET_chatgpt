@@ -73,7 +73,7 @@ dism /online /Enable-Feature /FeatureName:TFTP
 Download the file using TFTP:
 
 ```powershell
-tftp -i 139.185.51.212 GET arm.efi
+tftp -i 123.123.123.123 GET arm.efi
 ```
 
 Verify the file is downloaded successfully.
@@ -105,13 +105,13 @@ ifconfig -l eth1
 
 ### Download File
 ```shell
-FS0:\EFI\> ping 139.185.51.212
-FS0:\EFI\> tftp 139.185.51.212 arm.efi
+FS0:\EFI\> ping 123.123.123.123
+FS0:\EFI\> tftp 123.123.123.123 arm.efi
 ```
 
 ```copy-paste
-ping 139.185.51.212
-tftp 139.185.51.212 arm.efi
+ping 123.123.123.123
+tftp 123.123.123.123 arm.efi
 ```
 
 The file will be downloaded and can be used for booting or further processing.
