@@ -4,6 +4,8 @@ This guide provides step-by-step instructions on setting up a TFTP server using 
 
 ---
 
+## 0. Temporary allow all Firewall / Iptables ICMP and UDP-ports from your source to your destination and vice-versa 
+
 ## 1. Install and Build TFTP Server
 
 ### Prerequisites
@@ -112,6 +114,12 @@ FS0:\EFI\> tftp 123.123.123.123 arm.efi
 ```copy-paste
 ping 123.123.123.123
 tftp 123.123.123.123 arm.efi
+```
+
+```result
+FS0:\EFI\> tftp 123.123.123.123 arm.efi
+Downloading the file 'arm.efi'
+[=======================================>]    1082 Kb
 ```
 
 The file will be downloaded and can be used for booting or further processing.
