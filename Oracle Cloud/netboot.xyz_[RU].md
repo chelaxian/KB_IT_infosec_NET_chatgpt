@@ -106,16 +106,17 @@ FS0:\> cd EFI
 FS0:\EFI\> ifconfig -s eth0 static 10.0.0.24 255.255.255.0 10.0.0.1
 #FS0:\EFI\> ifconfig -s eth1 static 172.16.0.24 255.255.255.0 172.16.0.1 #если несколько сетевых адаптеров
 FS0:\EFI\> ifconfig -l eth0
-#FS0:\EFI\> ifconfig -l eth1
+#FS0:\EFI\> ifconfig -l eth1 #если несколько сетевых адаптеров
 ```
 
-```copy-paste
+копи-паста
+```bash
 fs0:
 cd EFI
 ifconfig -s eth0 static 10.0.0.24 255.255.255.0 10.0.0.1
 #ifconfig -s eth1 static 172.16.0.24 255.255.255.0 172.16.0.1 #если несколько сетевых адаптеров
 ifconfig -l eth0
-ifconfig -l eth1
+ifconfig -l eth1 #если несколько сетевых адаптеров
 ```
 
 ### Скачивание файла
@@ -124,12 +125,14 @@ FS0:\EFI\> ping 10.0.0.2
 FS0:\EFI\> tftp 10.0.0.2 arm.efi
 ```
 
-```copy-paste
+копи-паста
+```bash
 ping 10.0.0.2
 tftp 10.0.0.2 arm.efi
 ```
 
-```result
+результат
+```bash
 FS0:\EFI\> tftp 10.0.0.2 arm.efi
 Downloading the file 'arm.efi'
 [=======================================>]    1082 Kb
