@@ -6,7 +6,7 @@
 
 ### **2. Очистите и восстановите настройки**
 1. **Закройте eMule.**
-2. Перейдите в папку **C:\Users\%USERNAME%\AppData\Local\eMule** (или **C:\Program Files\eMule\Config**).
+2. Перейдите в папку **C:\Users\\%USERNAME%\AppData\Local\eMule** (или **C:\Program Files\eMule\Config**).
 3. Удалите (или переместите) файлы:
    - **preferences.ini**
    - **preferences.dat**
@@ -15,7 +15,7 @@
 
 ### **3. Проверка файловых списков**
 Ошибка может быть вызвана поврежденными файлами **known.met, known2_64.met или clients.met**.
-1. Перейдите в **C:\Users\%USERNAME%\AppData\Local\eMule**.
+1. Перейдите в **C:\Users\\%USERNAME%\AppData\Local\eMule**.
 2. Удалите **known.met**, **known2_64.met**, **clients.met**.
 3. Перезапустите eMule.
 
