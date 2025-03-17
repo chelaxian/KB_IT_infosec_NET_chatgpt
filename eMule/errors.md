@@ -7,7 +7,7 @@
 ### **2. Очистите и восстановите настройки**
 1. **Закройте eMule.**
 2. Перейдите в папку \
-**C:\Users\\%USERNAME%\AppData\Local\eMule** \
+`**C:\Users\\%USERNAME%\AppData\Local\eMule**` \
  (или **C:\Program Files\eMule\Config**).
 3. Удалите (или переместите) файлы:
    - **preferences.ini**
