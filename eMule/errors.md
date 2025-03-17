@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/e2ed82ba-fd71-48df-ab44-f06a03a800cb)
+![image](https://github.com/user-attachments/assets/e2ed82ba-fd71-48df-ab44-f06a03a800cb) \
 Ошибка **"Encountered an improper argument"** в eMule часто связана с проблемами в настройках, поврежденными файлами или конфликтами с системой. Чтобы исправить:
 
 ### **1. Обновите eMule**
