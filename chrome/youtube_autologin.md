@@ -162,3 +162,151 @@
 Убедитесь, что в настройках LastPass включены следующие опции:
 - **Options → General:** поставить галочку на **Automatically fill login information**.
 - **Options → Advanced:** поставить галочку на **Log in to sites automatically within this many seconds since last login** (и указать нужное время).
+
+
+---
+
+автонажатие Enter, Tab, Enter
+
+```javascript
+// ==UserScript==
+// @name         Auto Press Enter and Tab Alternately
+// @namespace    http://example.com/
+// @version      1.1
+// @description  Эмулирует нажатие клавиш Enter и Tab, чередуя их, начиная с Enter.
+// @match        *://*/*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    // Функция для симуляции нажатия указанной клавиши
+    function simulateKey(key, code, keyCode) {
+        // Создание события keydown
+        const keyDownEvent = new KeyboardEvent('keydown', {
+            bubbles: true,
+            cancelable: true,
+            key: key,
+            code: code,
+            keyCode: keyCode, // deprecated, но может понадобиться для некоторых случаев
+            which: keyCode
+        });
+
+        // Создание события keyup
+        const keyUpEvent = new KeyboardEvent('keyup', {
+            bubbles: true,
+            cancelable: true,
+            key: key,
+            code: code,
+            keyCode: keyCode,
+            which: keyCode
+        });
+
+        // Диспатчим события на активном элементе или document.body, если фокуса нет
+        const target = document.activeElement || document.body;
+        target.dispatchEvent(keyDownEvent);
+        target.dispatchEvent(keyUpEvent);
+
+        console.log(`AutoKeyPress: ${key} key pressed.`);
+    }
+
+    // Флаг, определяющий, какую клавишу нажимать следующей
+    let pressEnterNext = true;
+
+    // Функция, которая чередует нажатия клавиш
+    function alternateKeyPress() {
+        if (pressEnterNext) {
+            simulateKey('Enter', 'Enter', 13);
+        } else {
+            simulateKey('Tab', 'Tab', 9);
+        }
+        pressEnterNext = !pressEnterNext;
+    }
+
+    // Устанавливаем интервал в 5000 мс для чередования нажатий
+    setInterval(alternateKeyPress, 5000);
+})();
+```
+
+---
+
+автоматическое нажатие заданных кнопок на странице
+
+```javascript
+// ==UserScript==
+// @name         AutoClick Next/SignIn Enhanced
+// @namespace    http://example.com/
+// @version      1.1
+// @description  Автоматически нажимает на кнопки/ссылки с текстами "Next", "Sign in", "Log in", "Далее", "Продолжить", "Войти" и т.д.
+// @match        *://*/*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    // Array of target words (in lower case)
+    const targetWords = [
+        "next",         // English: "Next"
+        "далее",        // Russian: "Next"
+        "sign in",      // English: "Sign in"
+        "log in",       // English: "Log in"
+        "login",        // English: "Login"
+        "continue",     // English: "Continue"
+        "reload",       // English: "Reload"
+        "продолжить",   // Russian: "Continue"
+        "войти",        // Russian: "Enter/Login"
+        "start",        // English: "Start"
+        "begin",        // English: "Begin"
+        "начать",       // Russian: "Begin"
+        "agree",        // English: "Agree"
+        "accept",       // English: "Accept"
+        "согласиться",  // Russian: "Agree"
+        "принять",      // Russian: "Accept"
+        "ok",           // English: "OK"
+        "ок"            // Russian: "OK"
+    ];
+
+    // Function to simulate a click on the element
+    function simulateClick(element) {
+        element.click();
+        console.log(`AutoClick: Clicked on element with text "${element.innerText || element.value || element.getAttribute('aria-label') || ''}"`);
+    }
+
+    // Function to find target buttons/links and click them
+    function clickTargetButton() {
+        // Select all potential clickable elements: <button>, <input> с типом button/submit, <a> и элементы с role="button"
+        const clickableElements = document.querySelectorAll('button, input[type="button"], input[type="submit"], a, [role="button"]');
+
+        // Loop through each element
+        for (const element of clickableElements) {
+            // Skip element if it's disabled
+            if (element.disabled) continue;
+
+            // Get the text content from innerText, value, or aria-label
+            let textContent = (element.innerText || element.value || "").toLowerCase().trim();
+            if (!textContent) {
+                textContent = element.getAttribute('aria-label') ? element.getAttribute('aria-label').toLowerCase().trim() : "";
+            }
+
+            // Check if the element's text contains any of the target words
+            for (const word of targetWords) {
+                if (textContent.includes(word)) {
+                    simulateClick(element);
+                    // Если требуется кликнуть только первую найденную кнопку за цикл, раскомментируйте return:
+                    // return;
+                    break;  // прерываем внутренний цикл и переходим к следующему элементу
+                }
+            }
+        }
+    }
+
+    // Run click immediately after page load
+    window.addEventListener('load', clickTargetButton);
+
+    // Also run click every 2 seconds for dynamically loaded content
+    setInterval(clickTargetButton, 2000);
+})();
+
+```
