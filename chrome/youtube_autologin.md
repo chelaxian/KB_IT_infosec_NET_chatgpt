@@ -172,9 +172,11 @@
 // ==UserScript==
 // @name         Auto Press Enter and Tab Alternately
 // @namespace    http://example.com/
-// @version      1.1
+// @version      1.2
 // @description  Эмулирует нажатие клавиш Enter и Tab, чередуя их, начиная с Enter.
 // @match        *://*/*
+// @exclude      https://www.youtube.com/watch?v=*
+// @exclude      https://www.youtube.com/live/*
 // @grant        none
 // ==/UserScript==
 
@@ -227,6 +229,7 @@
     // Устанавливаем интервал в 5000 мс для чередования нажатий
     setInterval(alternateKeyPress, 5000);
 })();
+
 ```
 
 ---
