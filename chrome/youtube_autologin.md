@@ -241,8 +241,8 @@
 // ==UserScript==
 // @name         AutoClick Next/SignIn Enhanced
 // @namespace    http://example.com/
-// @version      1.4
-// @description  Автоматически нажимает на кнопки/ссылки с текстами "Next", "Sign in", "Log in", "Далее", "Продолжить", "Войти" и т.д.
+// @version      1.5
+// @description  Автоматически нажимает на указанный аккаунт Google и на кнопки с текстами "Next", "Sign in", "Log in", "Login", "Continue", "Reload", "Agree", "Accept".
 // @match        *://*/*
 // @exclude      https://www.youtube.com/watch?v=*
 // @exclude      https://www.youtube.com/live/*
@@ -252,30 +252,19 @@
 (function() {
     'use strict';
 
-    // ВАШ ЛОГИН/ТЕКСТ, который нужно кликать
-    const userLogin = "300.tpaktop.300@gmail.com";
+    // Email/аккаунт, на который надо нажимать:
+    const userEmail = "300.tpaktop.300@gmail.com";
 
-    // Массив целевых слов (в нижнем регистре)
+    // Список слов, при обнаружении которых на кнопках/ссылках делаем клик:
     const targetWords = [
-        userLogin.toLowerCase(), // Логин выведен отдельно для удобства изменения
         "next",         // English: "Next"
-        "далее",        // Russian: "Next"
         "sign in",      // English: "Sign in"
         "log in",       // English: "Log in"
         "login",        // English: "Login"
         "continue",     // English: "Continue"
         "reload",       // English: "Reload"
-        "продолжить",   // Russian: "Continue"
-        "войти",        // Russian: "Enter/Login"
-        "start",        // English: "Start"
-        "begin",        // English: "Begin"
-        "начать",       // Russian: "Begin"
         "agree",        // English: "Agree"
-        "accept",       // English: "Accept"
-        "согласиться",  // Russian: "Agree"
-        "принять",      // Russian: "Accept"
-        "ok",           // English: "OK"
-        "ок"            // Russian: "OK"
+        "accept"        // English: "Accept"
     ];
 
     // Функция для имитации клика по элементу
@@ -284,13 +273,19 @@
         console.log(`AutoClick: Clicked on element with text "${element.innerText || element.value || element.getAttribute('aria-label') || ''}"`);
     }
 
-    // Функция поиска подходящих элементов и клика по ним
-    function clickTargetButton() {
-        // Ищем все потенциально кликабельные элементы
+    // Основная функция: сначала кликаем по аккаунту (если есть), потом по кнопкам
+    function clickTargetElements() {
+        // 1) Пытаемся найти и кликнуть нужный аккаунт по data-identifier
+        const googleAccLink = document.querySelector(`[role="link"][data-identifier="${userEmail}"]`);
+        if (googleAccLink) {
+            googleAccLink.click();
+            console.log(`AutoClick: Clicked on Google account link with data-identifier="${userEmail}"`);
+        }
+
+        // 2) Ищем кнопки/ссылки с целевыми словами
         const clickableElements = document.querySelectorAll(
             'button, input[type="button"], input[type="submit"], a, [role="button"]'
         );
-
         for (const element of clickableElements) {
             // Пропускаем, если элемент отключен
             if (element.disabled) continue;
@@ -302,23 +297,20 @@
                 textContent = aria ? aria.toLowerCase().trim() : "";
             }
 
-            // Проверяем, содержит ли текст какой-либо из targetWords
+            // Проверяем, содержит ли текст одно из целевых слов
             for (const word of targetWords) {
                 if (textContent.includes(word)) {
                     simulateClick(element);
-                    // Если нужно кликать только первый найденный элемент за проход, раскомментируйте:
-                    // return;
-                    break;  // Переходим к следующему элементу
+                    break; // переходим к следующему элементу
                 }
             }
         }
     }
 
     // Запуск при загрузке страницы
-    window.addEventListener('load', clickTargetButton);
+    window.addEventListener('load', clickTargetElements);
 
-    // Периодический запуск для динамически подгружаемого контента
-    setInterval(clickTargetButton, 2000);
+    // Периодический запуск (каждые 2 сек) для динамически подгружаемых элементов
+    setInterval(clickTargetElements, 2000);
 })();
-
 ```
