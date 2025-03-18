@@ -98,7 +98,7 @@
     'use strict';
 
     // НАСТРАИВАЕМЫЕ ПАРАМЕТРЫ
-    const INTERVAL = 300000; // 5 минут в миллисекундах (300000 мс)
+    const INTERVAL = 600000; // 10 минут в миллисекундах
     const WAIT = 5000;       // 5 секунд в миллисекундах
 
     const LOGOUT_URL = "https://www.youtube.com/logout";
