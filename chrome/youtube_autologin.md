@@ -241,7 +241,7 @@
 // ==UserScript==
 // @name         AutoClick Next/SignIn Enhanced
 // @namespace    http://example.com/
-// @version      1.2
+// @version      1.4
 // @description  Автоматически нажимает на кнопки/ссылки с текстами "Next", "Sign in", "Log in", "Далее", "Продолжить", "Войти" и т.д.
 // @match        *://*/*
 // @exclude      https://www.youtube.com/watch?v=*
@@ -252,8 +252,12 @@
 (function() {
     'use strict';
 
-    // Array of target words (in lower case)
+    // ВАШ ЛОГИН/ТЕКСТ, который нужно кликать
+    const userLogin = "300.tpaktop.300@gmail.com";
+
+    // Массив целевых слов (в нижнем регистре)
     const targetWords = [
+        userLogin.toLowerCase(), // Логин выведен отдельно для удобства изменения
         "next",         // English: "Next"
         "далее",        // Russian: "Next"
         "sign in",      // English: "Sign in"
@@ -274,46 +278,47 @@
         "ок"            // Russian: "OK"
     ];
 
-    // Function to simulate a click on the element
+    // Функция для имитации клика по элементу
     function simulateClick(element) {
         element.click();
         console.log(`AutoClick: Clicked on element with text "${element.innerText || element.value || element.getAttribute('aria-label') || ''}"`);
     }
 
-    // Function to find target buttons/links and click them
+    // Функция поиска подходящих элементов и клика по ним
     function clickTargetButton() {
-        // Select all potential clickable elements: <button>, <input> с типом button/submit, <a> и элементы с role="button"
-        const clickableElements = document.querySelectorAll('button, input[type="button"], input[type="submit"], a, [role="button"]');
+        // Ищем все потенциально кликабельные элементы
+        const clickableElements = document.querySelectorAll(
+            'button, input[type="button"], input[type="submit"], a, [role="button"]'
+        );
 
-        // Loop through each element
         for (const element of clickableElements) {
-            // Skip element if it's disabled
+            // Пропускаем, если элемент отключен
             if (element.disabled) continue;
 
-            // Get the text content from innerText, value, or aria-label
+            // Получаем текст из innerText, value или aria-label
             let textContent = (element.innerText || element.value || "").toLowerCase().trim();
             if (!textContent) {
-                textContent = element.getAttribute('aria-label') ? element.getAttribute('aria-label').toLowerCase().trim() : "";
+                const aria = element.getAttribute('aria-label');
+                textContent = aria ? aria.toLowerCase().trim() : "";
             }
 
-            // Check if the element's text contains any of the target words
+            // Проверяем, содержит ли текст какой-либо из targetWords
             for (const word of targetWords) {
                 if (textContent.includes(word)) {
                     simulateClick(element);
-                    // Если требуется кликнуть только первую найденную кнопку за цикл, раскомментируйте return:
+                    // Если нужно кликать только первый найденный элемент за проход, раскомментируйте:
                     // return;
-                    break;  // Прерываем внутренний цикл и переходим к следующему элементу
+                    break;  // Переходим к следующему элементу
                 }
             }
         }
     }
 
-    // Run click immediately after page load
+    // Запуск при загрузке страницы
     window.addEventListener('load', clickTargetButton);
 
-    // Also run click every 2 seconds for dynamically loaded content
+    // Периодический запуск для динамически подгружаемого контента
     setInterval(clickTargetButton, 2000);
 })();
-
 
 ```
