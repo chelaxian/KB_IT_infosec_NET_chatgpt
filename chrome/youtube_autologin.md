@@ -230,6 +230,7 @@
     setInterval(alternateKeyPress, 5000);
 })();
 
+
 ```
 
 ---
@@ -240,9 +241,11 @@
 // ==UserScript==
 // @name         AutoClick Next/SignIn Enhanced
 // @namespace    http://example.com/
-// @version      1.1
+// @version      1.2
 // @description  Автоматически нажимает на кнопки/ссылки с текстами "Next", "Sign in", "Log in", "Далее", "Продолжить", "Войти" и т.д.
 // @match        *://*/*
+// @exclude      https://www.youtube.com/watch?v=*
+// @exclude      https://www.youtube.com/live/*
 // @grant        none
 // ==/UserScript==
 
@@ -299,7 +302,7 @@
                     simulateClick(element);
                     // Если требуется кликнуть только первую найденную кнопку за цикл, раскомментируйте return:
                     // return;
-                    break;  // прерываем внутренний цикл и переходим к следующему элементу
+                    break;  // Прерываем внутренний цикл и переходим к следующему элементу
                 }
             }
         }
@@ -311,5 +314,6 @@
     // Also run click every 2 seconds for dynamically loaded content
     setInterval(clickTargetButton, 2000);
 })();
+
 
 ```
