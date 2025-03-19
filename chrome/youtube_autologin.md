@@ -1,3 +1,14 @@
+# Автоматизация автообновления куки на YouTube
+
+Понадобятся следующие расширения:
+- [LastPass](https://chromewebstore.google.com/detail/lastpass-free-password-ma/hdokiejnpimakedhajhdlcegeplioahd)
+- [Violentmonkey](https://chromewebstore.google.com/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag)
+- [Accept all cookies](https://chromewebstore.google.com/detail/accept-all-cookies/ofpnikijgfhlmmjlpkfaifhhdonchhoi)
+- [Cookie AutoDelete](https://chromewebstore.google.com/detail/cookie-autodelete/fhcgjolkccmbidfldomjliifgaodjagh)
+- (необязательно) [Auto Refresh Plus | Page Monitor](https://chromewebstore.google.com/detail/auto-refresh-plus-page-mo/hgeljhfekpckiiplhkigfehkdpldcggm)
+- (необязательно) [uBlock Origin](https://chromewebstore.google.com/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm)
+- (необязательно) [SponsorBlock для YouTube](https://chromewebstore.google.com/detail/sponsorblock-%D0%B4%D0%BB%D1%8F-youtube/mnjggcdmjocbbbhaepdhchncahnbgone)
+
 # Циклический вход/выход для YouTube
 
 Данный проект позволяет автоматически разлогиниваться и залогиниваться на YouTube по заданному циклу. Скрипт реализован для расширений [Violentmonkey](https://violentmonkey.github.io/) (аналог Tampermonkey) для браузера Chrome. Для автозаполнения данных на странице логина рекомендуется использовать LastPass или аналогичный менеджер паролей.
