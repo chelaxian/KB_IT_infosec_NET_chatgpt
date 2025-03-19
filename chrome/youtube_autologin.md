@@ -13,16 +13,6 @@
 
 Данный проект позволяет автоматически разлогиниваться и залогиниваться на YouTube по заданному циклу. Скрипт реализован для расширений [Violentmonkey](https://violentmonkey.github.io/) (аналог Tampermonkey) для браузера Chrome. Для автозаполнения данных на странице логина рекомендуется использовать LastPass или аналогичный менеджер паролей.
 
-## Необходимые расширения
-
-1. **Violentmonkey**  
-   - [Ссылка на Chrome Web Store](https://chrome.google.com/webstore/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag)  
-   - Используется для управления пользовательскими скриптами.
-
-2. **LastPass**  
-   - [Ссылка на Chrome Web Store](https://chrome.google.com/webstore/detail/lastpass-free-password-ma/hdokiejnpimakedhajhdlcegeplioahd)  
-   - Используется для автоматического автозаполнения логина и пароля на странице входа Google.
-
 ## Установка и настройка
 
 ### 1. Установка Violentmonkey и скрипта
@@ -158,6 +148,13 @@
     }
 })();
 ```
+### 3. Установка и настройка Accept all cookies
+
+Просто установить и включить, ничего не настраивать
+
+### 4. Установка и настройка Cookie AutoDelete
+
+Установить, исключить из автоочистки `google.com` и включить автоочистку на всех страницах при смене домена, релоаде, открытии, закрытии
 
 ## Заключение
 
