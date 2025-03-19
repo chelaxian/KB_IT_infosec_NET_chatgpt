@@ -104,7 +104,7 @@
     const LOGOUT_URL = "https://www.youtube.com/logout";
     const LOGIN_URL = "https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F%253FthemeRefresh%253D1&hl=en&ifkv=ASSHykrZmMTbrRwtTdPcCL808H2MXtIBXe4kDNr1IF_omyo6oiVwXg7ubi9zbShFz6v8Ul_ILTxIvQ&passive=true&service=youtube&uilel=3&flowName=GlifWebSignIn&flowEntry=ServiceLogin";
     const HOMEPAGE = "https://www.youtube.com/";
-    const NEXTPAGE = "https://www.youtube.com/live/jfKfPfyJRdk?si=Wp1hKNv7HJh0rWfs";
+    const NEXTPAGE = "https://www.youtube.com/watch?v=4xDzrJKXOOY";
     // Считываем состояние цикла: "0", "1" или "2" или "3". Если не задано – по умолчанию "0"
     let step = localStorage.getItem("ytCycleStep") || "0";
     console.log("Запущен цикл. Текущий шаг:", step, " | Текущий URL:", window.location.href);
