@@ -195,10 +195,16 @@ export LIBVA_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri
 export XDG_RUNTIME_DIR=/tmp/xdg
 mkdir -p $XDG_RUNTIME_DIR && chmod 700 $XDG_RUNTIME_DIR
 vainfo --display drm --device /dev/dri/renderD128
+ls -l /dev/dri
 ```
 
 2. Проверь вывод. Если `vainfo` начнёт показывать поддерживаемые профили (H264, HEVC...), всё заработало.
 ```
+root@46a3c8bc9414:/# vainfo --display drm --device /dev/dri/renderD128
+libva info: VA-API version 1.20.0
+libva info: User environment variable requested driver 'radeonsi'
+libva info: Trying to open /usr/lib/x86_64-linux-gnu/dri/radeonsi_drv_video.so
+libva info: Found init function __vaDriverInit_1_20
 libva info: va_openDriver() returns 0
 vainfo: VA-API version: 1.20 (libva 2.12.0)
 vainfo: Driver version: Mesa Gallium driver 24.2.8-1ubuntu1~24.04.1 for AMD Radeon 660M (radeonsi, rembrandt, LLVM 19.1.1, DRM 3.57, 6.8.12-4-pve)
@@ -218,6 +224,10 @@ vainfo: Supported profile and entrypoints
       VAProfileVP9Profile2            : VAEntrypointVLD
       VAProfileAV1Profile0            : VAEntrypointVLD
       VAProfileNone                   : VAEntrypointVideoProc
+root@46a3c8bc9414:/# ls -l /dev/dri
+total 0
+crw-rw---- 1 root video 226,   0 Mar 24 00:31 card0
+crw-rw---- 1 root video 226, 128 Mar 24 00:31 renderD128
 ```
 
 3. Если всё равно `va_openDriver = -1` — проверь:
