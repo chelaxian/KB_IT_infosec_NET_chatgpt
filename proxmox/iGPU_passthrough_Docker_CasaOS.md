@@ -57,8 +57,20 @@
    - [x] VAAPI
    - Укажи путь к устройству:
      ```
-     /dev/dri/renderD128
+     /dev/dri
+     #/dev/dri/card0
+     #/dev/dri/renderD128
      ```
+
+1. **Пробросить полный каталог `/sys/class/drm` из хоста в контейнер.**
+
+   В настройках CasaOS для контейнера Jellyfin нужно добавить том (volume), который будет монтировать каталог `/sys/class/drm` с хоста в контейнер (рекомендуется в режиме «только для чтения»). Это обеспечит, что драйвер (radeonsi или amdgpu) сможет прочитать всю информацию о подключённых устройствах и их статус.
+
+2. **Убедиться, что контейнер запущен в привилегированном режиме.**
+
+   Многие функции DRM требуют полного доступа к sysfs и cgroup. Если контейнер не привилегированный, даже проброшенный sysfs может быть недостаточным.
+
+     
 5. Сохрани и перезапусти Jellyfin (можно прямо в интерфейсе).
 
 ---
@@ -149,74 +161,6 @@ Radeon 660M (Rembrandt, RDNA2 + VCN 3.1) поддерживает:
 
 ---
 
-## 🚨 Текущая картина
-
-- VAAPI доступно (`libva info: VA-API version 1.20.0`)
-- Драйвер `radeonsi` найден (`Trying to open .../radeonsi_drv_video.so`)
-- Ошибка `va_openDriver() returns -1` = проблема с инициализацией.
-
----
-
-## 🧩 Возможные причины и решения
-
-### 1. 📦 Отсутствует необходимый пакет `mesa-va-drivers`
-
-Драйвер `radeonsi_drv_video.so` может существовать, но без зависимостей не инициализируется.
-
-📌 **Решение — установить всё для VAAPI на AMD внутри контейнера:**
-
-```bash
-apt update
-apt install -y mesa-va-drivers libva-drm2 libdrm-amdgpu1 libdrm2
-```
-
-Также не помешает:
-
-```bash
-apt install -y vainfo
-```
-
----
-
-### 2. ❗ Устройство работает, но драйвер не может инициализировать GPU без `card0` (уже проброшено — это ок)
-
-Но **иногда** AMD-шные `libdrm_amdgpu` завязаны на наличие полноценного DRM-устройства и некоторых прав в cgroup.
-
-📌 **Проверь права внутри контейнера:**
-
-```bash
-ls -l /dev/dri/
-```
-
-Оба файла должны быть:
-
-```
-crw-rw---- 1 root video 226, 0   card0
-crw-rw---- 1 root video 226, 128 renderD128
-```
-
-Если `renderD128` всё ещё принадлежит `abc` — задай:
-
-```bash
-chgrp video /dev/dri/renderD128
-```
-
----
-
-### 3. 🧪 Запуск `vainfo` с переменными окружения
-
-Попробуй выполнить `vainfo` с явно заданной переменной драйвера **и** создадим XDG runtime:
-
-```bash
-export LIBVA_DRIVER_NAME=radeonsi
-export XDG_RUNTIME_DIR=/tmp/xdg
-mkdir -p $XDG_RUNTIME_DIR
-chmod 700 $XDG_RUNTIME_DIR
-vainfo
-```
-
----
-
 ### 4. ⛔ Контейнер всё ещё не "видит" полноценный GPU стек
 
 Если после всего вышеуказанного `vainfo` всё ещё возвращает `va_openDriver() = -1`, возможно, контейнеру не хватает:
@@ -239,16 +183,43 @@ vainfo
 chgrp video /dev/dri/renderD128
 chmod 660 /dev/dri/renderD128
 usermod -aG video jellyfin
+#
 apt update
 apt install -y mesa-va-drivers libva-drm2 libdrm-amdgpu1 libdrm2 vainfo
+apt update && apt install -y xvfb
+#
+Xvfb :0 &
+export DISPLAY=:0
 export LIBVA_NO_DISPLAY=1
 export LIBVA_DRIVER_NAME=radeonsi
+export LIBVA_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri
 export XDG_RUNTIME_DIR=/tmp/xdg
 mkdir -p $XDG_RUNTIME_DIR && chmod 700 $XDG_RUNTIME_DIR
-vainfo
+vainfo --display drm --device /dev/dri/renderD128
 ```
 
 2. Проверь вывод. Если `vainfo` начнёт показывать поддерживаемые профили (H264, HEVC...), всё заработало.
+```
+libva info: va_openDriver() returns 0
+vainfo: VA-API version: 1.20 (libva 2.12.0)
+vainfo: Driver version: Mesa Gallium driver 24.2.8-1ubuntu1~24.04.1 for AMD Radeon 660M (radeonsi, rembrandt, LLVM 19.1.1, DRM 3.57, 6.8.12-4-pve)
+vainfo: Supported profile and entrypoints
+      VAProfileH264ConstrainedBaseline: VAEntrypointVLD
+      VAProfileH264ConstrainedBaseline: VAEntrypointEncSlice
+      VAProfileH264Main               : VAEntrypointVLD
+      VAProfileH264Main               : VAEntrypointEncSlice
+      VAProfileH264High               : VAEntrypointVLD
+      VAProfileH264High               : VAEntrypointEncSlice
+      VAProfileHEVCMain               : VAEntrypointVLD
+      VAProfileHEVCMain               : VAEntrypointEncSlice
+      VAProfileHEVCMain10             : VAEntrypointVLD
+      VAProfileHEVCMain10             : VAEntrypointEncSlice
+      VAProfileJPEGBaseline           : VAEntrypointVLD
+      VAProfileVP9Profile0            : VAEntrypointVLD
+      VAProfileVP9Profile2            : VAEntrypointVLD
+      VAProfileAV1Profile0            : VAEntrypointVLD
+      VAProfileNone                   : VAEntrypointVideoProc
+```
 
 3. Если всё равно `va_openDriver = -1` — проверь:
 
@@ -258,6 +229,5 @@ vainfo
 
 ---
 
-Готов помочь дожать до конца — пришли следующий вывод `vainfo` после вышеуказанных шагов.
 
 
