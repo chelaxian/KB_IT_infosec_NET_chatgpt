@@ -257,12 +257,15 @@ vainfo
 1. Внутри контейнера выполни:
 
 ```bash
-export LIBVA_DRIVER_NAME=radeonsi
-export XDG_RUNTIME_DIR=/tmp/xdg
-mkdir -p $XDG_RUNTIME_DIR
-chmod 700 $XDG_RUNTIME_DIR
+chgrp video /dev/dri/renderD128
+chmod 660 /dev/dri/renderD128
+usermod -aG video jellyfin
 apt update
 apt install -y mesa-va-drivers libva-drm2 libdrm-amdgpu1 libdrm2 vainfo
+export LIBVA_NO_DISPLAY=1
+export LIBVA_DRIVER_NAME=radeonsi
+export XDG_RUNTIME_DIR=/tmp/xdg
+mkdir -p $XDG_RUNTIME_DIR && chmod 700 $XDG_RUNTIME_DIR
 vainfo
 ```
 
