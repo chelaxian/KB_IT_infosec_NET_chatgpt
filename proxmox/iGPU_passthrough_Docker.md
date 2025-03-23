@@ -10,6 +10,7 @@
    ```bash
    docker run -d \
      --name Jellyfin \
+     --device=/dev/dri/card0 \
      --device=/dev/dri/renderD128 \
      -p 1900:1900 \
      -p 7359:7359 \
