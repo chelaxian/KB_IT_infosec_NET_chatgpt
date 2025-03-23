@@ -184,7 +184,7 @@ chgrp video /dev/dri/renderD128
 chmod 660 /dev/dri/renderD128
 usermod -aG video jellyfin
 #
-apt update && apt upgrade
+apt update && apt upgrade -y
 apt install -y mesa-va-drivers libva-drm2 libdrm-amdgpu1 libdrm2 vainfo xvfb
 #
 Xvfb :0 &
