@@ -95,6 +95,12 @@ wget https://boot.netboot.xyz/ipxe/netboot.xyz-arm64.efi
 systemctl restart ssh
 systemctl restart sshd
 ```
+Вот однострочный скрипт, который с помощью `echo` перезаписывает содержимое файла `/etc/network/interfaces` на статический ip `10.0.0.197`:
+
+```bash
+echo -e "# This file describes the network interfaces available on your system\n# and how to activate them. For more information, see interfaces(5).\n\nsource /etc/network/interfaces.d/*\n\n# The loopback network interface\nauto lo\niface lo inet loopback\n\n# The primary network interface\nallow-hotplug enp0s6\n# iface enp0s6 inet dhcp\n# Define Static IP\niface enp0s6 inet static\n\taddress 10.0.0.197\n\tnetmask 255.255.255.0\n\tgateway 10.0.0.1" > /etc/network/interfaces
+```
+
 
 ---
 
