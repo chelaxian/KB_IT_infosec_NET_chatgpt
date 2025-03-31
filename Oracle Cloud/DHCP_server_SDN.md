@@ -11,7 +11,8 @@
 - **Zone ID**: `DHCP`
 - **VNet Name**: `DHCP`
 - **Subnet**: `10.200.200.0/24`, шлюз `10.200.200.1`
-- **DHCP-сервер**: встроенный `dnsmasq` (автоматически запускается Proxmox SDN)
+- **DHCP-сервер**: встроенный `dnsmasq` (автоматически запускается Proxmox SDN) \
+<img width="536" alt="image" src="https://github.com/user-attachments/assets/251f8097-6be7-4c09-ab8c-ee9aff625988" />
 
 ---
 
@@ -47,7 +48,8 @@ apt install dnsmasq
 - Zone: `DHCP`
 - Галки: `Isolate Ports` и `VLAN Aware` — **выключены**
 
-**Результат**: создаётся виртуальная L2-сеть `DHCP` внутри одноимённой зоны.
+**Результат**: создаётся виртуальная L2-сеть `DHCP` внутри одноимённой зоны. \
+<img width="260" alt="image" src="https://github.com/user-attachments/assets/af6cc70a-ae78-45f8-aa42-2e819f2937d5" />
 
 ---
 
@@ -63,7 +65,8 @@ apt install dnsmasq
   10.200.200.100 - 10.200.200.200
   ```
 
-**Результат**: встроенный `dnsmasq` будет автоматически раздавать адреса в этом диапазоне.
+**Результат**: встроенный `dnsmasq` будет автоматически раздавать адреса в этом диапазоне. \
+<img width="256" alt="image" src="https://github.com/user-attachments/assets/1662ba7f-b9b0-4d30-b96c-7d9e911039ed" />
 
 ---
 
@@ -75,6 +78,11 @@ Datacenter → SDN → Apply
 ```
 
 Это активирует SDN и поднимет `dnsmasq` на нужной ноде автоматически.
+
+После внесения изменений перезагрузи PVE:
+```bash
+sudo reboot
+```
 
 ---
 
