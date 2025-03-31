@@ -34,7 +34,7 @@ apt install dnsmasq
 - IPAM: `pve` (или `none`)
 - Галка **automatic DHCP** — включена ✅
 
-**Результат**: создаётся зона `DHCP` с поддержкой встроенного DHCP через `dnsmasq`.
+**Результат**: создаётся зона `DHCP` с поддержкой встроенного DHCP через `dnsmasq`. \
 <img width="296" alt="image" src="https://github.com/user-attachments/assets/f17d8a49-eb13-457c-b9c4-0b56a73b2371" />
 
 ---
