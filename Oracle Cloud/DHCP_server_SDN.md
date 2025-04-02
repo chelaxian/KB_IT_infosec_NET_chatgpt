@@ -12,7 +12,8 @@
 - **VNet Name**: `DHCP`
 - **Subnet**: `10.200.200.0/24`, шлюз `10.200.200.1`
 - **DHCP-сервер**: встроенный `dnsmasq` (автоматически запускается Proxmox SDN) \
-<img width="536" alt="image" src="https://github.com/user-attachments/assets/251f8097-6be7-4c09-ab8c-ee9aff625988" />
+<img width="559" alt="image" src="https://github.com/user-attachments/assets/439e6932-ccc5-45d9-9df0-64b54bb9c71f" />
+
 
 ---
 
