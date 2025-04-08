@@ -3,7 +3,15 @@
 ### Для сервисов MS OneDrive / MS SharePoint
 
 **PTAF PRO** в режиме **Prevent/Detect** имеет лимит на загрузку файла до **10 мегабайт**. \
-В режиме **"Без мер защиты"** захардкоженный лимит до **1 гигабайта**. \
+В режиме **"Без мер защиты"** захардкоженный лимит до **1 гигабайта**. 
+
+Для загрузки файлов в MS OneDrive / MS SharePoint используются следующие методы API-вызовов:
+- StartUploadFile
+- ContinueUpload
+- FinishUpload
+- GetUploadStatus
+- CancelUpload
+
 Вот такие регулярные выражения на **PTAF-AGENT** (стоящего в качестве балансировщика (см. [статью](https://github.com/chelaxian/KB_IT_infosec_NET_chatgpt/blob/main/PT/PTAF/ptaf_agent.nginx.conf.md)) перед **PTAF PRO**) для байпасса мимо **PTAF** на оригинальный бэкэнд на каждый из 5 метод помогли обойти эти ограничения:
 
 nginx.conf:
