@@ -154,3 +154,4 @@ http {
   # (Конец) Принятие защищенных соединений
 }
 ```
+[скрипт для упрощенного масштабирования и тиражирования бэкендов в конфиг NGINX](https://github.com/chelaxian/KB_IT_infosec_NET_chatgpt/blob/main/PT/PTAF/update_nginx_conf.py)
