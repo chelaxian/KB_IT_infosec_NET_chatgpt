@@ -1,9 +1,23 @@
+# установка драйвера
+- https://danielkawakami.blogspot.com/ (XFI_SupportPack_8_0_Refresh3.exe)
+- https://support.creative.com/downloads/download.aspx?nDownloadId=100271 (SBXF_PCDRV_L11_2_30_0012.exe)
+
+---
+
 ![image](https://github.com/user-attachments/assets/0f98a983-66a1-49c8-a400-eac6ac15334b) 
 
 ничего не помогает. я уже все удалил что только можно и реестр почистил - все равно пишет как на скриншоте. давай вместо очистки попробуем это обойти и принудительно без ребута установить? как мне сделать так чтобы инсталлятор игнорировал эту ошибку и шел дальше?
 
 ---
 Ты упёрся в один из **самых неприятных защитных механизмов установщика Creative** – проверку на «неперезагруженные драйвера». Это защита на уровне **инсталлятора InstallShield**, и она реализована не в Windows, а **внутри самого EXE-файла** `SBXF_PCDRV_LB_2_18_0015.exe`.
+
+---
+
+1. очистить ПК от лишних хвостов драйверов через:
+- Driver Fusion (driverfusionfreesetup.exe)
+- Driver Cleaner 3.3
+- Display Driver Uninstaller ([Guru3D]-DDU.zip)
+- CCleaner 
 
 ---
 
