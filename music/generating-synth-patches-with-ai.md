@@ -1,3 +1,5 @@
+https://gist.github.com/0xdevalias/5a06349b376d01b2a76ad27a86b08c1b#generating-synth-patches-with-ai-1
+
 # Generating Synth Patches with AI
 
 ## Table of Contents
