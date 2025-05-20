@@ -41,12 +41,12 @@ video
     const blob = new Blob([fullUrls.join('\n')], { type: 'text/plain' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'boosty_media_links.txt';
+    a.download = 'site_media_links.txt';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
 
-    console.log(`[✓] Найдено ${fullUrls.length} ссылок. Сохранено в boosty_media_links.txt`);
+    console.log(`[✓] Найдено ${fullUrls.length} ссылок. Сохранено в site_media_links.txt`);
 })();
 
 ```
@@ -95,12 +95,12 @@ photo
     const blob = new Blob([cleanImageUrls.join('\n')], { type: 'text/plain' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'boosty_image_urls.txt';
+    a.download = 'site_image_urls.txt';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
 
-    console.log(`[✓] Найдено ${cleanImageUrls.length} изображений. Сохранено в boosty_image_urls.txt`);
+    console.log(`[✓] Найдено ${cleanImageUrls.length} изображений. Сохранено в site_image_urls.txt`);
 })();
 
 ```
