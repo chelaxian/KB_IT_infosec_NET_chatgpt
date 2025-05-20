@@ -104,3 +104,9 @@ photo
 })();
 
 ```
+
+yt-dlp
+
+```cmd
+yt-dlp.exe --cookies cookie.txt -a site_media_links.txt
+```
