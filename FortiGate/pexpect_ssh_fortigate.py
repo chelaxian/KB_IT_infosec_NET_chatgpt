@@ -50,14 +50,16 @@ def ssh_execute_command(host, user, password, command):
     """Выполняет SSH-команду с вводом пароля через `pexpect`."""
     try:
         log_message(f"Отправка команды на FortiGate: {command}")
-        child = pexpect.spawn(f"ssh {user}@{host} {command}")
+        ssh_cmd = f"ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {user}@{host} {command}"
+        child = pexpect.spawn(ssh_cmd, timeout=30)
         child.expect("password:")
         child.sendline(password)
         child.expect(pexpect.EOF)
-        output = child.before.decode()
+        output = child.before.decode(errors="ignore")
         log_message(output)
     except Exception as e:
         log_message(f"Ошибка SSH-подключения: {e}")
+
 
 def monitor_and_react():
     """Мониторинг туннелей и автоматическое переключение при потере связи."""
