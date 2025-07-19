@@ -15,7 +15,7 @@
 ## 0. Установка (пропустить, если уже установлено)
 
 https://github.com/Musixal/Rathole-Tunnel
-
+создание сервисов тоже опускаем, сами разберетесь
 ---
 
 ## 1. Содержимое скрипта на сервере rat-hole `/usr/local/bin/rathole-monitor.sh`
