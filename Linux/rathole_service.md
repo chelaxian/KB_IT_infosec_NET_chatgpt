@@ -12,6 +12,12 @@
 
 ---
 
+## 0. Установка
+
+https://github.com/Musixal/Rathole-Tunnel
+
+---
+
 ## 1. Содержимое скрипта на сервере rat-hole `/usr/local/bin/rathole-monitor.sh`
 
 ```bash
@@ -189,10 +195,6 @@ systemctl enable --now rathole-monitor.timer
 * Учёт минимального аптайма (5 мин)
 * Проверка портов
 * Авторестарт в случае сбоев
-
----
-
-Вот дополненный раздел для твоей инструкции:
 
 ---
 
