@@ -32,7 +32,7 @@ MYSQL_PASSWORD="СЛОЖНЫЙ_ПАРОЛЬ"
 MYSQL_DATABASE=nextcloud
 NEXTCLOUD_ADMIN_USER=admin
 NEXTCLOUD_ADMIN_PASSWORD="СЛОЖНЫЙ_ПАРОЛЬ"
-NEXTCLOUD_TRUSTED_DOMAINS="localhost,nextcloud.example.local"
+NEXTCLOUD_TRUSTED_DOMAINS="nextcloud.example.local"
 ```
 
 ---
