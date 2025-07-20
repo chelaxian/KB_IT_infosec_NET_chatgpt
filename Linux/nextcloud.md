@@ -57,11 +57,6 @@ services:
       - ./db:/var/lib/mysql
     networks:
       - nextcloud-net
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
 
   app:
     image: nextcloud
@@ -77,11 +72,11 @@ services:
       NEXTCLOUD_ADMIN_PASSWORD: ${NEXTCLOUD_ADMIN_PASSWORD}
       NEXTCLOUD_TRUSTED_DOMAINS: ${NEXTCLOUD_TRUSTED_DOMAINS}
     volumes:
+      - ./app:/var/www/html
       - ./config:/var/www/html/config
-      - ./data:/var/www/html/data
+      - /mnt/vps_shared:/mnt/vps_shared
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     networks:
       - nextcloud-net
 
