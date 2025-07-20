@@ -147,7 +147,7 @@ done
 ```
 ---
 
-## 2. systemd unit: `rathole-monitor.service`
+## 2. systemd unit: `/etc/systemd/system/rathole-monitor.service`
 
 ```ini
 [Unit]
@@ -159,7 +159,7 @@ Type=oneshot
 ExecStart=/usr/local/bin/rathole-monitor.sh
 ```
 
-## 3. systemd timer: `rathole-monitor.timer`
+## 3. systemd timer: `/etc/systemd/system/rathole-monitor.timer`
 
 ```ini
 [Unit]
