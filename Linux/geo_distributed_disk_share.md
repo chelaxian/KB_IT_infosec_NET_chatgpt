@@ -407,5 +407,212 @@ INTERVAL=15  # Проверка каждые 15 секунд
 systemctl restart gluster-watchdog.service
 ```
 
+Вот **полная инструкция** по работе с кластером **GlusterFS**, включая добавление новых узлов, синхронизацию, ребалансировку, проверки состояния, удаление и восстановление. Всё оформлено как **шпаргалка для продакшн-кластера**:
+
+---
+
+## 📦 1. Добавление нового узла в кластер (peer)
+
+### На **любом существующем** узле кластера:
+
+```bash
+gluster peer probe <hostname или IP нового узла>
+```
+
+❗ Убедись, что на новом узле:
+
+* открыт порт `24007/tcp` (GlusterD)
+* работает `glusterd`
+* совпадают версии GlusterFS
+* корректно разрешаются имена/хосты (`/etc/hosts` или DNS)
+
+👉 Проверить:
+
+```bash
+gluster peer status
+```
+
+---
+
+## 🧱 2. Создание тома (volume)
+
+```bash
+gluster volume create <volume-name> replica <N> transport tcp \
+<host1>:/gluster_bricks/brick1 \
+<host2>:/gluster_bricks/brick1 \
+<hostN>:/gluster_bricks/brick1 force
+```
+
+> 📌 Пример: replica 3 — три копии
+
+Запустить:
+
+```bash
+gluster volume start <volume-name>
+```
+
+Проверить:
+
+```bash
+gluster volume info
+```
+
+---
+
+## 🔁 3. Подключение нового участника к существующему тому
+
+1. **Создай brick** на новом узле:
+
+```bash
+mkdir -p /gluster_bricks/brick1
+```
+
+2. **Добавь brick в volume**:
+
+```bash
+gluster volume add-brick <volume-name> <new-host>:/gluster_bricks/brick1
+```
+
+❗ Для **replica** укажи:
+
+```bash
+gluster volume add-brick <volume-name> replica <new-replica-count> \
+<host1>:/brick1 <host2>:/brick1 <new-host>:/brick1
+```
+
+Проверка:
+
+```bash
+gluster volume info
+```
+
+---
+
+## 🔄 4. Ребалансировка (rebalancing) после добавления bricks
+
+```bash
+gluster volume rebalance <volume-name> start
+```
+
+Проверка прогресса:
+
+```bash
+gluster volume rebalance <volume-name> status
+```
+
+Остановить:
+
+```bash
+gluster volume rebalance <volume-name> stop
+```
+
+---
+
+## ⚙️ 5. Синхронизация конфигурации на всех нодах
+
+```bash
+gluster volume sync <volume-name> all
+```
+
+---
+
+## 🧼 6. Проверка статуса и здоровья
+
+```bash
+gluster peer status
+gluster volume status
+gluster volume info
+gluster volume heal <volume-name> info
+```
+
+---
+
+## 🩹 7. Восстановление / Heal
+
+Проверка недостающих файлов:
+
+```bash
+gluster volume heal <volume-name> info
+```
+
+Принудительное лечение:
+
+```bash
+gluster volume heal <volume-name> full
+```
+
+---
+
+## 🧨 8. Удаление brick
+
+❗ Сначала **rebalance**, потом **remove**:
+
+```bash
+gluster volume remove-brick <volume-name> replica <new-count> \
+<host-to-remove>:/brick1 start
+gluster volume remove-brick <volume-name> ... status
+gluster volume remove-brick <volume-name> ... commit
+```
+
+---
+
+## 🗑️ 9. Удаление участника из кластера
+
+1. Убедись, что **на этом узле больше нет bricks** (`gluster volume info`)
+2. Удали peer:
+
+```bash
+gluster peer detach <host>
+```
+
+Если нода мертва и восстановлению не подлежит:
+
+```bash
+gluster peer detach <host> force
+```
+
+---
+
+## 📦 10. Монтирование тома на клиенте
+
+На клиенте (должен быть установлен `glusterfs-client`):
+
+```bash
+mount -t glusterfs <gluster-host>:/<volume-name> /mnt/gluster
+```
+
+---
+
+## 🔐 11. Работа через FUSE или NFS (по выбору)
+
+* FUSE: `mount -t glusterfs`
+* NFS: `mount -t nfs -o vers=3 <host>:/<volume> /mnt`
+
+---
+
+## 🧭 12. Автоматизация проверки кластера (помимо watchdog-а)
+
+Периодическая проверка состояния (cron или systemd):
+
+```bash
+gluster volume status | grep -q 'Offline' && echo "Есть оффлайн brick-и"
+gluster peer status | grep -q 'Disconnected' && echo "Есть отвалившиеся peer-ы"
+```
+
+---
+
+## 📌 Советы
+
+| Что                       | Рекомендация                                                                        |
+| ------------------------- | ----------------------------------------------------------------------------------- |
+| **Синхронизация времени** | Установи `chrony` или `ntpd` на всех узлах                                          |
+| **DNS/имена**             | Лучше использовать IP или прописать в `/etc/hosts`                                  |
+| **Разделы для brick'ов**  | Не монтируй `/brick1` на `/` — выделяй отдельный раздел или LVM                     |
+| **Volume Options**        | Включи полезные фичи: `performance.cache-size`, `server.allow-insecure` и пр.       |
+| **WireGuard / VPN**       | Используй `PersistentKeepalive` + убедись, что `glusterd` стартует после `wg-quick` |
+
+---
+
+
 
 
