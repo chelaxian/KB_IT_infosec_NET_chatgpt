@@ -157,32 +157,49 @@ dism.exe /Online /Enable-Feature:Microsoft-Hyper-V /All
 
 С недавних версий у `wsl.exe` появился свой механизм очистки VHDX:
 
-```powershell
-wsl --shutdown
-wsl --manage Ubuntu --compact
-```
+У тебя WSL **поддерживает `--manage`**, но в твоей версии ещё **нет подкоманды `--compact`**. Она появилась начиная с WSL 1.2.5 из Microsoft Store.
 
-или для всех дистрибутивов:
-
-```powershell
-wsl --shutdown
-wsl --system --compact
-```
-
-Это работает и на Home, и на Pro.
+Сейчас у тебя «системный» WSL, поэтому он показывает только `--manage --move` и `--set-sparse`.
 
 ---
 
-#### 🔹 3. Альтернативно — вручную через DiskPart
+### 🔹 Варианты, как всё-таки сжать VHDX
 
-Если Hyper-V нет и `--compact` не помогает, можно подключить VHDX руками:
+1. **Обновить WSL через Microsoft Store** (рекомендую)
 
-```powershell
-diskpart
-select vdisk file="C:\Users\chelaxian\AppData\Local\Packages\CanonicalGroupLimited.Ubuntu24.04LTS_79rhkp1fndgsc\LocalState\ext4.vhdx"
-attach vdisk readonly
-compact vdisk
-detach vdisk
-exit
-```
+   ```powershell
+   wsl --update
+   ```
+
+   После этого будет доступна команда:
+
+   ```powershell
+   wsl --shutdown
+   wsl --manage Ubuntu-24.04 --compact
+   ```
+
+2. **Использовать `--set-sparse`** (тоже работает на твоей версии)
+   Это включает разрежённый режим VHDX → свободное место будет автоматически освобождаться.
+
+   ```powershell
+   wsl --shutdown
+   wsl --manage Ubuntu-24.04 --set-sparse true
+   ```
+
+   Но сразу VHDX не уменьшится, а будет ужиматься постепенно.
+
+3. **Через `diskpart`** (если обновлять WSL не хочешь):
+
+   ```powershell
+   diskpart
+   select vdisk file="C:\Users\chelaxian\AppData\Local\Packages\CanonicalGroupLimited.Ubuntu24.04LTS_79rhkp1fndgsc\LocalState\ext4.vhdx"
+   attach vdisk readonly
+   compact vdisk
+   detach vdisk
+   exit
+   ```
+
+---
+
+⚡ Самый удобный путь — обновить WSL и юзать `--compact`.
 
