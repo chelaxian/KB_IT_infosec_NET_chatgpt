@@ -204,3 +204,50 @@ dism.exe /Online /Enable-Feature:Microsoft-Hyper-V /All
 
 ⚡ Самый удобный путь — обновить WSL и юзать `--compact`.
 
+---
+
+классическая проблема установки WSL из Store → код `1603` (ошибка MSI, *Cannot remove old version*).
+То есть в системе сидит старая «системная» версия WSL, и новая из Microsoft Store не может поверх встать.
+
+---
+
+### 🔹 Как лечится ошибка 1603 при обновлении WSL
+
+1. **Удалить системный компонент WSL (старый)**
+   В PowerShell (от админа):
+
+   ```powershell
+   dism.exe /Online /Disable-Feature /FeatureName:Microsoft-Windows-Subsystem-Linux /NoRestart
+   ```
+
+   Потом сразу:
+
+   ```powershell
+   dism.exe /Online /Enable-Feature /FeatureName:Microsoft-Windows-Subsystem-Linux /All /NoRestart
+   ```
+
+   ⚠️ Важно: это не трогает твои дистрибутивы (Ubuntu-24.04 останется).
+
+2. **Установить WSL из Microsoft Store**
+
+   * Открой [WSL в Microsoft Store](ms-windows-store://pdp/?productid=9P9TQF7MRM4R).
+   * Нажми «Установить».
+   * После этого будет доступна версия ≥ 1.2, где работает `--compact`.
+
+3. **Проверить версию**
+
+   ```powershell
+   wsl --version
+   ```
+
+   Должно быть что-то вроде:
+
+   ```
+   WSL version: 2.5.10.0
+   Kernel version: 6.1.x
+   WSLg version: 1.x
+   ```
+
+---
+
+
