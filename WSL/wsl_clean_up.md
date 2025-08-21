@@ -134,3 +134,55 @@ sudo resolvectl flush-caches
 
 *(нужен модуль Hyper-V, работает в Windows 11 Pro/Enterprise)*
 
+---
+
+команда `Optimize-VHD` доступна только если включён **Hyper-V** (Windows 11 Pro / Enterprise).
+На **Windows 11 Home** и без Hyper-V VMM она даёт именно такую ошибку: *"Virtual Machine Management service… not found"*.
+
+---
+
+### Варианты решения:
+
+#### 🔹 1. Включить Hyper-V (если у тебя Pro/Enterprise)
+
+```powershell
+dism.exe /Online /Enable-Feature:Microsoft-Hyper-V /All
+```
+
+после перезагрузки будет работать `Optimize-VHD`.
+
+---
+
+#### 🔹 2. Если Windows Home — использовать встроенную оптимизацию WSL
+
+С недавних версий у `wsl.exe` появился свой механизм очистки VHDX:
+
+```powershell
+wsl --shutdown
+wsl --manage Ubuntu --compact
+```
+
+или для всех дистрибутивов:
+
+```powershell
+wsl --shutdown
+wsl --system --compact
+```
+
+Это работает и на Home, и на Pro.
+
+---
+
+#### 🔹 3. Альтернативно — вручную через DiskPart
+
+Если Hyper-V нет и `--compact` не помогает, можно подключить VHDX руками:
+
+```powershell
+diskpart
+select vdisk file="C:\Users\chelaxian\AppData\Local\Packages\CanonicalGroupLimited.Ubuntu24.04LTS_79rhkp1fndgsc\LocalState\ext4.vhdx"
+attach vdisk readonly
+compact vdisk
+detach vdisk
+exit
+```
+
