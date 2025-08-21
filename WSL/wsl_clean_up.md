@@ -175,6 +175,7 @@ dism.exe /Online /Enable-Feature:Microsoft-Hyper-V /All
 
    ```powershell
    wsl --shutdown
+   wsl --list --verbose
    wsl --manage Ubuntu-24.04 --compact
    ```
 
