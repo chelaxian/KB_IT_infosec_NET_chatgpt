@@ -519,4 +519,120 @@ systemctl daemon-reload
 systemctl enable --now pbr-routes.service
 ```
 
+---
+
+Вижу корень проблемы: у тебя в `ip rule show` стоят **правила `main` и `default` с приоритетом 0**. Они срабатывают раньше наших PBR-правил — поэтому ядро лезет в таблицу `main` и уходит через **enp0s6**.
+
+Чиним порядок правил и жёстко подталкиваем ядро по `iif` (входному интерфейсу) + `fwmark`.
+
+## 1) Почини приоритеты `main/default`
+
+Оставь `local` с prio 0, а `main`/`default` переставь вниз:
+
+```bash
+# убрать неправильные нулевые правила
+ip -4 rule del pref 0 lookup main 2>/dev/null || true
+ip -4 rule del pref 0 lookup default 2>/dev/null || true
+
+# на всякий случай — вернуть local на 0, если вдруг его нет
+ip -4 rule add pref 0 from all lookup local 2>/dev/null || true
+
+# добавить main/default с правильными приоритетами
+ip -4 rule add pref 32766 from all lookup main
+ip -4 rule add pref 32767 from all lookup default
+
+# посмотреть порядок
+ip -4 rule show
+```
+
+Ожидаемо сверху будет `0: … local`, дальше наши PBR (100xx), в конце `32766 main`, `32767 default`.
+
+## 2) Усилим PBR: по входному интерфейсу + fwmark
+
+Это помогает, когда два WAN в одной подсети/один шлюз:
+
+```bash
+# iif для vmbr1 и vmbr0 ставим ВЫШЕ fwmark, чтобы шло наверняка
+ip -4 rule add pref 10005 iif vmbr1 lookup vmbr1
+ip -4 rule add pref 10015 iif vmbr0 lookup vmbr0
+
+# fwmark оставляем как есть (ты уже сделал):
+# 10010: fwmark 0xa -> vmbr1
+# 10020: fwmark 0xe -> vmbr0
+```
+
+## 3) Убедись, что mangle/CONNMARK в правильном порядке
+
+Restore должен быть первым правилом PREROUTING и OUTPUT:
+
+```bash
+# PREROUTING: restore -> mark -> save
+iptables -t mangle -D PREROUTING -j CONNMARK --restore-mark 2>/dev/null || true
+iptables -t mangle -I PREROUTING 1 -j CONNMARK --restore-mark
+
+# (уже есть)
+# iptables -t mangle -A PREROUTING -s 10.10.0.0/24 -j MARK --set-mark 10
+# iptables -t mangle -A PREROUTING -s 10.10.0.0/24 -j CONNMARK --save-mark
+# iptables -t mangle -A PREROUTING -s 10.14.0.0/24 -j MARK --set-mark 14
+# iptables -t mangle -A PREROUTING -s 10.14.0.0/24 -j CONNMARK --save-mark
+
+# OUTPUT: restore первым
+iptables -t mangle -D OUTPUT -j CONNMARK --restore-mark 2>/dev/null || true
+iptables -t mangle -I OUTPUT 1 -j CONNMARK --restore-mark
+```
+
+Проверь счётчики, что метки реально ставятся:
+
+```bash
+iptables -t mangle -L PREROUTING -n -v --line-numbers
+iptables -t mangle -L OUTPUT -n -v --line-numbers
+```
+
+## 4) Сброси кэш маршрутов и проверь
+
+```bash
+ip route flush cache
+
+# теперь ядро должно выбрать правильный uplink
+ip route get 9.9.9.9 from 10.10.0.2 iif vmbr1
+ip route get 9.9.9.9 from 10.14.0.2 iif vmbr0
+```
+
+Ожидаемо:
+
+* для `10.10.0.2` → `dev enp1s0`
+* для `10.14.0.2` → `dev enp0s6`
+
+И из контейнера:
+
+```bash
+ping -c 3 9.9.9.9
+curl -s ifconfig.io
+```
+
+## 5) На будущее — обнови свой автоскрипт
+
+В своём `pbr-routes.sh`:
+
+* **никогда не делай `ip rule flush`**;
+* гарантированно ставь правильные `pref`:
+
+  * `pref 0` → `local`
+  * `pref 10005/10015` → `iif vmbrX`
+  * `pref 10010/10020/...` → `fwmark`
+  * `pref 32766` → `main`
+  * `pref 32767` → `default`
+* дефолтные маршруты в таблицах — **с `src`** (как ты уже сделал).
+
+Если после пунктов 1–4 всё ещё не сработает — пришли:
+
+```bash
+ip -4 rule show
+iptables -t mangle -L PREROUTING -n -v --line-numbers
+iptables -t mangle -L OUTPUT -n -v --line-numbers
+ip route get 9.9.9.9 mark 10
+ip route get 9.9.9.9 mark 14
+```
+
+(последние две команды проверяют обход правил именно по fwmark).
 
