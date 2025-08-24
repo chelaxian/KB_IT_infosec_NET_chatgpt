@@ -313,4 +313,210 @@ iptables -t nat -L POSTROUTING -n -v
 
 ---
 
+Окей, смотрю на дампы.
+
+## Что вижу по состоянию
+
+1. PBR-таблицы есть и заполнены правильно (`vmbr0/1/10/11/dhcpnet`).
+2. `ip rule show` выглядит странно: приоритеты отображаются как `0`. Раньше были `32761…`. Похоже, твой скрипт с `ip rule flush` всё вычистил и добавил правила без явных приоритетов (или их порядок теперь не гарантирован). Это может ломать матч правил vs `main`.
+3. В `POSTROUTING` снова торчат `MASQUERADE` (11–15). Они лишние и иногда перехватывают трафик вместо SNAT.
+4. `rp_filter`: `all=2` (loose), но на всех интерфейсах `=0`. Лучше выставить `all=0`, чтобы исключить влияния (иногда ядро всё равно использует `all` как глобальный флаг проверки).
+
+## Что сделать (шаги и команды)
+
+### 1) Убрать лишние MASQUERADE
+
+Оставляем только явные SNAT (правила 6–10). Удаляем 11–15 снизу вверх:
+
+```bash
+iptables -t nat -D POSTROUTING 15
+iptables -t nat -D POSTROUTING 14
+iptables -t nat -D POSTROUTING 13
+iptables -t nat -D POSTROUTING 12
+iptables -t nat -D POSTROUTING 11
+```
+
+### 2) Починить приоритеты `ip rule`
+
+Сначала удалим текущие PBR-правила для подсетей, потом добавим с понятными приоритетами (меньше 32766, чтобы шли раньше `main`). Я предлагаю такой порядок:
+
+* 10010: vmbr1 (10.10.0.0/24 → enp1s0)
+* 10020: vmbr0 (10.14.0.0/24 → enp0s6)
+* 10030: vmbr10 (10.140.0.0/24 → enp0s6)
+* 10040: vmbr11 (10.100.0.0/24 → enp1s0)
+* 10050: dhcpnet (10.200.200.0/24 → enp0s6)
+
+```bash
+# удалить старые (без приоритета)
+ip rule del from 10.10.0.0/24 table vmbr1 2>/dev/null || true
+ip rule del from 10.14.0.0/24 table vmbr0 2>/dev/null || true
+ip rule del from 10.140.0.0/24 table vmbr10 2>/dev/null || true
+ip rule del from 10.100.0.0/24 table vmbr11 2>/dev/null || true
+ip rule del from 10.200.200.0/24 table dhcpnet 2>/dev/null || true
+
+# поставить с приоритетами
+ip rule add priority 10010 from 10.10.0.0/24   table vmbr1
+ip rule add priority 10020 from 10.14.0.0/24   table vmbr0
+ip rule add priority 10030 from 10.140.0.0/24  table vmbr10
+ip rule add priority 10040 from 10.100.0.0/24  table vmbr11
+ip rule add priority 10050 from 10.200.200.0/24 table dhcpnet
+
+# убедиться
+ip rule show
+```
+
+> Если увидишь «File exists», сначала `ip rule del priority <номер>` и повтори добавление.
+
+### 3) Отключить глобальный rp\_filter (на всякий случай)
+
+```bash
+sysctl -w net.ipv4.conf.all.rp_filter=0
+```
+
+И в `/etc/sysctl.d/99-pbr.conf` добавь постоянные настройки:
+
+```bash
+cat >/etc/sysctl.d/99-pbr.conf <<'EOF'
+net.ipv4.ip_forward=1
+net.ipv4.conf.all.rp_filter=0
+net.ipv4.conf.default.rp_filter=0
+EOF
+sysctl --system
+```
+
+### 4) Очистить возможные «залипшие» conntrack-сессии (не обязательно, но полезно при смене NAT/маршрута)
+
+Если установлен `conntrack`:
+
+```bash
+conntrack -D -s 10.10.0.0/24 2>/dev/null || true
+conntrack -D -s 10.14.0.0/24 2>/dev/null || true
+conntrack -D -s 10.100.0.0/24 2>/dev/null || true
+conntrack -D -s 10.140.0.0/24 2>/dev/null || true
+conntrack -D -s 10.200.200.0/24 2>/dev/null || true
+```
+
+### 5) Перепроверь, что маршруты в таблицах в порядке (у тебя уже ок):
+
+```bash
+ip route show table vmbr1
+ip route show table vmbr0
+ip route show table vmbr10
+ip route show table vmbr11
+ip route show table dhcpnet
+```
+
+Ожидаемо:
+
+* `vmbr1`: `default via 10.0.0.1 dev enp1s0` и `10.10.0.0/24 dev vmbr1 src 10.10.0.1`
+* `vmbr0`: `default via 10.0.0.1 dev enp0s6` и `10.14.0.0/24 dev vmbr0 src 10.14.0.1`
+* и т.д.
+
+### 6) Тесты
+
+```bash
+# на хосте:
+ip route get 9.9.9.9 from 10.10.0.2
+ip route get 9.9.9.9 from 10.14.0.2
+ip route get 9.9.9.9 from 10.100.0.2
+ip route get 9.9.9.9 from 10.140.0.2
+
+# counters NAT
+iptables -t nat -L POSTROUTING -n -v --line-numbers
+```
+
+И внутри соответствующих контейнеров:
+
+```bash
+ping -c 3 9.9.9.9
+curl -s ifconfig.io
+```
+
+## Важная правка к нашему systemd-сервису
+
+В твоём скрипте был `ip rule flush` — это **опасно** (можно снести служебные правила и поменять порядок). Лучше **не** делать flush. Вместо этого: точечно удаляй/добавляй нужные правила с приоритетом.
+
+Обновлённый `/usr/local/bin/pbr-routes.sh` (без flush и с приоритетами):
+
+```bash
+#!/bin/bash
+set -e
+
+# Таблицы PBR должны существовать в /etc/iproute2/rt_tables:
+# 210 vmbr1, 211 vmbr0, 212 vmbr10, 213 vmbr11, 214 dhcpnet
+
+# Функция: безопасно добавить правило (сначала удалить, если есть)
+safe_rule_add() {
+  local prio="$1" net="$2" table="$3"
+  ip rule del priority "$prio" 2>/dev/null || true
+  ip rule add priority "$prio" from "$net" table "$table"
+}
+
+# Роуты в таблицах (идемпотентно)
+ip route replace 10.10.0.0/24 dev vmbr1  src 10.10.0.1  table vmbr1
+ip route replace default         via 10.0.0.1 dev enp1s0 table vmbr1
+
+ip route replace 10.14.0.0/24 dev vmbr0  src 10.14.0.1  table vmbr0
+ip route replace default         via 10.0.0.1 dev enp0s6 table vmbr0
+
+ip route replace 10.140.0.0/24 dev vmbr10 src 10.140.0.1 table vmbr10
+ip route replace default          via 10.0.0.1 dev enp0s6 table vmbr10
+
+ip route replace 10.100.0.0/24 dev vmbr11 src 10.100.0.1 table vmbr11
+ip route replace default          via 10.0.0.1 dev enp1s0 table vmbr11
+
+ip route replace 10.200.200.0/24 dev DHCP   src 10.200.200.1 table dhcpnet
+ip route replace default          via 10.0.0.1 dev enp0s6 table dhcpnet
+
+# Правила с фиксированными приоритетами
+safe_rule_add 10010 10.10.0.0/24   vmbr1
+safe_rule_add 10020 10.14.0.0/24   vmbr0
+safe_rule_add 10030 10.140.0.0/24  vmbr10
+safe_rule_add 10040 10.100.0.0/24  vmbr11
+safe_rule_add 10050 10.200.200.0/24 dhcpnet
+
+# SNAT — чистим только наш «блок» (мягко): удалим MASQUERADE и гарантированно вставим SNAT
+iptables -t nat -D POSTROUTING -s 10.14.0.0/24  -o enp0s6   -j MASQUERADE 2>/dev/null || true
+iptables -t nat -D POSTROUTING -s 10.140.0.0/24 -o enp0s6:0 -j MASQUERADE 2>/dev/null || true
+iptables -t nat -D POSTROUTING -s 10.10.0.0/24  -o enp1s0   -j MASQUERADE 2>/dev/null || true
+iptables -t nat -D POSTROUTING -s 10.100.0.0/24 -o enp1s0:0 -j MASQUERADE 2>/dev/null || true
+iptables -t nat -D POSTROUTING -s 10.200.200.0/24 -o enp0s6  -j MASQUERADE 2>/dev/null || true
+
+# Убедимся, что нужные SNAT есть (idempotent – допустимы дубли, но лучше чисто)
+for rule in \
+ "-s 10.200.200.0/24 -o enp0s6  -j SNAT --to-source 10.0.0.103" \
+ "-s 10.10.0.0/24   -o enp1s0  -j SNAT --to-source 10.0.0.105" \
+ "-s 10.14.0.0/24   -o enp0s6  -j SNAT --to-source 10.0.0.103" \
+ "-s 10.100.0.0/24  -o enp1s0  -j SNAT --to-source 10.0.0.106" \
+ "-s 10.140.0.0/24  -o enp0s6  -j SNAT --to-source 10.0.0.104"; do
+  # если нет — добавим в начало
+  iptables -t nat -C POSTROUTING $rule 2>/dev/null || iptables -t nat -I POSTROUTING 1 $rule
+done
+```
+
+И поправь unit (запуск после сети/бриджей), добавим доп. зависимости:
+
+```ini
+# /etc/systemd/system/pbr-routes.service
+[Unit]
+Description=Policy Based Routing and SNAT setup
+After=network-online.target pve-cluster.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/pbr-routes.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Активировать:
+
+```bash
+systemctl daemon-reload
+systemctl enable --now pbr-routes.service
+```
+
 
