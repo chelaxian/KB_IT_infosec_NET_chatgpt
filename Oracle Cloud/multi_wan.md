@@ -202,3 +202,115 @@ chmod +x /etc/network/if-up.d/pbr.sh
 
 ---
 
+Лучший способ в Debian/Proxmox — оформить systemd-сервис, который будет поднимать все PBR-маршруты и правила iptables после ребута.
+
+---
+
+## 🔹 Шаг 1. Скрипт с маршрутами и SNAT
+
+Создай файл `/usr/local/bin/pbr-routes.sh`:
+
+```bash
+#!/bin/bash
+### PBR + SNAT config ###
+
+# Очистка старых правил ip rule (чтобы не плодились)
+ip rule flush
+ip rule add from all lookup local
+ip rule add from all lookup main
+ip rule add from all lookup default
+
+# Маршруты для таблиц
+
+# vmbr1 (10.10.0.0/24 → enp1s0 → 10.0.0.105)
+ip route add 10.10.0.0/24 dev vmbr1 src 10.10.0.1 table vmbr1
+ip route add default via 10.0.0.1 dev enp1s0 table vmbr1
+ip rule add from 10.10.0.0/24 table vmbr1
+
+# vmbr0 (10.14.0.0/24 → enp0s6 → 10.0.0.103)
+ip route add 10.14.0.0/24 dev vmbr0 src 10.14.0.1 table vmbr0
+ip route add default via 10.0.0.1 dev enp0s6 table vmbr0
+ip rule add from 10.14.0.0/24 table vmbr0
+
+# vmbr10 (10.140.0.0/24 → enp0s6 → 10.0.0.104)
+ip route add 10.140.0.0/24 dev vmbr10 src 10.140.0.1 table vmbr10
+ip route add default via 10.0.0.1 dev enp0s6 table vmbr10
+ip rule add from 10.140.0.0/24 table vmbr10
+
+# vmbr11 (10.100.0.0/24 → enp1s0 → 10.0.0.106)
+ip route add 10.100.0.0/24 dev vmbr11 src 10.100.0.1 table vmbr11
+ip route add default via 10.0.0.1 dev enp1s0 table vmbr11
+ip rule add from 10.100.0.0/24 table vmbr11
+
+# DHCP (10.200.200.0/24 → enp0s6 → 10.0.0.103)
+ip route add 10.200.200.0/24 dev DHCP src 10.200.200.1 table dhcpnet
+ip route add default via 10.0.0.1 dev enp0s6 table dhcpnet
+ip rule add from 10.200.200.0/24 table dhcpnet
+
+# SNAT правила (чётко под свои IP)
+iptables -t nat -F POSTROUTING
+iptables -t nat -A POSTROUTING -s 10.200.200.0/24 -o enp0s6 -j SNAT --to-source 10.0.0.103
+iptables -t nat -A POSTROUTING -s 10.10.0.0/24   -o enp1s0 -j SNAT --to-source 10.0.0.105
+iptables -t nat -A POSTROUTING -s 10.14.0.0/24   -o enp0s6 -j SNAT --to-source 10.0.0.103
+iptables -t nat -A POSTROUTING -s 10.100.0.0/24  -o enp1s0 -j SNAT --to-source 10.0.0.106
+iptables -t nat -A POSTROUTING -s 10.140.0.0/24  -o enp0s6 -j SNAT --to-source 10.0.0.104
+```
+
+Делаем исполняемым:
+
+```bash
+chmod +x /usr/local/bin/pbr-routes.sh
+```
+
+---
+
+## 🔹 Шаг 2. Systemd-unit
+
+Создай файл `/etc/systemd/system/pbr-routes.service`:
+
+```ini
+[Unit]
+Description=Policy Based Routing and SNAT setup
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/pbr-routes.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+```
+
+---
+
+## 🔹 Шаг 3. Активируем
+
+```bash
+systemctl daemon-reexec
+systemctl enable pbr-routes.service
+systemctl start pbr-routes.service
+```
+
+---
+
+## 🔹 Проверка после ребута
+
+```bash
+ip rule show
+ip route show table vmbr1
+iptables -t nat -L POSTROUTING -n -v
+```
+
+---
+
+Таким образом:
+
+* после загрузки сети systemd вызовет твой скрипт;
+* будут восстановлены все `ip rule` и таблицы маршрутов;
+* NAT-правила пересоберутся.
+
+---
+
+
