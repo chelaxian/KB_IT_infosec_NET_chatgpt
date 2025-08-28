@@ -67,7 +67,7 @@ ip route replace default via 10.0.0.1 dev enp0s6 src 10.0.0.103 table dhcpnet
 * `pref 32767` → `default`
 
 ```bash
-# фикс системных «нулевых» правил, если они вдруг появились
+# фикс системных «нулевых» правил
 ip -4 rule del pref 0 lookup main 2>/dev/null || true
 ip -4 rule del pref 0 lookup default 2>/dev/null || true
 ip -4 rule add pref 0 from all lookup local 2>/dev/null || true
@@ -75,18 +75,37 @@ ip -4 rule add pref 32766 from all lookup main 2>/dev/null || true
 ip -4 rule add pref 32767 from all lookup default 2>/dev/null || true
 
 # iif (чтобы даже без меток маршрутизация была правильной)
-ip -4 rule replace pref 10005 iif vmbr1  lookup vmbr1
-ip -4 rule replace pref 10015 iif vmbr0  lookup vmbr0
-ip -4 rule replace pref 10025 iif vmbr10 lookup vmbr10
-ip -4 rule replace pref 10035 iif vmbr11 lookup vmbr11
-ip -4 rule replace pref 10045 iif DHCP   lookup dhcpnet
+ip -4 rule del pref 10005 2>/dev/null || true
+ip -4 rule add pref 10005 iif vmbr1  lookup vmbr1
+
+ip -4 rule del pref 10015 2>/dev/null || true
+ip -4 rule add pref 10015 iif vmbr0  lookup vmbr0
+
+ip -4 rule del pref 10025 2>/dev/null || true
+ip -4 rule add pref 10025 iif vmbr10 lookup vmbr10
+
+ip -4 rule del pref 10035 2>/dev/null || true
+ip -4 rule add pref 10035 iif vmbr11 lookup vmbr11
+
+ip -4 rule del pref 10045 2>/dev/null || true
+ip -4 rule add pref 10045 iif DHCP   lookup dhcpnet
 
 # fwmark (для устойчивости и в случаях локального исходящего трафика контейнеров)
-ip -4 rule replace pref 10010 fwmark 10 lookup vmbr1
-ip -4 rule replace pref 10020 fwmark 14 lookup vmbr0
-ip -4 rule replace pref 10030 fwmark 114 lookup vmbr10
-ip -4 rule replace pref 10040 fwmark 110 lookup vmbr11
-ip -4 rule replace pref 10050 fwmark 200 lookup dhcpnet
+ip -4 rule del pref 10010 2>/dev/null || true
+ip -4 rule add pref 10010 fwmark 10  lookup vmbr1
+
+ip -4 rule del pref 10020 2>/dev/null || true
+ip -4 rule add pref 10020 fwmark 14  lookup vmbr0
+
+ip -4 rule del pref 10030 2>/dev/null || true
+ip -4 rule add pref 10030 fwmark 114 lookup vmbr10
+
+ip -4 rule del pref 10040 2>/dev/null || true
+ip -4 rule add pref 10040 fwmark 110 lookup vmbr11
+
+ip -4 rule del pref 10050 2>/dev/null || true
+ip -4 rule add pref 10050 fwmark 200 lookup dhcpnet
+
 ```
 
 ---
