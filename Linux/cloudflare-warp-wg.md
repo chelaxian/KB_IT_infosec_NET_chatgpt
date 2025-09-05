@@ -86,7 +86,8 @@ sudo ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
 Создаём базовый конфиг для resolvconf:
 
 ```bash
-sudo nano /etc/resolvconf/resolv.conf.d/base
+sudo mkdir /etc/resolvconf/
+sudo nano /run/resolvconf/resolv.conf
 ```
 
 Вставляем:
