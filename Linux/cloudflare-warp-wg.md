@@ -131,5 +131,6 @@ curl ifconfig.io
 ```bash
 iptables -t nat -A POSTROUTING -j MASQUERADE
 iptables -t nat -L -n -v
+iptables-save > /etc/iptables/rules.v4
 ```
 
