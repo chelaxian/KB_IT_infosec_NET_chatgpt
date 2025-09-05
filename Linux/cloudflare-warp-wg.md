@@ -75,7 +75,7 @@ sudo chmod 600 /etc/wireguard/wgcf.conf
 В LXC `/etc/resolv.conf` обычно обычный файл, создаём симлинк:
 
 ```bash
-sudo mv /etc/resolv.conf /etc/resolv.conf.backup
+sudo mv /run/resolv.conf /etc/resolv.conf.backup
 sudo ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
 ```
 
