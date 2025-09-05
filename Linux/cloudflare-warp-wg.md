@@ -98,12 +98,6 @@ nameserver 1.0.0.1
 search one.one.one.one
 ```
 
-Применяем изменения:
-
-```bash
-sudo resolvconf -u
-```
-
 Проверяем:
 
 ```bash
