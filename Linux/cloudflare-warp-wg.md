@@ -1,8 +1,5 @@
-Полная инструкция **с нуля для ARM, с `wgcf`, регистрацией, генерацией профиля, настройкой DNS и автозапуском**. 
 
----
-
-# **Полная инструкция для WireGuard + wgcf на ARM**
+# **Полная инструкция WireGuard + wgcf (ARM64) с нуля**
 
 ## **1️⃣ Устанавливаем зависимости**
 
@@ -11,28 +8,38 @@ sudo apt update
 sudo apt install wireguard openresolv iproute2 iptables curl -y
 ```
 
-* `wireguard` — сам VPN.
-* `openresolv` — для корректной работы `resolvconf`.
+* `wireguard` — VPN.
+* `openresolv` — корректная работа `resolvconf`.
 * `iproute2` — маршруты.
-* `iptables` — для NAT / LXC.
+* `iptables` — NAT / LXC.
 * `curl` — проверка IP.
 
 ---
 
-## **2️⃣ Устанавливаем wgcf для ARM64**
+## **2️⃣ Скачиваем и устанавливаем wgcf для ARM64**
 
 ```bash
-# Скачиваем последнюю версию wgcf
+# Скачиваем wgcf (ARM64)
 wget https://github.com/ViRb3/wgcf/releases/download/v2.2.29/wgcf_2.2.29_linux_arm64 -O wgcf
+
+# Делаем исполняемым
 chmod +x wgcf
+
+# Перемещаем в системный путь
 sudo mv wgcf /usr/local/bin/
 ```
 
-Проверяем:
+Проверяем версию:
 
 ```bash
 wgcf --version
-# должно показать v2.2.29
+# должно показать: v2.2.29
+```
+
+Если не сработало, добавь `/usr/local/bin` в PATH:
+
+```bash
+export PATH=$PATH:/usr/local/bin
 ```
 
 ---
@@ -40,10 +47,10 @@ wgcf --version
 ## **3️⃣ Регистрируемся и генерируем профиль**
 
 ```bash
-# Регистрируемся в Cloudflare Warp
+# Регистрация в Cloudflare Warp
 wgcf register
 
-# Генерируем конфигурацию WireGuard
+# Генерация конфигурации WireGuard
 wgcf generate
 ```
 
@@ -59,13 +66,13 @@ sudo cp wgcf-profile.conf /etc/wireguard/wgcf.conf
 sudo chmod 600 /etc/wireguard/wgcf.conf
 ```
 
-* Файл **обязательно с правами 600**, иначе `wg-quick` ругается.
+> ⚠️ Файл **с правами 600**, иначе `wg-quick` не сможет использовать.
 
 ---
 
-## **5️⃣ Настраиваем симлинк для resolv.conf**
+## **5️⃣ Настройка resolv.conf для LXC / Debian**
 
-В LXC `/etc/resolv.conf` часто обычный файл, нужно заменить на симлинк:
+В LXC `/etc/resolv.conf` обычно обычный файл, создаём симлинк:
 
 ```bash
 sudo mv /etc/resolv.conf /etc/resolv.conf.backup
@@ -74,15 +81,15 @@ sudo ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
 
 ---
 
-## **6️⃣ Настройка DNS вручную (если нужно)**
+## **6️⃣ Настройка DNS вручную (опционально)**
 
-Создаём файл `/etc/resolvconf/resolv.conf.d/base`:
+Создаём базовый конфиг для resolvconf:
 
 ```bash
 sudo nano /etc/resolvconf/resolv.conf.d/base
 ```
 
-Содержимое:
+Вставляем:
 
 ```
 nameserver 1.1.1.1
@@ -90,7 +97,7 @@ nameserver 1.0.0.1
 search one.one.one.one
 ```
 
-Применяем:
+Применяем изменения:
 
 ```bash
 sudo resolvconf -u
@@ -108,7 +115,7 @@ cat /etc/resolv.conf
 
 ---
 
-## **7️⃣ Запуск wgcf и проверка**
+## **7️⃣ Запуск wgcf и автозапуск**
 
 ```bash
 sudo systemctl enable wg-quick@wgcf
@@ -120,20 +127,7 @@ systemctl status wg-quick@wgcf
 
 ```bash
 curl ifconfig.io
-# должен отличаться от IP хоста, трафик идёт через Warp
+# должен отличаться от IP хоста
 ```
 
----
-
-## **8️⃣ Проверка маршрутов и интерфейса**
-
-```bash
-ip a show wgcf
-ip route show
-```
-
-* Интерфейс `wgcf` должен быть `up`.
-* IP-адреса совпадают с теми, что в `wgcf.conf`.
-
----
 
