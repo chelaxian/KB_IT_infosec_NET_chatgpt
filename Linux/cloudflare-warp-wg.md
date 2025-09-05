@@ -125,4 +125,11 @@ curl ifconfig.io
 # должен отличаться от IP хоста
 ```
 
+---
+
+На хосте proxmox
+```bash
+iptables -t nat -A POSTROUTING -j MASQUERADE
+iptables -t nat -L -n -v
+```
 
