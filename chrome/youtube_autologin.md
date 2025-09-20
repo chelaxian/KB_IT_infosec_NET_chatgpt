@@ -242,23 +242,42 @@
 
 ```javascript
 // ==UserScript==
-// @name         AutoClick Next/SignIn Google/YT/youtu.be
+// @name         AutoClick Next/SignIn Google/YT/youtu.be (Safe)
 // @namespace    http://example.com/
-// @version      1.8
-// @description  Автоматически нажимает на нужный Google-аккаунт и спецкнопки только на Google, YouTube и youtu.be.
+// @version      1.9
+// @description  Автоматически нажимает на нужный Google-аккаунт и спецкнопки только на Google, YouTube и youtu.be. Исключает кнопки голосового поиска и экранной клавиатуры.
 // @match        *://*/*
 // @grant        none
 // ==/UserScript==
 (function() {
     'use strict';
+
     const userEmails = [
         "tatapepeof@gmail.com",
         "300.tpaktop.300@gmail.com",
         "1560step@gmail.com"
     ];
+
     const targetWords = [
         "sign in", "next", "log in", "login", "continue", "reload", "agree", "accept"
     ];
+
+    // Запрет на клики по элементам голосового поиска и экранной клавиатуры
+    const forbiddenSelectors = [
+        '[aria-label*="Голосовой поиск"]',
+        '[aria-label*="voice search"]',
+        '.voice-search-button',
+        '.vk-keyboard',
+        '[aria-label*="Экранная клавиатура"]'
+    ];
+
+    function isForbidden(element) {
+        for (const sel of forbiddenSelectors) {
+            if (element.matches && element.matches(sel)) return true;
+        }
+        return false;
+    }
+
     const host = window.location.hostname;
     const isGoogleOrYouTube = (
         /\.google\./i.test(host) ||
@@ -267,30 +286,37 @@
         host === 'google.com' ||
         host === 'youtu.be'
     );
+
     if (!isGoogleOrYouTube) return;
 
     function simulateClick(element) {
         element.click();
         console.log(`AutoClick: Clicked: "${element.innerText || element.value || element.getAttribute('aria-label') || ''}"`);
     }
+
     function clickTargetElements() {
         for (const email of userEmails) {
             const accLink = document.querySelector(`[role="link"][data-identifier="${email}"]`);
             if (accLink) {
                 simulateClick(accLink);
-                return;
+                return; // Один клик за запуск
             }
         }
+
         const clickableButtons = document.querySelectorAll(
             'button, input[type="button"], input[type="submit"], [role="button"]'
         );
+
         for (const element of clickableButtons) {
             if (element.disabled) continue;
+            if (isForbidden(element)) continue; // Пропускаем запрещённые элементы
+
             let textContent = (element.innerText || element.value || "").toLowerCase().trim();
             if (!textContent) {
                 const aria = element.getAttribute('aria-label');
                 textContent = aria ? aria.toLowerCase().trim() : "";
             }
+
             for (const word of targetWords) {
                 if (textContent.includes(word)) {
                     simulateClick(element);
@@ -299,8 +325,10 @@
             }
         }
     }
+
     window.addEventListener('load', clickTargetElements);
     setInterval(clickTargetElements, 2000);
+
 })();
 ```
 ---
