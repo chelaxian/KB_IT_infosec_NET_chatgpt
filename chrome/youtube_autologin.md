@@ -81,6 +81,7 @@
    - Сбрасывает состояние цикла до "0", после чего цикл повторяется.
 
 Для хранения состояния используется `localStorage` под ключом `ytCycleStep`.
+<img width="657" height="260" alt="image" src="https://github.com/user-attachments/assets/7014dd43-04cb-4553-b1d3-2f38591f088f" />
 
 ## Финальный скрипт
 
@@ -94,22 +95,18 @@
 // @match        https://accounts.google.com/v3/signin/identifier*
 // @grant        none
 // ==/UserScript==
-
 (function() {
     'use strict';
-
     // НАСТРАИВАЕМЫЕ ПАРАМЕТРЫ
-    const INTERVAL = 600000; // 10 минут в миллисекундах
+    const INTERVAL = 6000000; // 100 минут в миллисекундах
     const WAIT = 5000;       // 5 секунд в миллисекундах
-
     const LOGOUT_URL = "https://www.youtube.com/logout";
     const LOGIN_URL = "https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F%253FthemeRefresh%253D1&hl=en&ifkv=ASSHykrZmMTbrRwtTdPcCL808H2MXtIBXe4kDNr1IF_omyo6oiVwXg7ubi9zbShFz6v8Ul_ILTxIvQ&passive=true&service=youtube&uilel=3&flowName=GlifWebSignIn&flowEntry=ServiceLogin";
     const HOMEPAGE = "https://www.youtube.com/";
-    const NEXTPAGE = "https://www.youtube.com/watch?v=4xDzrJKXOOY";
+    const NEXTPAGE = "https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=WL";
     // Считываем состояние цикла: "0", "1" или "2" или "3". Если не задано – по умолчанию "0"
     let step = localStorage.getItem("ytCycleStep") || "0";
     console.log("Запущен цикл. Текущий шаг:", step, " | Текущий URL:", window.location.href);
-
     // Если состояние "0": ждём INTERVAL и переходим на logout, устанавливая состояние "1"
     if (step === "0") {
         console.log(`Шаг 0: через ${INTERVAL/1000} секунд выполняем переход на logout.`);
@@ -178,67 +175,65 @@
 
 ```javascript
 // ==UserScript==
-// @name         Auto Press Enter and Tab Alternately
+// @name         Auto Press Enter and Tab Alternately (Fixed)
 // @namespace    http://example.com/
-// @version      1.2
-// @description  Эмулирует нажатие клавиш Enter и Tab, чередуя их, начиная с Enter.
+// @version      1.3
+// @description  Эмулирует нажатие Enter и Tab (чередуя), начиная с Enter, максимально близко к реальному поведению.
 // @match        *://*/*
-// @exclude      https://www.youtube.com/watch?v=*
-// @exclude      https://www.youtube.com/live/*
 // @grant        none
 // ==/UserScript==
-
 (function() {
     'use strict';
-
-    // Функция для симуляции нажатия указанной клавиши
-    function simulateKey(key, code, keyCode) {
-        // Создание события keydown
-        const keyDownEvent = new KeyboardEvent('keydown', {
-            bubbles: true,
-            cancelable: true,
-            key: key,
-            code: code,
-            keyCode: keyCode, // deprecated, но может понадобиться для некоторых случаев
-            which: keyCode
-        });
-
-        // Создание события keyup
-        const keyUpEvent = new KeyboardEvent('keyup', {
-            bubbles: true,
-            cancelable: true,
-            key: key,
-            code: code,
-            keyCode: keyCode,
-            which: keyCode
-        });
-
-        // Диспатчим события на активном элементе или document.body, если фокуса нет
-        const target = document.activeElement || document.body;
-        target.dispatchEvent(keyDownEvent);
-        target.dispatchEvent(keyUpEvent);
-
-        console.log(`AutoKeyPress: ${key} key pressed.`);
-    }
-
-    // Флаг, определяющий, какую клавишу нажимать следующей
     let pressEnterNext = true;
 
-    // Функция, которая чередует нажатия клавиш
-    function alternateKeyPress() {
-        if (pressEnterNext) {
-            simulateKey('Enter', 'Enter', 13);
+    // Функция имитации Enter
+    function simulateEnter() {
+        const active = document.activeElement;
+        if (!active) return;
+        if (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA') {
+            // Вызвать submit, если поле внутри формы
+            const form = active.form;
+            if (form) {
+                form.requestSubmit ? form.requestSubmit() : form.submit();
+                console.log('AutoKeyPress: Submit form by Enter');
+            } else {
+                // Иначе вставить символ новой строки (для textarea)
+                if (active.tagName === 'TEXTAREA') {
+                    active.value += '\n';
+                    active.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+                console.log('AutoKeyPress: Enter pressed in input/textarea');
+            }
+        } else if (active.tagName === 'BUTTON' || active.type === 'submit') {
+            active.click();
+            console.log('AutoKeyPress: Enter triggered button click');
         } else {
-            simulateKey('Tab', 'Tab', 9);
+            // Попытаться эмулировать нажатие Enter как синтетическим событием (на всякий случай)
+            active.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, bubbles: true }));
+            active.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', code: 'Enter', keyCode: 13, bubbles: true }));
+            console.log('AutoKeyPress: Synthetic Enter on generic element');
         }
+    }
+
+    // Реализация Tab — переход фокуса к следующему focusable элементу
+    function simulateTab() {
+        const focusable = Array.from(document.querySelectorAll('a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+            .filter(el => !el.disabled && el.offsetParent !== null); // только видимые и активные
+        const active = document.activeElement;
+        const idx = focusable.indexOf(active);
+        const next = focusable[(idx + 1) % focusable.length];
+        if (next) next.focus();
+        console.log('AutoKeyPress: Tab moved focus');
+    }
+
+    function alternateKeyPress() {
+        if (pressEnterNext) simulateEnter();
+        else simulateTab();
         pressEnterNext = !pressEnterNext;
     }
 
-    // Устанавливаем интервал в 5000 мс для чередования нажатий
     setInterval(alternateKeyPress, 5000);
 })();
-
-
 ```
 
 ---
@@ -247,78 +242,111 @@
 
 ```javascript
 // ==UserScript==
-// @name         AutoClick Next/SignIn Enhanced
+// @name         AutoClick Next/SignIn Google/YT/youtu.be
 // @namespace    http://example.com/
-// @version      1.5
-// @description  Автоматически нажимает на указанный аккаунт Google и на кнопки с текстами "Next", "Sign in", "Log in", "Login", "Continue", "Reload", "Agree", "Accept".
+// @version      1.8
+// @description  Автоматически нажимает на нужный Google-аккаунт и спецкнопки только на Google, YouTube и youtu.be.
 // @match        *://*/*
-// @exclude      https://www.youtube.com/watch?v=*
-// @exclude      https://www.youtube.com/live/*
 // @grant        none
 // ==/UserScript==
-
 (function() {
     'use strict';
-
-    // Email/аккаунт, на который надо нажимать:
-    const userEmail = "300.tpaktop.300@gmail.com";
-
-    // Список слов, при обнаружении которых на кнопках/ссылках делаем клик:
-    const targetWords = [
-        "next",         // English: "Next"
-        "sign in",      // English: "Sign in"
-        "log in",       // English: "Log in"
-        "login",        // English: "Login"
-        "continue",     // English: "Continue"
-        "reload",       // English: "Reload"
-        "agree",        // English: "Agree"
-        "accept"        // English: "Accept"
+    const userEmails = [
+        "tatapepeof@gmail.com",
+        "300.tpaktop.300@gmail.com",
+        "1560step@gmail.com"
     ];
+    const targetWords = [
+        "sign in", "next", "log in", "login", "continue", "reload", "agree", "accept"
+    ];
+    const host = window.location.hostname;
+    const isGoogleOrYouTube = (
+        /\.google\./i.test(host) ||
+        /\.youtube\./i.test(host) ||
+        host === 'youtube.com' ||
+        host === 'google.com' ||
+        host === 'youtu.be'
+    );
+    if (!isGoogleOrYouTube) return;
 
-    // Функция для имитации клика по элементу
     function simulateClick(element) {
         element.click();
-        console.log(`AutoClick: Clicked on element with text "${element.innerText || element.value || element.getAttribute('aria-label') || ''}"`);
+        console.log(`AutoClick: Clicked: "${element.innerText || element.value || element.getAttribute('aria-label') || ''}"`);
     }
-
-    // Основная функция: сначала кликаем по аккаунту (если есть), потом по кнопкам
     function clickTargetElements() {
-        // 1) Пытаемся найти и кликнуть нужный аккаунт по data-identifier
-        const googleAccLink = document.querySelector(`[role="link"][data-identifier="${userEmail}"]`);
-        if (googleAccLink) {
-            googleAccLink.click();
-            console.log(`AutoClick: Clicked on Google account link with data-identifier="${userEmail}"`);
+        for (const email of userEmails) {
+            const accLink = document.querySelector(`[role="link"][data-identifier="${email}"]`);
+            if (accLink) {
+                simulateClick(accLink);
+                return;
+            }
         }
-
-        // 2) Ищем кнопки/ссылки с целевыми словами
-        const clickableElements = document.querySelectorAll(
-            'button, input[type="button"], input[type="submit"], a, [role="button"]'
+        const clickableButtons = document.querySelectorAll(
+            'button, input[type="button"], input[type="submit"], [role="button"]'
         );
-        for (const element of clickableElements) {
-            // Пропускаем, если элемент отключен
+        for (const element of clickableButtons) {
             if (element.disabled) continue;
-
-            // Получаем текст из innerText, value или aria-label
             let textContent = (element.innerText || element.value || "").toLowerCase().trim();
             if (!textContent) {
                 const aria = element.getAttribute('aria-label');
                 textContent = aria ? aria.toLowerCase().trim() : "";
             }
-
-            // Проверяем, содержит ли текст одно из целевых слов
             for (const word of targetWords) {
                 if (textContent.includes(word)) {
                     simulateClick(element);
-                    break; // переходим к следующему элементу
+                    break;
                 }
             }
         }
     }
-
-    // Запуск при загрузке страницы
     window.addEventListener('load', clickTargetElements);
-
-    // Периодический запуск (каждые 2 сек) для динамически подгружаемых элементов
     setInterval(clickTargetElements, 2000);
 })();
+```
+---
+
+автоматическое нажатие Sign in
+
+```javascript
+// ==UserScript==
+// @name         YouTube Auto Sign-In Clicker (Fixed)
+// @namespace    http://tampermonkey.net/
+// @version      1.1
+// @description  Автоматически нажимает кнопку "Sign in" на YouTube при появлении запроса "confirm you're not a bot"
+// @author       Кожаный мешок
+// @match        https://www.youtube.com/*
+// @grant        none
+// ==/UserScript==
+(function() {
+    'use strict';
+    let clicked = false;
+    function clickSignInButton() {
+        if (clicked) return;
+        // Более точный поиск кнопки "Sign in"
+        const button = Array.from(document.querySelectorAll('ytd-button-renderer,button'))
+            .map(el => el.querySelector('a,button') || el)
+            .find(btn =>
+                btn &&
+                /sign in/i.test(btn.textContent) &&
+                btn.offsetParent !== null // видимость
+            );
+        if (button) {
+            console.log('[YouTube AutoLogin] Нажимаем кнопку "Sign in"...');
+            clicked = true;
+            button.click();
+        } else {
+            // Лог только при загрузке, чтобы не спамить при каждом интервале
+            if (document.readyState === 'complete') {
+                console.log('[YouTube AutoLogin] Кнопка "Sign in" не найдена.');
+            }
+        }
+    }
+    // Проверка каждую минуту
+    setInterval(clickSignInButton, 60 * 1000);
+    // Срабатывание сразу после загрузки
+    window.addEventListener('load', () => {
+        setTimeout(clickSignInButton, 3500);
+    });
+})();
+
 ```
