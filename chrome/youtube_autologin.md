@@ -259,7 +259,7 @@
     ];
 
     const targetWords = [
-        "sign in", "next", "log in", "login", "continue", "reload", "agree", "accept"
+        "sign in", "next", "log in", "login", "continue", "reload", "agree", "accept", "try again", "retry"
     ];
 
     // Запрет на клики по элементам голосового поиска и экранной клавиатуры
