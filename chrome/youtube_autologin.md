@@ -92,7 +92,12 @@
 // @version      1.0
 // @description  По схеме: ждем INTERVAL, переходим на logout, ждем 2 сек, переходим на логин, ждем 2 сек, переходим на главную ждем 2 сек, переходим на LoFi Girl. Цикл повторяется.
 // @match        https://www.youtube.com/*
+// @match        https://youtube.com/*
+// @match        https://youtu.be/*
 // @match        https://accounts.google.com/v3/signin/identifier*
+// @match        https://accounts.google.com/*
+// @match        https://www.google.com/*
+// @match        https://google.com/*
 // @grant        none
 // ==/UserScript==
 (function() {
@@ -179,7 +184,13 @@
 // @namespace    http://example.com/
 // @version      1.3
 // @description  Эмулирует нажатие Enter и Tab (чередуя), начиная с Enter, максимально близко к реальному поведению.
-// @match        *://*/*
+// @match        https://www.youtube.com/*
+// @match        https://youtube.com/*
+// @match        https://youtu.be/*
+// @match        https://accounts.google.com/v3/signin/identifier*
+// @match        https://accounts.google.com/*
+// @match        https://www.google.com/*
+// @match        https://google.com/*
 // @grant        none
 // ==/UserScript==
 (function() {
@@ -246,7 +257,13 @@
 // @namespace    http://example.com/
 // @version      1.9
 // @description  Автоматически нажимает на нужный Google-аккаунт и спецкнопки только на Google, YouTube и youtu.be. Исключает кнопки голосового поиска и экранной клавиатуры.
-// @match        *://*/*
+// @match        https://www.youtube.com/*
+// @match        https://youtube.com/*
+// @match        https://youtu.be/*
+// @match        https://accounts.google.com/v3/signin/identifier*
+// @match        https://accounts.google.com/*
+// @match        https://www.google.com/*
+// @match        https://google.com/*
 // @grant        none
 // ==/UserScript==
 (function() {
@@ -343,6 +360,12 @@
 // @description  Автоматически нажимает кнопку "Sign in" на YouTube при появлении запроса "confirm you're not a bot"
 // @author       Кожаный мешок
 // @match        https://www.youtube.com/*
+// @match        https://youtube.com/*
+// @match        https://youtu.be/*
+// @match        https://accounts.google.com/v3/signin/identifier*
+// @match        https://accounts.google.com/*
+// @match        https://www.google.com/*
+// @match        https://google.com/*
 // @grant        none
 // ==/UserScript==
 (function() {
