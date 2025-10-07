@@ -1,7 +1,3 @@
-Ок, даю пошаговую, «с нуля», под Debian/Ubuntu (подойдёт и для Proxmox/Debian 12). В итоге получишь: Squid на нужном IP:PORT + BasicAuth + healthcheck через systemd (oneshot + timer) с авто-рестартом.
-
----
-
 # 0) Предпосылки
 
 * Root-доступ на новом сервере.
@@ -465,4 +461,370 @@ journalctl -u squid-healthcheck.service -n 30 --no-pager
 journalctl -t squid-healthcheck --since "10 min ago" --no-pager
 ```
 
-Готово. По этому рецепту поднимаешь такой же стенд на любом новом сервере. Если хочешь — упакую всё в один `bash`-инсталлятор (скрипт, который прогонит все шаги автоматом и спросит только IP/порт/логин/пароль).
+Ок, вот **продолжение инструкции** для варианта c **SOCKS5 (Dante)**. Вставляй этот раздел сразу после предыдущего гайда про Squid — он полностью совместим с уже установленным `healthcheck`.
+
+---
+
+# B) SOCKS5-прокси на Dante + healthcheck
+
+## B.1) Переменные окружения (под себя)
+
+```bash
+IP="10.0.0.100"      # IP интерфейса контейнера/хоста, где будет слушать SOCKS5
+PORT="1080"
+USER="user"
+PASS="passw0rd!"
+SVC="danted"        # у некоторых пакетов юнит зовётся "sockd": проверь ниже
+```
+
+Проверь IP:
+
+```bash
+hostname -I
+ip -4 addr show | awk '/inet /{print $2,$NF}'
+```
+
+## B.2) Установка Dante
+
+```bash
+apt-get update
+apt-get install -y dante-server curl dos2unix
+# выяснить точное имя systemd-юнита:
+systemctl status danted || systemctl status sockd || true
+# при необходимости:
+# SVC="sockd"
+```
+
+## B.3) Создать системного пользователя для auth
+
+```bash
+id -u "$USER" >/dev/null 2>&1 || useradd -M -s /usr/sbin/nologin "$USER"
+echo "${USER}:${PASS}" | chpasswd
+```
+
+## B.4) Конфиг `/etc/danted.conf` (минимальный рабочий)
+
+Определим внешний интерфейс для исходящих соединений:
+
+```bash
+EXT_IF="$(ip -o -4 route show to default | awk '{print $5}' | head -1)"
+echo "EXT_IF=${EXT_IF}"
+```
+
+Сгенерируем конфиг:
+
+```bash
+cat >/etc/danted.conf <<EOF
+logoutput: syslog
+
+internal: ${IP} port = ${PORT}
+external: ${EXT_IF}
+
+user.privileged: root
+user.notprivileged: nobody
+user.libwrap: nobody
+
+# Клиентские методы (к самому демону) и методы SOCKS:
+clientmethod: none
+socksmethod: username   # требуем user/pass (системные пользователи)
+
+# Кто может подключаться к SOCKS (источники):
+client pass {
+  from: 0.0.0.0/0 to: 0.0.0.0/0
+  log: connect disconnect error
+}
+
+# Что разрешаем через SOCKS (наружу):
+socks pass {
+  from: 0.0.0.0/0 to: 0.0.0.0/0
+  command: connect
+  protocol: tcp
+  log: connect disconnect error
+}
+
+# Явный запрет остального
+socks block {
+  from: 0.0.0.0/0 to: 0.0.0.0/0
+  log: error
+}
+EOF
+```
+
+Старт и автозапуск:
+
+```bash
+systemctl daemon-reload
+systemctl enable --now "${SVC}"
+systemctl status "${SVC}" --no-pager
+ss -ltnp | grep ":${PORT}\b" || journalctl -u "${SVC}" -n 50 --no-pager
+```
+
+Ожидаем `LISTEN ${IP}:${PORT}` процессом `danted`/`sockd`.
+
+## B.5) Привязка healthcheck к Dante (SOCKS5H)
+
+> **Важно:** для корректного DNS через прокси используем `socks5h` (DNS-резолвинг на стороне прокси).
+
+Файл окружения:
+
+```bash
+cat >/etc/default/squid-healthcheck <<EOF
+PROXY_TYPE="socks5h"
+PROXY_IP="${IP}"
+PROXY_PORT=${PORT}
+PROXY_USER="${USER}"
+PROXY_PASSWORD="${PASS}"
+
+MAX_FAILS=3
+TIMEOUT=8
+SVC_NAME="${SVC}"
+
+URL_HTTP="http://ya.ru"
+URL_HTTPS="https://example.com"
+EOF
+```
+
+(Если скрипт и таймер уже стоят с прошлого раздела — этот шаг просто их перепривяжет к Dante. Если нет — поставь из предыдущей инструкции разделы «скрипт», «service», «timer».)
+
+Перечитать юниты (если впервые ставишь):
+
+```bash
+systemctl daemon-reload
+systemctl enable --now squid-healthcheck.timer
+```
+
+## B.6) Проверка (ручная и через systemd)
+
+Ручной «человеческий» отчёт:
+
+```bash
+VERBOSE=1 /usr/local/bin/squid-healthcheck.sh
+```
+
+Ожидаем:
+
+* `TCP ${IP}:${PORT} : LISTEN (reachable)`
+* `STATUS: HEALTHY`, коды `HTTP=302/200`, `HTTPS=200`
+
+Таймер тикает:
+
+```bash
+systemctl list-timers --all | grep -i squid-healthcheck
+```
+
+Логи:
+
+```bash
+journalctl -u squid-healthcheck.service -n 30 --no-pager
+journalctl -t squid-healthcheck --since "15 min ago" --no-pager
+```
+
+Интеграционный тест авто-рестарта:
+
+```bash
+systemctl stop "${SVC}"
+sleep 70
+journalctl -t squid-healthcheck --since "2 min ago" --no-pager
+systemctl status "${SVC}"
+```
+
+## B.7) Типовые узкие места (быстро)
+
+* `code=000` при `LISTEN` → почти всегда **DNS не через прокси** → ставь `PROXY_TYPE="socks5h"`.
+* `authentication failed` в журналах Dante → нет системного пользователя/неверный пароль.
+* `no matching rule` → поправь `client pass`/`socks pass` (источники/направления/команды).
+* Нет исхода в интернет у самого сервера → проверь `curl -I http[s]://example.com` без прокси, маршрут/файрвол.
+
+## B.8) Ужесточение (по желанию)
+
+* Ограничить источники:
+
+  ```conf
+  client pass { from: 10.0.0.0/8 to: 0.0.0.0/0 }
+  ```
+* Ограничить направления/порты:
+
+  ```conf
+  socks pass { from: 10.0.0.0/8 to: 0.0.0.0/0 port = 80-443 command: connect protocol: tcp }
+  ```
+* Systemd-перезапуск самого демона при падении:
+
+  ```bash
+  systemctl edit "${SVC}"
+  ```
+
+  Вставить:
+
+  ```ini
+  [Service]
+  Restart=always
+  RestartSec=5s
+  StartLimitIntervalSec=0
+  ```
+
+  Применить:
+
+  ```bash
+  systemctl daemon-reload
+  systemctl restart "${SVC}"
+  ```
+
+---
+
+## 1) Быстрый фикс резолвинга: `socks5h`
+
+В конфиге хелсчека переключи тип на `socks5h`, чтобы **DNS шёл через прокси**:
+
+```bash
+sed -i 's/^PROXY_TYPE=.*/PROXY_TYPE="socks5h"/' /etc/default/squid-healthcheck
+VERBOSE=1 /usr/local/bin/squid-healthcheck.sh
+```
+
+Если после этого коды станут 200/30x — дело было в DNS, готово.
+
+---
+
+## 2) Проверка аутентификации к Dante
+
+`danted` по-умолчанию проверяет **системных** пользователей (PAM). Если юзер `user` не существует в системе — логин не пройдёт. Создай учётку без шелла:
+
+```bash
+id user || useradd -M -s /usr/sbin/nologin user
+echo 'user:passw0rd!' | chpasswd
+```
+
+Быстрый явный тест (видно причину, если auth/ACL не пускают):
+
+```bash
+curl -v --socks5-hostname 10.0.0.100:1080 \
+     --proxy-user 'user:passw0rd!' \
+     http://example.com -I
+```
+
+* Если увидишь в выводе `SOCKS5 authentication failed` → проблема с логином/паролем/методом.
+* Если `Connection denied` / `general SOCKS server failure` → упёрся в ACL `danted`.
+
+---
+
+## 3) Минимальный рабочий `danted.conf` (с паролями)
+
+Уточни внешний интерфейс (для исходящих от Dante):
+
+```bash
+IFACE=$(ip -o -4 route show to default | awk '{print $5}')
+echo "$IFACE"
+```
+
+Пример конфига (Ubuntu/Jammy, пакет `dante-server`), подставь свой `IFACE`:
+
+```conf
+# /etc/danted.conf
+logoutput: syslog
+internal: 10.0.0.100 port = 1080
+external: IFACE_NAME
+
+user.privileged: root
+user.notprivileged: nobody
+user.libwrap: nobody
+
+clientmethod: none
+socksmethod: username   # требуем user/pass (PAM: системные пользователи)
+
+# Разрешаем клиентам коннектиться к SOCKS
+client pass {
+  from: 0.0.0.0/0 to: 0.0.0.0/0
+}
+
+# Разрешаем все TCP CONNECT наружу (можно ужать под свои сети/порты)
+socks pass {
+  from: 0.0.0.0/0 to: 0.0.0.0/0
+  protocol: tcp
+  command: connect
+}
+
+# (опционально) запрет всего остального явно
+socks block { from: 0.0.0.0/0 to: 0.0.0.0/0 }
+```
+
+Применить:
+
+```bash
+sed -i "s/IFACE_NAME/$IFACE/" /etc/danted.conf
+systemctl restart danted || systemctl restart sockd
+systemctl status danted --no-pager || systemctl status sockd --no-pager
+ss -ltnp | grep 1080
+```
+
+Повтори тест:
+
+```bash
+curl -v --socks5-hostname 10.0.0.100:1080 \
+     --proxy-user 'user:passw0rd!' \
+     http://example.com -I
+```
+
+Ожидаем `HTTP/1.1 301/200`. Если ок — хелсчек тоже начнёт давать 2xx/3xx.
+
+---
+
+## 4) Исключаем проблемы выхода в интернет у самого хоста
+
+С самой машины с Dante без прокси:
+
+```bash
+curl -4 -I http://example.com
+curl -4 -I https://example.com
+```
+
+Если здесь не отвечает — чиним маршрут/файрвол (nftables/iptables), а не прокси.
+
+---
+
+## 5) Доведём хелсчек до зелёного
+
+* В `/etc/default/squid-healthcheck` оставь:
+
+```bash
+PROXY_TYPE="socks5h"
+PROXY_IP="10.0.0.100"
+PROXY_PORT=1080
+PROXY_USER="user"
+PROXY_PASSWORD="passw0rd!"
+SVC_NAME="danted"   # или "sockd" — как называется unit у тебя: проверь `systemctl list-units | grep -i dante`
+```
+
+* Ручной прогон (наглядный):
+
+```bash
+VERBOSE=1 /usr/local/bin/squid-healthcheck.sh
+```
+
+Ожидаем `STATUS: HEALTHY` и коды `HTTP=30x/200`, `HTTPS=200`.
+
+---
+
+## 6) Если всё ещё 000 — быстрое чтение логов Dante
+
+Включи подробный лог и смотри причину отказа:
+
+```bash
+# временно в /etc/danted.conf можно на время диагностики:
+logoutput: stderr
+
+systemctl restart danted
+journalctl -u danted -n 100 --no-pager
+```
+
+Чаще всего там прямо видно: «no matching rule», «method not supported», «authentication failed».
+
+---
+
+### Короткий TL;DR
+
+1. Поставь `PROXY_TYPE="socks5h"` → DNS через прокси.
+2. Убедись, что в системе есть пользователь `user` с нужным паролем (PAM у Dante).
+3. Проверь ACL в `danted.conf` (примеры выше).
+4. `curl -v --socks5-hostname ...` должен дать 200/301.
+5. После этого хелсчек будет **HEALTHY** и перезапускать `danted` при падениях.
+
+
