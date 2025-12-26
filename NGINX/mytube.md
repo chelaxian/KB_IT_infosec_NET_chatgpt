@@ -103,79 +103,6 @@ grep -RIn -- "--js-run" /root/mytube/backend/src/utils/ytDlpUtils.ts | head
 
 ---
 
-## 8.3 Проверка Range (обязательно для playback)
-
-После настройки `rickroll.example.com`:
-
-```bash
-curl -I -H "Range: bytes=0-1" "https://rickroll.example.com/videos/<любой_твой_mp4>"
-```
-
-Ожидаемо:
-
-* `206 Partial Content`
-* `Content-Range: bytes 0-1/...`
-
----
-
-# 9) Частые проблемы и решения
-
-## 9.1 `spawn yt-dlp ENOENT`
-
-`yt-dlp` не найден в PATH:
-
-* ставим в `/usr/local/bin/yt-dlp`
-* проверяем `which yt-dlp`
-
-## 9.2 `yt-dlp: no such option: --js-runtime`
-
-Старая версия MyTube/yt-dlp — делаем патч на `--js-runtimes` (см. раздел 4)
-
-## 9.3 Frontend Connection Error при работе через домен
-
-Фронт ходит на IP:порт, а не на домен:
-
-* исправить `frontend/.env` → `VITE_API_URL=/api` и пересобрать фронт
-
-## 9.4 Видео не играет, сабы/видео красные в F12
-
-* обязательно отдельный host `rickroll.*`
-* обязательно отключение 304/conditional caching в NPM Advanced (см. 8.2)
-* обязательно Range passthrough
-
----
-
-# 10) Мини-команды “проверить что всё живо”
-
-```bash
-# backend
-curl -I http://127.0.0.1:5551/api/videos 2>/dev/null | head -n 5
-
-# frontend
-curl -I http://127.0.0.1:5556/ 2>/dev/null | head -n 5
-
-# через домен (после NPM)
-curl -I https://mytube.example.com/ | head -n 5
-curl -I https://mytube.example.com/api/videos | head -n 5
-```
-
-## 1) Требования
-
-* Ubuntu/Debian
-* Node.js **v22** (через nvm)
-* `yt-dlp` свежий бинарник в `/usr/local/bin/yt-dlp`
-* `deno` в PATH (`/root/.deno/bin`)
-* Домены:
-
-  * `mytube.example.com` — UI
-  * `rickroll.example.com` — backend + раздача `/videos` и `/subtitles` (медиа)
-* Порты:
-
-  * backend: `5551`
-  * frontend: `5556`
-
----
-
 ## 2) Переменные окружения (как у тебя)
 
 ### `backend/.env`
@@ -430,11 +357,58 @@ systemctl stop mytube.service
 
 ---
 
-# Быстрые проверки
+## 8.3 Проверка Range (обязательно для playback)
+
+После настройки `rickroll.example.com`:
 
 ```bash
-ss -lntp | egrep ':(5551|5556)\s'
-curl -I http://127.0.0.1:5556/ | head
-curl -I http://127.0.0.1:5551/api/health 2>/dev/null || true
+curl -I -H "Range: bytes=0-1" "https://rickroll.example.com/videos/<любой_твой_mp4>"
 ```
 
+Ожидаемо:
+
+* `206 Partial Content`
+* `Content-Range: bytes 0-1/...`
+
+---
+
+# 9) Частые проблемы и решения
+
+## 9.1 `spawn yt-dlp ENOENT`
+
+`yt-dlp` не найден в PATH:
+
+* ставим в `/usr/local/bin/yt-dlp`
+* проверяем `which yt-dlp`
+
+## 9.2 `yt-dlp: no such option: --js-runtime`
+
+Старая версия MyTube/yt-dlp — делаем патч на `--js-runtimes` (см. раздел 4)
+
+## 9.3 Frontend Connection Error при работе через домен
+
+Фронт ходит на IP:порт, а не на домен:
+
+* исправить `frontend/.env` → `VITE_API_URL=/api` и пересобрать фронт
+
+## 9.4 Видео не играет, сабы/видео красные в F12
+
+* обязательно отдельный host `rickroll.*`
+* обязательно отключение 304/conditional caching в NPM Advanced (см. 8.2)
+* обязательно Range passthrough
+
+---
+
+# 10) Мини-команды “проверить что всё живо”
+
+```bash
+# backend
+curl -I http://127.0.0.1:5551/api/videos 2>/dev/null | head -n 5
+
+# frontend
+curl -I http://127.0.0.1:5556/ 2>/dev/null | head -n 5
+
+# через домен (после NPM)
+curl -I https://mytube.example.com/ | head -n 5
+curl -I https://mytube.example.com/api/videos | head -n 5
+```
