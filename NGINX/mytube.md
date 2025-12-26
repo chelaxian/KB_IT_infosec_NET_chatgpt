@@ -1,4 +1,163 @@
-# README
+# MyTube — установка и публикация через Nginx Proxy Manager (с нуля)
+
+## 0) Предпосылки
+
+* ОС: Ubuntu/Debian (у тебя Ubuntu 24.04/noble)
+* Домен(а):
+
+  * `mytube.example.com` — UI (frontend)
+  * `rickroll.example.com` — раздача медиа (videos/subtitles) *(можно любой второй поддомен, но в примере так)*
+* Порты на сервере:
+
+  * Backend: `5551`
+  * Frontend: `5556`
+* Reverse-proxy: **Nginx Proxy Manager** (NPM)
+* Node: **v22**
+
+---
+
+## 1) Установка Node.js через NVM (Node 22)
+
+```bash
+# nvm
+curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+# node 22
+nvm install 22
+nvm use 22
+nvm alias default 22
+
+node -v
+npm -v
+```
+
+---
+
+## 2) Клонирование MyTube и установка зависимостей
+
+```bash
+cd /root
+git clone https://github.com/franklioxygen/MyTube.git mytube
+cd /root/mytube
+
+# чистый старт (на всякий)
+rm -rf node_modules backend/node_modules frontend/node_modules
+rm -f package-lock.json backend/package-lock.json frontend/package-lock.json
+
+# установка
+npm run install:all
+```
+
+> Если ловишь `ENOSPC` во время npm install — проверь `df -hT`, почисти логи, увеличь диск.
+
+---
+
+## 3) yt-dlp (обязательно свежий) + deno
+
+### 3.1 Ставим свежий yt-dlp (не apt!)
+
+apt-версия часто старая и ломает опции.
+
+```bash
+apt-get remove -y yt-dlp 2>/dev/null || true
+pipx uninstall yt-dlp 2>/dev/null || true
+pip3 uninstall -y yt-dlp 2>/dev/null || true
+
+curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
+chmod +x /usr/local/bin/yt-dlp
+
+yt-dlp --version
+```
+
+### 3.2 Ставим deno
+
+```bash
+apt-get update
+apt-get install -y unzip
+curl -fsSL https://deno.land/install.sh | sh
+
+# чтобы работало сразу в текущей сессии
+export PATH="/root/.deno/bin:$PATH"
+deno --version
+
+# чтобы работало всегда
+grep -q '\.deno/bin' /root/.bashrc || echo 'export PATH="/root/.deno/bin:$PATH"' >> /root/.bashrc
+```
+
+---
+
+## 4) Патч backend под новую опцию yt-dlp: `--js-runtime` -> `--js-runtimes`
+
+В MyTube (версия в твоём кейсе) использовалась старая опция.
+
+```bash
+grep -RIn -- "--js-runtime" /root/mytube/backend/src
+# должно найти 2 места в backend/src/utils/ytDlpUtils.ts
+
+sed -i 's/--js-runtime/--js-runtimes/g' /root/mytube/backend/src/utils/ytDlpUtils.ts
+
+grep -RIn -- "--js-run" /root/mytube/backend/src/utils/ytDlpUtils.ts | head
+```
+
+---
+
+## 8.3 Проверка Range (обязательно для playback)
+
+После настройки `rickroll.example.com`:
+
+```bash
+curl -I -H "Range: bytes=0-1" "https://rickroll.example.com/videos/<любой_твой_mp4>"
+```
+
+Ожидаемо:
+
+* `206 Partial Content`
+* `Content-Range: bytes 0-1/...`
+
+---
+
+# 9) Частые проблемы и решения
+
+## 9.1 `spawn yt-dlp ENOENT`
+
+`yt-dlp` не найден в PATH:
+
+* ставим в `/usr/local/bin/yt-dlp`
+* проверяем `which yt-dlp`
+
+## 9.2 `yt-dlp: no such option: --js-runtime`
+
+Старая версия MyTube/yt-dlp — делаем патч на `--js-runtimes` (см. раздел 4)
+
+## 9.3 Frontend Connection Error при работе через домен
+
+Фронт ходит на IP:порт, а не на домен:
+
+* исправить `frontend/.env` → `VITE_API_URL=/api` и пересобрать фронт
+
+## 9.4 Видео не играет, сабы/видео красные в F12
+
+* обязательно отдельный host `rickroll.*`
+* обязательно отключение 304/conditional caching в NPM Advanced (см. 8.2)
+* обязательно Range passthrough
+
+---
+
+# 10) Мини-команды “проверить что всё живо”
+
+```bash
+# backend
+curl -I http://127.0.0.1:5551/api/videos 2>/dev/null | head -n 5
+
+# frontend
+curl -I http://127.0.0.1:5556/ 2>/dev/null | head -n 5
+
+# через домен (после NPM)
+curl -I https://mytube.example.com/ | head -n 5
+curl -I https://mytube.example.com/api/videos | head -n 5
+```
 
 ## 1) Требования
 
