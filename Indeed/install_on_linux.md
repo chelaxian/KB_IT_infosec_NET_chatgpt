@@ -1,15 +1,17 @@
 ### Usefull links
 
-[Развёртывание Indeed PAM 2.10, базовый курс.](https://edu.indeed-company.ru/mod/page/view.php?id=68) \
+[Развёртывание Indeed PAM 2.10, базовый курс.](https://edu.indeed-company.ru/mod/page/view.php?id=68) 
+
 [Дистрибутив Indeed PAM 2.10.1](https://download.indeed-company.ru/s/q8zoOXIGhxhfR2q) \
 [Дистрибутив Indeed PAM 2.10.3](https://download.indeed-company.ru/s/phaUY6BRU8fwi4O) \
 [Дистрибутив Indeed PAM 3.0.0](https://download.indeed-company.ru/s/INxwIE8Vxk07FWb) \
-[Дистрибутив Indeed PAM 3.2.1](https://download.indeed-company.ru/s/oRHZXRNDKUKupop) \
+[Дистрибутив Indeed PAM 3.2.1](https://download.indeed-company.ru/s/oRHZXRNDKUKupop) 
 
 [Документация Indeed PAM 2.10](https://docs.indeed-company.ru/privileged-access-manager/2.10/intro/) \
 [Документация Indeed PAM 3.0](https://docs.indeed-company.ru/privileged-access-manager/3.0/intro/) \
 [Документация Indeed PAM 3.2](https://docs.indeed-company.ru/privileged-access-manager/3.2/intro/) \
-[Документация Indeed PAM (latest)](https://docs.indeed-company.ru/privileged-access-manager) \
+[Документация Indeed PAM (latest)](https://docs.indeed-company.ru/privileged-access-manager) 
+
 [База знаний](https://support.indeed-company.ru/Knowledgebase/List/Index/50/indeed-privileged-access-manager) 
 
 ---
