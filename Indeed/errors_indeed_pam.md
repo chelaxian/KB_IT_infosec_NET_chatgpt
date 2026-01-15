@@ -84,6 +84,7 @@ openssl s_client -connect local.test:636 -CAfile /etc/indeed/indeed-pam/ca-certi
 ```
 
 В консоли администратора:
+
 <img width="286" height="188" alt="image" src="https://github.com/user-attachments/assets/ac81bd53-3657-47a7-a96a-d0c5414acbf2" />
 
 
