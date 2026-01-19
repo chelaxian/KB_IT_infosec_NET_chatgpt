@@ -5,7 +5,8 @@
 [Дистрибутив Indeed PAM 2.10.1](https://download.indeed-company.ru/s/q8zoOXIGhxhfR2q) \
 [Дистрибутив Indeed PAM 2.10.3](https://download.indeed-company.ru/s/phaUY6BRU8fwi4O) \
 [Дистрибутив Indeed PAM 3.0.0](https://download.indeed-company.ru/s/INxwIE8Vxk07FWb) \
-[Дистрибутив Indeed PAM 3.2.1](https://download.indeed-company.ru/s/oRHZXRNDKUKupop) 
+[Дистрибутив Indeed PAM 3.2.1](https://download.indeed-company.ru/s/oRHZXRNDKUKupop) \
+[Дистрибутив Indeed PAM 3.3.0](https://download.indeed-company.ru/s/XJzGcnVajKyeYRa)
 
 [Документация Indeed PAM 2.10](https://docs.indeed-company.ru/privileged-access-manager/2.10/intro/) \
 [Документация Indeed PAM 3.0](https://docs.indeed-company.ru/privileged-access-manager/3.0/intro/) \
