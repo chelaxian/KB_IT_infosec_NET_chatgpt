@@ -1,4 +1,7 @@
 https://github.com/chelaxian/KB_IT_infosec_NET_chatgpt/blob/main/windows/windows_activate.md
+https://msfree.su/index.php?threads/632/
+https://tavalik.ru/ustanovka_servera_terminalov_windows_server_2012/
+https://dzen.ru/a/YkqyzSvPkT3fnXao
 
 # Ошибка при установке RDP сервера доступа
 
