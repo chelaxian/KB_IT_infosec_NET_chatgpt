@@ -1,139 +1,245 @@
-Отлично, сейчас соберу **полную, чёткую, техничную инструкцию** — как полностью снести старый Docker в RED OS / RHEL8-совместимых дистрибутивах и корректно установить рабочий Docker CE вместе с containerd.io (совместимый с Indeed PAM Wizard), так чтобы всё завелось **с нуля**.
+## 🎯 Цель
+
+На RED OS 8 (RHEL8-совместимая) полностью:
+
+1. Убрать старый Docker / containerd / runc.
+2. Отключить docker-пакеты из репозиториев RedOS.
+3. Поставить **чистый Docker CE** из официального Docker-репозитория.
+4. Проверить, что userns/remap и rootless **выключены**.
+5. Убедиться, что IndeedPAM Wizard нормально стартует.
 
 ---
 
-# 📘 **ПОЛНАЯ ИНСТРУКЦИЯ: удаление старого Docker + чистая установка нового Docker CE (совместимо с Indeed PAM 3.3)**
+## 0. Предпосылки
 
-Инструкция проверена на RED OS 8.0.x, но подходит и для RHEL 8 / Rocky / Alma.
+Работаем под `root`:
+
+```bash
+sudo -i
+```
 
 ---
 
-# 1️⃣ Полное удаление старого Docker, containerd, runc
+## 1️⃣ Полное удаление старого контейнерного стека
 
-Удаляем ВСЁ, что относится к старым пакетам:
-
-```bash
-sudo dnf remove -y docker \
- docker-ce \
- docker-ce-cli \
- docker-ce-rootless-extras \
- docker-buildx-plugin \
- docker-compose-plugin \
- containerd \
- containerd.io \
- moby-engine \
- moby-cli \
- runc \
- crun \
- docker-ce-cli-doc
-```
-
-Очищаем каталоги:
+Сносим всё, что хотя бы отдалённо похоже на Docker / containerd / runc / moby:
 
 ```bash
-sudo rm -rf /var/lib/docker /var/lib/containerd /etc/docker
+dnf remove -y docker \
+  docker-ce \
+  docker-ce-cli \
+  docker-ce-rootless-extras \
+  docker-buildx-plugin \
+  docker-compose-plugin \
+  containerd \
+  containerd.io \
+  moby-engine \
+  moby-cli \
+  runc \
+  crun \
+  docker-ce-cli-doc
 ```
 
-Проверяем, что старья нет:
+Чистим данные и конфиги:
+
+```bash
+rm -rf /var/lib/docker /var/lib/containerd /etc/docker
+```
+
+Проверяем, что пакетов действительно нет:
 
 ```bash
 rpm -qa | grep -i -E "docker|containerd|runc|moby"
+# Должно ничего не вывести
 ```
 
-Должно быть пусто.
-
-Очищаем кеш DNF:
+Чистим кэш dnf:
 
 ```bash
-sudo dnf clean all
-sudo rm -rf /var/cache/dnf
+dnf clean all
+rm -rf /var/cache/dnf
 ```
 
 ---
 
-# 2️⃣ Добавление репозитория Docker CE для RHEL / RedOS
+## 2️⃣ Отключение docker-пакетов из репозиториев RedOS
 
-Используем репо RHEL — оно подходит для RedOS:
+Иначе dnf будет снова пытаться тащить `docker-ce-cli-*.red80` и `runc` из redos-репозиториев, что ломает установку Docker CE.
+
+### 2.1. Смотрим, какие репозитории есть
 
 ```bash
-sudo dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
+ls /etc/yum.repos.d/
+```
+
+Типично там будут файлы типа:
+
+* `redos.repo`
+* `redos-base.repo`
+* `redos-updates.repo`
+* `redos-appstream.repo` и т.п.
+
+### 2.2. Вариант А (ручной, аккуратный) — правим `.repo` файлы
+
+Открываем, например:
+
+```bash
+nano /etc/yum.repos.d/redos.repo
+```
+
+В каждом нужном блоке (например `[redos-base]`, `[redos-updates]`) добавляем строку:
+
+```ini
+exclude=docker* containerd* runc*
+```
+
+Пример блока:
+
+```ini
+[redos-base]
+name=RedOS Base
+baseurl=...
+enabled=1
+gpgcheck=1
+exclude=docker* containerd* runc*
+```
+
+То же самое делаем в остальных `redos-*.repo`, где скачиваются обновления.
+
+После правки можно проверить:
+
+```bash
+grep -R "exclude=.*docker" /etc/yum.repos.d
+```
+
+Ожидаем что-то вида:
+
+```text
+/etc/yum.repos.d/redos.repo:exclude=docker* containerd* runc*
+...
+```
+
+### 2.3. Вариант B (быстрый, но грубый) — через sed
+
+Если не хочешь руками лазить по каждому файлу:
+
+```bash
+sed -i '/^\[redos/{
+  :a
+  n
+  /^\[/{ba}
+  /exclude=/!s/^enabled=1/&\nexclude=docker* containerd* runc*/
+}' /etc/yum.repos.d/redos*.repo
+```
+
+После этого тоже проверяем:
+
+```bash
+grep -R "exclude=.*docker" /etc/yum.repos.d
 ```
 
 ---
 
-# 3️⃣ Установка рабочей версии Docker CE + containerd.io
+## 3️⃣ Снова чистим dnf и добавляем Docker CE repo
 
-⚠ Здесь очень важно: в RED OS конфликтует runc от RedSoft с containerd.io от Docker CE.
-Правильный путь — **позволить containerd.io обнулить runc**, а Docker CE CLI — заменить свои части на корректные версии.
-
-Команда:
+На всякий случай ещё раз очищаем кэш (после правки exclude):
 
 ```bash
-sudo dnf install -y docker-ce docker-ce-cli docker-compose-plugin containerd.io --nobest
+dnf clean all
+rm -rf /var/cache/dnf
 ```
 
-Если DNF попросит заменить runc — соглашаться.
+Добавляем официальный Docker-репозиторий для RHEL:
 
-Как результат должны установиться такие пакеты:
-
-* **docker-ce 29.1.5**
-* **docker-ce-cli 29.1.5**
-* **containerd.io 2.2.1**
-* **docker-buildx-plugin**
-* **docker-compose-plugin**
-* **fuse-overlayfs**
+```bash
+dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
+```
 
 ---
 
-# 4️⃣ Проверка, что всё установлено корректно
+## 4️⃣ Установка Docker CE + containerd.io (EL8)
 
-Проверяем пакеты:
-
-```bash
-rpm -qa | grep -E "docker|containerd|buildx"
-```
-
-Запускаем сервис:
+Теперь можно ставить **только** пакеты из Docker-репо, без red80-мешанины:
 
 ```bash
-sudo systemctl enable --now docker
-sudo systemctl status docker
+dnf install -y docker-ce docker-ce-cli docker-compose-plugin containerd.io --nobest
 ```
 
-Ожидаем состояние: `active (running)`.
+Нормальная успешная транзакция установит примерно:
+
+* `containerd.io-2.2.1-1.el8.x86_64`
+* `docker-ce-29.1.5-1.el8.x86_64`
+* `docker-ce-cli-29.1.5-1.el8.x86_64`
+* `docker-buildx-plugin-0.30.1-1.el8.x86_64`
+* `docker-compose-plugin-5.0.2-1.el8.x86_64`
+* плюс `fuse-overlayfs`, `passt`, `passt-selinux`
+
+Проверка:
+
+```bash
+rpm -qa | grep -E "docker|containerd" | sort
+```
 
 ---
 
-# 5️⃣ Проверка, что userns-remap НЕ включён
+## 5️⃣ Запуск и базовая проверка Docker
 
-Это критично для Indeed PAM Wizard.
+Запускаем и добавляем в автозапуск:
 
-Нужно, чтобы вывод был пустой:
+```bash
+systemctl enable --now docker
+systemctl status docker
+```
+
+Ожидаем:
+
+```text
+Active: active (running)
+...
+/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+```
+
+Проверяем простейший контейнер:
+
+```bash
+docker run --rm hello-world
+```
+
+Если вывелась классическая портянка `Hello from Docker!` – всё ок.
+
+---
+
+## 6️⃣ Проверка, что userns/remap и rootless ОТКЛЮЧЕНЫ
+
+Это критично для Indeed PAM Wizard: раньше у тебя ansible внутри контейнера пытался работать от `nobody` (uid 65534), из-за чего был:
+
+```text
+chown failed: Operation not permitted: ... owner: nobody, gid: 65534
+```
+
+Теперь проверяем:
 
 ```bash
 docker info | grep -i userns
-```
-
-Проверка rootless:
-
-```bash
 docker info | grep -i rootless
 ```
 
-Оба вывода должны быть пустыми.
+Если всё хорошо — обе команды ничего не выводят.
 
-Если в `/etc/docker/daemon.json` ранее было `userns-remap`: удалить файл:
+Если вдруг в `/etc/docker/daemon.json` остались старые настройки (например, `userns-remap`), просто удаляем конфиг:
 
 ```bash
-sudo rm -f /etc/docker/daemon.json
-sudo systemctl restart docker
+rm -f /etc/docker/daemon.json
+systemctl restart docker
 ```
+
+И повторяем проверки `docker info | grep -i userns`.
 
 ---
 
-# 6️⃣ Проверка сетевого драйвера
+## 7️⃣ Проверка storage driver
 
-Wizard корректно работает только с overlayfs/overlay2:
+На всякий случай:
 
 ```bash
 docker info | grep -i "Storage Driver"
@@ -141,41 +247,41 @@ docker info | grep -i "Storage Driver"
 
 Ожидаем:
 
-```
+```text
 Storage Driver: overlayfs
 ```
 
-или
-
-```
-overlay2
-```
+или `overlay2` — это нормально для RED OS 8.
 
 ---
 
-# 7️⃣ Теперь можно запускать Indeed PAM Web Wizard
+## 8️⃣ Запуск Indeed PAM Web Wizard
+
+Переходим в каталог дистрибутива:
 
 ```bash
 cd /opt/IndeedPAM_3.3_RU/indeed-pam
+```
+
+(или куда ты его положил — у тебя это был `/opt/IndeedPAM_3.3_RU/indeed-pam`)
+
+Запускаем:
+
+```bash
 sudo bash run-wizard.sh -vvv
 ```
 
-После успешного старта веб-интерфейс доступен по адресу:
+Теперь:
 
+* шаг `TASK [Create common directories if not exist]` должен пройти без ошибок;
+* не должно быть `chown failed: Operation not permitted` и `owner: nobody`;
+* wizard поднимет контейнер с API/UI и выведет, что слушает `WEB_WIZARD_PORT=9443`.
+
+Дальше заходишь в браузер:
+
+```text
+https://<acs.indeed.step>:9443
 ```
-https://<FQDN>:9443
-```
 
----
+(по твоему FQDN/IP) — и работаешь с web-wizard.
 
-# 🎉 Готово — это полная рабочая инструкция «как сделать правильно с нуля»
-
-Если хочешь — могу оформить её в:
-
-* PDF
-* Markdown
-* Confluence-style
-* README.md
-* внутренний корпоративный регламент
-
-Скажи формат — подготовлю.
