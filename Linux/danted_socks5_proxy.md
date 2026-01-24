@@ -22,7 +22,7 @@ usermod -p '[ВАШ_ХЭШ_SHA512]' proxyuser  # openssl passwd -6 ***
 tee /etc/danted.conf >/dev/null << 'EOF'
 logoutput: /var/log/danted.log
 
-internal: 0.0.0.0 port = 5555
+internal: 0.0.0.0 port = 8080
 external: enp0s3  # Замените!
 
 socksmethod: username
@@ -70,15 +70,15 @@ systemctl enable --now danted
 
 ### 5. Firewall
 ```
-ufw allow 5555/tcp || true
+ufw allow 8080/tcp || true
 ufw reload || true
 ```
 
 ### 6. Проверка
 ```
 systemctl status danted
-ss -tuln | grep 5555
+ss -tuln | grep 8080
 tail /var/log/danted.log
-curl -v -x 'socks5://proxyuser:***@127.0.0.1:5555' http://ipinfo.io/ip
+curl -v -x 'socks5://proxyuser:***@127.0.0.1:8080' http://ipinfo.io/ip
 ```
-**Прокси готов:** `socks5://proxyuser:***@IP:5555` [community.hetzner](https://community.hetzner.com/tutorials/install-and-configure-danted-proxy-socks5/)
+**Прокси готов:** `socks5://proxyuser:***@IP:8080` [community.hetzner](https://community.hetzner.com/tutorials/install-and-configure-danted-proxy-socks5/)
