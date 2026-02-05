@@ -16,7 +16,7 @@
 
 ## 1) Скачать и распаковать Win32-OpenSSH
 
-1. Открой страницу релизов PowerShell/Win32-OpenSSH и скачай `OpenSSH-Win64.zip`. [web:16]
+1. Открой [страницу релизов PowerShell/Win32-OpenSSH](https://github.com/powershell/win32-openssh/releases) и скачай `OpenSSH-Win64.zip`. [web:16]
 2. Распакуй в папку, например:
 
 ```text
