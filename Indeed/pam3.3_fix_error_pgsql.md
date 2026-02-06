@@ -130,7 +130,7 @@ CREATE DATABASE "IdpJobs" OWNER pgsqluser;
 \q
 ```
 сделать пользователя владельцем баз данных
-```
+```sql
 ALTER DATABASE "Core" OWNER TO pgsqluser;
 ALTER DATABASE "CoreJobs" OWNER TO pgsqluser;
 ALTER DATABASE "Idp" OWNER TO pgsqluser;
