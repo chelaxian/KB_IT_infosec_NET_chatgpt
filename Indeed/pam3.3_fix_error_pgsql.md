@@ -135,6 +135,7 @@ ALTER DATABASE "Core" OWNER TO pgsqluser;
 ALTER DATABASE "CoreJobs" OWNER TO pgsqluser;
 ALTER DATABASE "Idp" OWNER TO pgsqluser;
 ALTER DATABASE "IdpJobs" OWNER TO pgsqluser;
+\q
 ```
 ---
 
