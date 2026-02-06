@@ -129,7 +129,13 @@ CREATE DATABASE "Idp"     OWNER pgsqluser;
 CREATE DATABASE "IdpJobs" OWNER pgsqluser;
 \q
 ```
-
+сделать пользователя владельцем баз данных
+```
+ALTER DATABASE "Core" OWNER TO pgsqluser;
+ALTER DATABASE "CoreJobs" OWNER TO pgsqluser;
+ALTER DATABASE "Idp" OWNER TO pgsqluser;
+ALTER DATABASE "IdpJobs" OWNER TO pgsqluser;
+```
 ---
 
 ## 5. Проверка подключений к БД
