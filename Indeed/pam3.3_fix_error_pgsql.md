@@ -169,11 +169,52 @@ PGPASSWORD='<PAM_DB_PASSWORD>' psql -h 100.100.100.100 -U pgsqluser -d Idp  -c "
 
 Ставим в **Core** и **Idp**:
 
+### **Установить пакет contrib для PostgreSQL 16**
+
+Под CentOS / RHEL / Rocky / Alma:
+
+```bash
+sudo dnf install postgresql-contrib postgresql16-contrib -y
+```
+
+Если pgsql поставлен через `postgresql16-server`, то пакет точно есть:
+
+```bash
+sudo dnf install postgresql16-contrib -y
+```
+
+Проверить:
+
+```bash
+rpm -qa | grep postgresql | grep contrib
+```
+
+##№ **Включить расширение в нужных базах**
+
+Выполняем под пользователем postgres:
+
 ```bash
 sudo -u postgres psql -d Core -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
 sudo -u postgres psql -d Idp  -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
+```
 
-# Проверка
+Если вылезет ошибка «нет superuser прав», выполнить так:
+
+```bash
+sudo -u postgres psql -c 'ALTER ROLE step SUPERUSER;'
+```
+
+и повторить создание расширений.
+
+После — вернуть обычные права:
+
+```bash
+sudo -u postgres psql -c 'ALTER ROLE step NOSUPERUSER;'
+```
+
+Проверка:
+
+```bash
 sudo -u postgres psql -d Core -c '\dx'
 sudo -u postgres psql -d Idp  -c '\dx'
 ```
