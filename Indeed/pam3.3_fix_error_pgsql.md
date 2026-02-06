@@ -201,7 +201,7 @@ sudo -u postgres psql -d Idp  -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
 Если вылезет ошибка «нет superuser прав», выполнить так:
 
 ```bash
-sudo -u postgres psql -c 'ALTER ROLE step SUPERUSER;'
+sudo -u postgres psql -c 'ALTER ROLE pgsqluser SUPERUSER;'
 ```
 
 и повторить создание расширений.
@@ -209,7 +209,7 @@ sudo -u postgres psql -c 'ALTER ROLE step SUPERUSER;'
 После — вернуть обычные права:
 
 ```bash
-sudo -u postgres psql -c 'ALTER ROLE step NOSUPERUSER;'
+sudo -u postgres psql -c 'ALTER ROLE pgsqluser NOSUPERUSER;'
 ```
 
 Проверка:
