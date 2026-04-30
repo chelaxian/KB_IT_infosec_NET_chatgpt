@@ -1,6 +1,6 @@
 ### Usefull links
 
-[Развёртывание Indeed PAM 2.10, базовый курс.](https://edu.indeed-id.ru/course/view.php?id=6) \ 
+[Развёртывание Indeed PAM 2.10, базовый курс.](https://edu.indeed-id.ru/course/view.php?id=6) \
 [Развёртывание Indeed PAM 3.2, базовый курс.](https://edu.indeed-id.ru/course/view.php?id=15) 
 
 [Дистрибутив Indeed PAM 2.10.1](https://download.indeed-company.ru/s/q8zoOXIGhxhfR2q) \
