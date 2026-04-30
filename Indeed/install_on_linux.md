@@ -13,6 +13,7 @@
 [Документация Indeed PAM 3.0](https://docs.indeed-company.ru/privileged-access-manager/3.0/intro/) \
 [Документация Indeed PAM 3.2](https://docs.indeed-company.ru/privileged-access-manager/3.2/intro/) \
 [Документация Indeed PAM 3.3](https://docs.indeed-company.ru/privileged-access-manager/3.3/intro/) \
+[Документация Indeed PAM 3.4](https://docs.indeed-company.ru/privileged-access-manager/3.4/intro/) \
 [Документация Indeed PAM (latest)](https://docs.indeed-company.ru/privileged-access-manager) 
 
 [База знаний](https://support.indeed-company.ru/Knowledgebase/List/Index/50/indeed-privileged-access-manager) 
