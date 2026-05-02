@@ -26,6 +26,7 @@
 - **Claude Code** для Z.AI — напрямую на `api.z.ai` (Anthropic-совместимый эндпоинт).
 - **Claude Code** для NIM — через локальный **free-claude-code** (uvicorn), который проксирует в NIM; для моделей вне whitelist — `minimal` tools и те же ограничения в Python.
 - **claude-mem** — воркер на `127.0.0.1:37777`; **Obsidian** — хранилище для сессий Claude (рабочая директория при запуске).
+- **Управление API ключами** — через TUI-меню лаунчеров (пункт "Сменить ключ API провайдера") можно интерактивно обновить ключи для **NVIDIA_NIM_API_KEY** и **ZAI_API_KEY** в переменных пользователя без редактирования файлов.
 
 ---
 
@@ -1387,6 +1388,7 @@ $ErrorActionPreference = "Stop"
 . (Join-Path $PSScriptRoot "launcher-tui.ps1")
 . (Join-Path $PSScriptRoot "launcher-provider-models.ps1")
 . (Join-Path $PSScriptRoot "launcher-custom-model-wizard.ps1")
+. (Join-Path $PSScriptRoot "launcher-api-keys.ps1")
 
 $VaultPath = "C:\Users\chelaxian\Documents\Obsidian Vault"
 $ObsidianExe = "C:\Users\chelaxian\AppData\Local\Programs\Obsidian\Obsidian.exe"
@@ -1425,6 +1427,10 @@ $script:Profiles = @(
   @{
     Id    = "custom-model"
     Label = "Другая модель… → Z.AI или NIM, список с API (прокрутка)"
+  }
+  @{
+    Id    = "change-api-key"
+    Label = "Сменить ключ API провайдера"
   }
 )
 
@@ -1570,6 +1576,11 @@ while ($true) {
       Invoke-ClaudeCloudProfile -ProfileId "custom-claude-nim"
     }
     exit $LASTEXITCODE
+  }
+
+  if ($profileId -eq "change-api-key") {
+    Show-ApiKeyChangeMenu -AppBrand "Claude"
+    continue
   }
 
   if ($profileId -eq "last") {
@@ -2586,7 +2597,157 @@ function Invoke-LauncherCustomModelWizard {
 }
 ```
 
-### 11.12. `update-cloud-shortcuts.ps1` (длинные имена ярлыков; переносимый `RepoRoot`)
+### 11.12. `launcher-api-keys.ps1` (модуль управления API ключами)
+
+Модуль для чтения и смены API ключей провайдеров (NVIDIA NIM, Z.AI) через TUI-меню лаунчеров.
+
+```powershell
+# Модуль для управления API ключами в лаунчерах Qwen/Claude
+
+function Get-CurrentApiKey {
+  param(
+    [Parameter(Mandatory = $true)]
+    [ValidateSet("NVIDIA_NIM", "ZAI")]
+    [string]$Provider
+  )
+
+  switch ($Provider) {
+    "NVIDIA_NIM" {
+      $key = [Environment]::GetEnvironmentVariable("NVIDIA_NIM_API_KEY", "User")
+      if ([string]::IsNullOrWhiteSpace($key)) {
+        $key = $env:NVIDIA_NIM_API_KEY
+      }
+      if ([string]::IsNullOrWhiteSpace($key) -or $key -eq "__SET_ME__") {
+        return ""
+      } else {
+        return $key.Trim()
+      }
+    }
+    "ZAI" {
+      $key = [Environment]::GetEnvironmentVariable("ZAI_API_KEY", "User")
+      if ([string]::IsNullOrWhiteSpace($key) -or $key -eq "__SET_ME__") {
+        $key = $env:ZAI_API_KEY
+      }
+      if ([string]::IsNullOrWhiteSpace($key) -or $key -eq "__SET_ME__") {
+        $key = [Environment]::GetEnvironmentVariable("OPENAI_API_KEY", "User")
+      }
+      if ([string]::IsNullOrWhiteSpace($key) -or $key -eq "__SET_ME__") {
+        $key = $env:OPENAI_API_KEY
+      }
+      if ([string]::IsNullOrWhiteSpace($key) -or $key -eq "__SET_ME__") {
+        return ""
+      } else {
+        return $key.Trim()
+      }
+    }
+    default { return "" }
+  }
+}
+
+function Read-SecretText {
+  param([string]$Prompt)
+  $sec = Read-Host -Prompt $Prompt -AsSecureString
+  $bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($sec)
+  try { return [Runtime.InteropServices.Marshal]::PtrToStringBSTR($bstr) } finally { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr) }
+}
+
+function Set-ProviderApiKey {
+  param(
+    [Parameter(Mandatory = $true)]
+    [ValidateSet("NVIDIA_NIM", "ZAI")]
+    [string]$Provider,
+    [Parameter(Mandatory = $true)]
+    [string]$NewKey
+  )
+
+  if ([string]::IsNullOrWhiteSpace($NewKey)) {
+    throw "API ключ не может быть пустым"
+  }
+
+  switch ($Provider) {
+    "NVIDIA_NIM" {
+      [Environment]::SetEnvironmentVariable("NVIDIA_NIM_API_KEY", $NewKey.Trim(), "User")
+      Write-Host "NVIDIA NIM API ключ обновлён в переменных пользователя." -ForegroundColor Green
+    }
+    "ZAI" {
+      [Environment]::SetEnvironmentVariable("ZAI_API_KEY", $NewKey.Trim(), "User")
+      Write-Host "Z.AI API ключ обновлён в переменных пользователя." -ForegroundColor Green
+    }
+  }
+}
+
+function Show-ApiKeyChangeMenu {
+  param(
+    [ValidateSet("Qwen", "Claude")]
+    [string]$AppBrand = "Qwen"
+  )
+
+  . (Join-Path $PSScriptRoot "launcher-tui.ps1")
+
+  $providers = @(
+    @{
+      Id    = "nim"
+      Label = "NVIDIA NIM API ключ"
+    }
+    @{
+      Id    = "zai"
+      Label = "Z.AI API ключ"
+    }
+  )
+
+  while ($true) {
+    $choice = Show-TuiFramedMenu -AppBrand $AppBrand -Title "Сменить ключ API провайдера" -Subtitle "Выберите провайдер" -Items $providers -EscapeAction "Back"
+    
+    if ($null -eq $choice) {
+      return $null
+    }
+
+    if ($choice.__menuBack) {
+      return $null
+    }
+
+    $providerId = [string]$choice.Id
+    $envVarName = if ($providerId -eq "nim") { "NVIDIA_NIM" } else { "ZAI" }
+    $currentKey = Get-CurrentApiKey -Provider $envVarName
+
+    Clear-Host
+    Write-Host ("Провайдер: {0}" -f $choice.Label) -ForegroundColor Cyan
+    if ([string]::IsNullOrWhiteSpace($currentKey)) {
+      Write-Host "Текущий ключ: (не задан)" -ForegroundColor Yellow
+    } else {
+      $masked = if ($currentKey.Length -gt 12) {
+        $currentKey.Substring(0, 6) + "..." + $currentKey.Substring($currentKey.Length - 6)
+      } else {
+        "***"
+      }
+      Write-Host ("Текущий ключ: {0}" -f $masked) -ForegroundColor Green
+    }
+    Write-Host ""
+    
+    $newKey = Read-SecretText "Введите новый API ключ (или оставьте пустым для отмены): "
+    
+    if ([string]::IsNullOrWhiteSpace($newKey)) {
+      Write-Host "Отмена — ключ не изменён." -ForegroundColor Yellow
+      Write-Host "Нажмите любую клавишу для продолжения..."
+      $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+      continue
+    }
+
+    try {
+      Set-ProviderApiKey -Provider $envVarName -NewKey $newKey
+      Write-Host ""
+      Write-Host "Нажмите любую клавишу для продолжения..."
+      $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    } catch {
+      Write-Host ("Ошибка: {0}" -f $_.Exception.Message) -ForegroundColor Red
+      Write-Host "Нажмите любую клавишу для продолжения..."
+      $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    }
+  }
+}
+```
+
+### 11.13. `update-cloud-shortcuts.ps1` (длинные имена ярлыков; переносимый `RepoRoot`)
 
 ```powershell
 # Ярлыки с длинными именами (как в оригинальном сетапе): «Cloud — выбор провайдера/профиля».
@@ -2659,7 +2820,7 @@ Ensure-QwenCodeCloudUnifiedShortcut
 Write-Output "ok"
 ```
 
-### 11.13. `run-qwen-code-launcher.ps1` (меню Qwen (облако))
+### 11.14. `run-qwen-code-launcher.ps1` (меню Qwen (облако))
 
 ```powershell
 [CmdletBinding()]
@@ -2673,6 +2834,7 @@ $ErrorActionPreference = "Stop"
 . (Join-Path $PSScriptRoot "launcher-tui.ps1")
 . (Join-Path $PSScriptRoot "launcher-provider-models.ps1")
 . (Join-Path $PSScriptRoot "launcher-custom-model-wizard.ps1")
+. (Join-Path $PSScriptRoot "launcher-api-keys.ps1")
 
 $StatePath = Join-Path $PSScriptRoot "qwen-code-launcher-state.json"
 
@@ -2699,6 +2861,10 @@ $script:Profiles = @(
   @{
     Id          = "custom-model"
     Label       = "Другая модель… → Z.AI или NIM, список с API (прокрутка)"
+  }
+  @{
+    Id          = "change-api-key"
+    Label       = "Сменить ключ API провайдера"
   }
 )
 
@@ -2820,6 +2986,11 @@ while ($true) {
     exit $LASTEXITCODE
   }
 
+  if ($profileId -eq "change-api-key") {
+    Show-ApiKeyChangeMenu -AppBrand "Qwen"
+    continue
+  }
+
   if ($profileId -eq "last") {
     $st = Get-LauncherState
     $profileId = Resolve-ProfileFromState $st
@@ -2838,7 +3009,7 @@ while ($true) {
 }
 ```
 
-### 11.14. `request.py` (NIM request builder (free-claude-code))
+### 11.15. `request.py` (NIM request builder (free-claude-code))
 
 ```python
 """Request builder for NVIDIA NIM provider."""
@@ -3262,7 +3433,7 @@ def build_request_body(
     return body
 ```
 
-### 11.15. `create-desktop-shortcuts.ps1` (ярлыки: Claude/Qwen `(cloud)` + Claude Mem Start/Viewer)
+### 11.16. `create-desktop-shortcuts.ps1` (ярлыки: Claude/Qwen `(cloud)` + Claude Mem Start/Viewer)
 
 > Источник правды в репозитории: `scripts/create-desktop-shortcuts.ps1`. Ниже — тот же полный текст.
 
@@ -3356,7 +3527,7 @@ Write-Host "Shortcuts created on desktop: Claude Code (cloud), Qwen Code (cloud)
 Write-Host "RepoRoot=$RepoRoot  Desktop=$DesktopPath" -ForegroundColor DarkGray
 ```
 
-### 11.16. `set-cloud-api-keys.ps1` (интерактивно записать `ZAI_API_KEY` и `NVIDIA_NIM_API_KEY` в User; значения не логируются)
+### 11.17. `set-cloud-api-keys.ps1` (интерактивно записать `ZAI_API_KEY` и `NVIDIA_NIM_API_KEY` в User; значения не логируются)
 
 ```powershell
 [CmdletBinding()]
