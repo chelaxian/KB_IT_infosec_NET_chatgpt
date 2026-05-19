@@ -20,9 +20,11 @@
 [База знаний](https://support.indeed-company.ru/Knowledgebase/List/Index/50/indeed-privileged-access-manager) 
 
 ---
-патч для 3.4 - https://download.indeed-id.ru/s/8hg30EOis0qZ5SX/download
-инструкция по патчу - https://download.indeed-id.ru/s/21Ekuvvcj7ZEA1O
+
+патч для 3.4 - https://download.indeed-id.ru/s/8hg30EOis0qZ5SX/download \
+инструкция по патчу - https://download.indeed-id.ru/s/21Ekuvvcj7ZEA1O \
 патч исправляет уязвимости в компоненте Indeed PAM SSH Proxy версии 3.4
+
 ---
 
 ### Install dependensies
